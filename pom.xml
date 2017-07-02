@@ -31,6 +31,7 @@
         <mockito.version>1.10.19</mockito.version>
         <javax.inject.version>1</javax.inject.version>
         <jjwt.version>0.7.0</jjwt.version>
+        <jetty-runner.version>9.4.6.v20170531</jetty-runner.version>
     </properties>
 
     <modules>

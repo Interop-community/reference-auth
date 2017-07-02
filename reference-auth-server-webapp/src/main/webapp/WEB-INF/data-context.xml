@@ -26,7 +26,7 @@
 
     <!--  The following is for connecting to a MySQL database that has been initialized with
              src/main/resources/db/tables/mysql_database_tables.sql -->
-    <bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
+    <bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource" primary="true" destroy-method="close">
         <property name="driverClassName" value="com.mysql.jdbc.Driver" />
         <property name="url" value="${oidc.datasource.mysql.url}" />
         <property name="username" value="${oidc.datasource.mysql.username}" />
@@ -36,6 +36,20 @@
     <bean id="jpaAdapter" class="org.springframework.orm.jpa.vendor.EclipseLinkJpaVendorAdapter">
         <property name="databasePlatform" value="org.eclipse.persistence.platform.database.MySQLPlatform" />
         <property name="showSql" value="false" />
+    </bean>
+
+    <bean id="bootstrapDataSource" class="org.apache.commons.dbcp2.BasicDataSource" primary="false" destroy-method="close">
+        <property name="driverClassName" value="com.mysql.jdbc.Driver" />
+        <property name="url" value="jdbc:mysql://localhost" />
+        <property name="username" value="root" />
+        <property name="password" value="password" />
+    </bean>
+
+    <!-- Flyway configuration -->
+    <bean id="flyway" class="org.flywaydb.core.Flyway" init-method="migrate">
+        <property name="baselineOnMigrate" value="true" />
+        <property name="schemas" value="oic" />
+        <property name="dataSource" ref="bootstrapDataSource" />
     </bean>
 
 </beans>

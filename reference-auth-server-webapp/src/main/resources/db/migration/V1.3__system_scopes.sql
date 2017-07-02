@@ -1,7 +1,3 @@
-SET AUTOCOMMIT = 0;
-
-START TRANSACTION;
-
 INSERT INTO system_scope (scope, description, structured, default_scope, restricted) VALUES
   ('openid', 'OpenID Connect id_token request', false, false, false),
   ('profile', 'User Profile Claim', false, false, false),
@@ -10,6 +6,7 @@ INSERT INTO system_scope (scope, description, structured, default_scope, restric
   ('launch/patient', 'When launching outside an EHR, provide patient context at time of launch', false, true, false),
   ('launch/encounter', 'When launching outside an EHR, provide encounter context at time of launch', false, false, false),
   ('launch/location', 'When launching outside an EHR, provide location context at time of launch', false, false, false),
+  ('launch/other', 'Launch with other context', false, false, false),
   ('user/*.*', 'Read-write all data accessible by the user', false, false, false),
   ('user/*.read', 'Read all data accessible by the user', false, false, false),
   ('user/*.write', 'Write all data accessible by the user', false, false, false),
@@ -70,8 +67,3 @@ INSERT INTO system_scope (scope, description, structured, default_scope, restric
   ('patient/Patient.write', 'Write all Patients for a given patient', false, false, false),
   ('offline_access', 'Allows the app to maintain authorization even when the app is offline.', false, false, false),
   ('online_access', 'Allows the app to maintain authorization as long as the app is online.', false, false, false);
-
-
-COMMIT;
-
-SET AUTOCOMMIT = 1;
