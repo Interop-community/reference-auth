@@ -40,9 +40,9 @@
 
     <bean id="bootstrapDataSource" class="org.apache.commons.dbcp2.BasicDataSource" primary="false" destroy-method="close">
         <property name="driverClassName" value="com.mysql.jdbc.Driver" />
-        <property name="url" value="jdbc:mysql://localhost" />
-        <property name="username" value="root" />
-        <property name="password" value="password" />
+        <property name="url" value="${bootstrap.datasource.mysql.url}" />
+        <property name="username" value="${oidc.datasource.mysql.username}" />
+        <property name="password" value="${oidc.datasource.mysql.password}" />
     </bean>
 
     <!-- Flyway configuration -->
