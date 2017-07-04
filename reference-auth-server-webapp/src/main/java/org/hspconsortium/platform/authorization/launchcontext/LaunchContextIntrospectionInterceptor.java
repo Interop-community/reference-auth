@@ -78,7 +78,7 @@ public class LaunchContextIntrospectionInterceptor extends HandlerInterceptorAda
 
         for (int i = 0; i < keys.length; i++) {
             String key = (String) keys[i];
-            String value = (String) launchContextParamMap.get(key);
+            String value = String.valueOf(launchContextParamMap.get(key));
             stringBuilder.append(key + "=" + value);
             if (i != keys.length - 1) {
                 stringBuilder.append(",");
