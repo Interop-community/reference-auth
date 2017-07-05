@@ -20,11 +20,11 @@ INSERT INTO whitelisted_site_scope (owner_id, scope) VALUES
   ((SELECT id from whitelisted_site where client_id = 'sand_man'), 'profile');
 
 INSERT INTO client_details (client_id, client_name, access_token_validity_seconds, token_endpoint_auth_method, client_secret) VALUES
-  ('{{sandbox_server_admin_access_client_id}}', 'Sandbox Manager Admin', 86400, 'SECRET_BASIC', '{{sandbox_server_admin_access_client_secret}}');
+  ('sandman_admin', 'Sandbox Manager Admin', 86400, 'SECRET_BASIC', 'secret');
 
 INSERT INTO client_grant_type (owner_id, grant_type) VALUES
-  ((SELECT id from client_details where client_id = '{{sandbox_server_admin_access_client_id}}'), 'client_credentials');
+  ((SELECT id from client_details where client_id = 'sandman_admin'), 'client_credentials');
 
 INSERT INTO client_authority (owner_id, authority) VALUES
-  ((SELECT id from client_details where client_id = '{{sandbox_server_admin_access_client_id}}'), 'ROLE_ADMIN'),
-  ((SELECT id from client_details where client_id = '{{sandbox_server_admin_access_client_id}}'), 'ROLE_USER');
+  ((SELECT id from client_details where client_id = 'sandman_admin'), 'ROLE_ADMIN'),
+  ((SELECT id from client_details where client_id = 'sandman_admin'), 'ROLE_USER');
