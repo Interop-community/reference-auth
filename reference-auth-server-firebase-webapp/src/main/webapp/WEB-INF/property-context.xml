@@ -30,6 +30,7 @@
         <property name="locations">
             <list>
                 <value>classpath:config/auth.properties</value>
+                <value>classpath:config/firebase.properties</value>
             </list>
         </property>
     </bean>
