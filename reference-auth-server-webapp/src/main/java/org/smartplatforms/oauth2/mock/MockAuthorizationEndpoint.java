@@ -59,13 +59,13 @@ public class MockAuthorizationEndpoint {
 		}
 
 		// Prepare JWT with claims set
-		JWTClaimsSet claimsSet = new JWTClaimsSet();
-		claimsSet.setClaim("context", launchContext);
-		claimsSet.setClaim("client_id", parameters.get("client_id"));
-		claimsSet.setClaim("scope", parameters.get("scope"));
-		claimsSet.setExpirationTime(new Date(new Date().getTime() + 5 * 60 * 1000)); //5 min
+		JWTClaimsSet.Builder claimsSetBuilder = new JWTClaimsSet.Builder();
+		claimsSetBuilder.claim("context", launchContext);
+		claimsSetBuilder.claim("client_id", parameters.get("client_id"));
+		claimsSetBuilder.claim("scope", parameters.get("scope"));
+		claimsSetBuilder.expirationTime(new Date(new Date().getTime() + 5 * 60 * 1000)); //5 min
 
-		SignedJWT signedJWT = new SignedJWT(new JWSHeader(JWSAlgorithm.RS256), claimsSet);
+		SignedJWT signedJWT = new SignedJWT(new JWSHeader(JWSAlgorithm.RS256), claimsSetBuilder.build());
 
 		// Compute the RSA signature
 		signedJWT.sign(signer);

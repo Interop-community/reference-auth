@@ -1,11 +1,11 @@
 package org.smartplatforms.oauth2;
 
-import org.mitre.oauth2.token.StructuredScopeAwareOAuth2RequestValidator;
+import org.mitre.oauth2.token.ScopeServiceAwareOAuth2RequestValidator;
 import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
 import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.security.oauth2.provider.ClientDetails;
 
-public class ScopeValidator extends StructuredScopeAwareOAuth2RequestValidator {
+public class ScopeValidator extends ScopeServiceAwareOAuth2RequestValidator {
 
 	@Override
 	public void validateScope(AuthorizationRequest authorizationRequest, ClientDetails client) throws InvalidScopeException {

@@ -41,6 +41,7 @@ import javax.servlet.http.HttpSession;
 import java.util.*;
 
 import static org.mitre.openid.connect.request.ConnectRequestParameters.*;
+import static org.springframework.security.config.Elements.CSRF;
 
 /**
  * Custom User Approval Handler implementation which uses a concept of a whitelist,
@@ -211,7 +212,7 @@ public class SmartTofuUserApprovalHandler extends TofuUserApprovalHandler implem
 
 						// If it's structured, assign the user-specified parameter
 						SystemScope systemScope = systemScopes.getByValue(scope);
-						if (systemScope != null && systemScope.isStructured()){
+						if (systemScope != null){
 							String paramValue = approvalParams.get("scopeparam_" + scope);
                             if (!Strings.isNullOrEmpty(paramValue)) {
                                 allowedScopes.add(scope + ":"+paramValue);

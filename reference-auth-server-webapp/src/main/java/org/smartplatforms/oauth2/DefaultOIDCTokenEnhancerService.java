@@ -71,13 +71,15 @@ public class DefaultOIDCTokenEnhancerService implements OIDCTokenEnhancerService
         }
 
         OAuth2AccessTokenEntity idTokenEntity = new OAuth2AccessTokenEntity();
-        JWTClaimsSet idClaims = new JWTClaimsSet();
+        JWTClaimsSet.Builder idClaimsBuilder = new JWTClaimsSet.Builder();
 
         if (customClaims != null) {
-            idClaims.setCustomClaims(customClaims);
+            for (Map.Entry<String, Object> entry : customClaims.entrySet()) {
+                idClaimsBuilder.claim(entry.getKey(), entry.getValue());
+            }
         }
 
-       // if the auth time claim was explicitly requested OR if the client always wants the auth time, put it in
+        // if the auth time claim was explicitly requested OR if the client always wants the auth time, put it in
         if (request.getExtensions().containsKey("max_age")
                 || (request.getExtensions().containsKey("idtoken")) // TODO: parse the ID Token claims (#473) -- for now assume it could be in there
                 || (client.getRequireAuthTime() != null && client.getRequireAuthTime())) {
@@ -86,7 +88,7 @@ public class DefaultOIDCTokenEnhancerService implements OIDCTokenEnhancerService
 
                 Long authTimestamp = Long.parseLong((String) request.getExtensions().get(AuthenticationTimeStamper.AUTH_TIMESTAMP));
                 if (authTimestamp != null) {
-                    idClaims.setClaim("auth_time", authTimestamp / 1000L);
+                    idClaimsBuilder.claim("auth_time", authTimestamp / 1000L);
                 }
             } else {
                 // we couldn't find the timestamp!
@@ -94,21 +96,21 @@ public class DefaultOIDCTokenEnhancerService implements OIDCTokenEnhancerService
             }
         }
 
-        idClaims.setIssueTime(issueTime);
+        idClaimsBuilder.issueTime(issueTime);
 
         if (client.getIdTokenValiditySeconds() != null) {
             Date expiration = new Date(System.currentTimeMillis() + (client.getIdTokenValiditySeconds() * 1000L));
-            idClaims.setExpirationTime(expiration);
+            idClaimsBuilder.expirationTime(expiration);
             idTokenEntity.setExpiration(expiration);
         }
 
-        idClaims.setIssuer(configBean.getIssuer());
-        idClaims.setSubject(sub);
-        idClaims.setAudience(Lists.newArrayList(client.getClientId()));
+        idClaimsBuilder.issuer(configBean.getIssuer());
+        idClaimsBuilder.subject(sub);
+        idClaimsBuilder.audience(Lists.newArrayList(client.getClientId()));
 
-        String nonce = (String)request.getExtensions().get("nonce");
+        String nonce = (String) request.getExtensions().get("nonce");
         if (!Strings.isNullOrEmpty(nonce)) {
-            idClaims.setCustomClaim("nonce", nonce);
+            idClaimsBuilder.claim("nonce", nonce);
         }
 
         Set<String> responseTypes = request.getResponseTypes();
@@ -116,7 +118,7 @@ public class DefaultOIDCTokenEnhancerService implements OIDCTokenEnhancerService
         if (responseTypes.contains("token")) {
             // calculate the token hash
             Base64URL at_hash = IdTokenHashUtils.getAccessTokenHash(signingAlg, accessToken);
-            idClaims.setClaim("at_hash", at_hash);
+            idClaimsBuilder.claim("at_hash", at_hash);
         }
 
         if (client.getIdTokenEncryptedResponseAlg() != null && !client.getIdTokenEncryptedResponseAlg().equals(Algorithm.NONE)
@@ -127,7 +129,7 @@ public class DefaultOIDCTokenEnhancerService implements OIDCTokenEnhancerService
 
             if (encrypter != null) {
 
-                EncryptedJWT idToken = new EncryptedJWT(new JWEHeader(client.getIdTokenEncryptedResponseAlg(), client.getIdTokenEncryptedResponseEnc()), idClaims);
+                EncryptedJWT idToken = new EncryptedJWT(new JWEHeader(client.getIdTokenEncryptedResponseAlg(), client.getIdTokenEncryptedResponseEnc()), idClaimsBuilder.build());
 
                 encrypter.encryptJwt(idToken);
 
@@ -143,7 +145,7 @@ public class DefaultOIDCTokenEnhancerService implements OIDCTokenEnhancerService
 
             if (signingAlg.equals(Algorithm.NONE)) {
                 // unsigned ID token
-                idToken = new PlainJWT(idClaims);
+                idToken = new PlainJWT(idClaimsBuilder.build());
 
             } else {
 
@@ -153,20 +155,20 @@ public class DefaultOIDCTokenEnhancerService implements OIDCTokenEnhancerService
                         || signingAlg.equals(JWSAlgorithm.HS384)
                         || signingAlg.equals(JWSAlgorithm.HS512)) {
 
-                    idToken = new SignedJWT(new JWSHeader(signingAlg), idClaims);
+                    idToken = new SignedJWT(new JWSHeader(signingAlg), idClaimsBuilder.build());
 
                     JWTSigningAndValidationService signer = symmetricCacheService.getSymmetricValidtor(client);
 
                     // sign it with the client's secret
                     signer.signJwt((SignedJWT) idToken);
                 } else {
-                    idClaims.setCustomClaim("kid", jwtService.getDefaultSignerKeyId());
+                    idClaimsBuilder.claim("kid", jwtService.getDefaultSignerKeyId());
 
                     JWSHeader header = new JWSHeader(signingAlg, null, null, null, null, null, null, null, null, null,
                             jwtService.getDefaultSignerKeyId(),
                             null, null);
 
-                    idToken = new SignedJWT(header, idClaims);
+                    idToken = new SignedJWT(header, idClaimsBuilder.build());
 
                     // sign it with the server's key
                     jwtService.signJwt((SignedJWT) idToken);
@@ -181,7 +183,7 @@ public class DefaultOIDCTokenEnhancerService implements OIDCTokenEnhancerService
 
         // create a scope set with just the special "id-token" scope
         //Set<String> idScopes = new HashSet<String>(token.getScope()); // this would copy the original token's scopes in, we don't really want that
-        Set<String> idScopes = Sets.newHashSet(SystemScopeService.ID_TOKEN_SCOPE);
+        Set<String> idScopes = Sets.newHashSet("id-token"); //TODO: verify that this is the correct fix for the missing 'id-token' constant
         idTokenEntity.setScope(idScopes);
 
         idTokenEntity.setClient(accessToken.getClient());
@@ -257,16 +259,16 @@ public class DefaultOIDCTokenEnhancerService implements OIDCTokenEnhancerService
         authHolder = authenticationHolderRepository.save(authHolder);
         token.setAuthenticationHolder(authHolder);
 
-        JWTClaimsSet claims = new JWTClaimsSet();
+        JWTClaimsSet.Builder claimsBuilder = new JWTClaimsSet.Builder();
 
-        claims.setAudience(Lists.newArrayList(client.getClientId()));
-        claims.setIssuer(configBean.getIssuer());
-        claims.setIssueTime(new Date());
-        claims.setExpirationTime(token.getExpiration());
-        claims.setJWTID(UUID.randomUUID().toString()); // set a random NONCE in the middle of it
+        claimsBuilder.audience(Lists.newArrayList(client.getClientId()));
+        claimsBuilder.issuer(configBean.getIssuer());
+        claimsBuilder.issueTime(new Date());
+        claimsBuilder.expirationTime(token.getExpiration());
+        claimsBuilder.jwtID(UUID.randomUUID().toString()); // set a random NONCE in the middle of it
 
         JWSAlgorithm signingAlg = jwtService.getDefaultSigningAlgorithm();
-        SignedJWT signed = new SignedJWT(new JWSHeader(signingAlg), claims);
+        SignedJWT signed = new SignedJWT(new JWSHeader(signingAlg), claimsBuilder.build());
 
         jwtService.signJwt(signed);
 

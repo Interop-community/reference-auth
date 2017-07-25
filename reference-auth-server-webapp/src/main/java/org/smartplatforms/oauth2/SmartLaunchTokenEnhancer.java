@@ -92,21 +92,21 @@ public class SmartLaunchTokenEnhancer implements TokenEnhancer {
         String clientId = originalAuthRequest.getClientId();
         ClientDetailsEntity client = clientService.loadClientByClientId(clientId);
 
-        JWTClaimsSet claims = new JWTClaimsSet();
+        JWTClaimsSet.Builder claimsBuilder = new JWTClaimsSet.Builder();
 
-        claims.setAudience(Lists.newArrayList(clientId));
+        claimsBuilder.audience(Lists.newArrayList(clientId));
 
-        claims.setIssuer(configBean.getIssuer());
+        claimsBuilder.issuer(configBean.getIssuer());
 
-        claims.setIssueTime(new Date());
+        claimsBuilder.issueTime(new Date());
 
-        claims.setExpirationTime(token.getExpiration());
+        claimsBuilder.expirationTime(token.getExpiration());
 
-        claims.setJWTID(UUID.randomUUID().toString()); // set a random NONCE in the middle of it
+        claimsBuilder.jwtID(UUID.randomUUID().toString()); // set a random NONCE in the middle of it
 
         JWSAlgorithm signingAlg = jwtService.getDefaultSigningAlgorithm();
 
-        SignedJWT signed = new SignedJWT(new JWSHeader(signingAlg), claims);
+        SignedJWT signed = new SignedJWT(new JWSHeader(signingAlg), claimsBuilder.build());
 
         jwtService.signJwt(signed);
 
@@ -138,7 +138,7 @@ public class SmartLaunchTokenEnhancer implements TokenEnhancer {
                 customClaims.put("email", userInfo.getEmail());
 
                 OAuth2AccessTokenEntity idTokenEntity = connectTokenService.createIdToken(client,
-                        originalAuthRequest, claims.getIssueTime(),
+                        originalAuthRequest, claimsBuilder.build().getIssueTime(),
                         userInfo.getSub(), token, customClaims);
 
                 // attach the id token to the parent access token

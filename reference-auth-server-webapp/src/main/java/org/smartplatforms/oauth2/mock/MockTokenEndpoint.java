@@ -6,7 +6,6 @@ import com.nimbusds.jose.crypto.RSASSAVerifier;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jwt.JWTClaimsSet;
-import com.nimbusds.jwt.ReadOnlyJWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import net.minidev.json.JSONObject;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -68,7 +67,7 @@ public class MockTokenEndpoint {
 			SignedJWT incomingSignedJWT = SignedJWT.parse(codeRaw);
 			incomingSignedJWT.verify(verifier);
 
-			ReadOnlyJWTClaimsSet jwtClaimsSet = incomingSignedJWT.getJWTClaimsSet();
+			JWTClaimsSet jwtClaimsSet = incomingSignedJWT.getJWTClaimsSet();
 
 			String scope = (String)jwtClaimsSet.getClaim("scope");
 			String context = (String)jwtClaimsSet.getClaim("context");
@@ -92,10 +91,10 @@ public class MockTokenEndpoint {
 			JWSSigner signer = new RSASSASigner(rsaKey.toRSAPrivateKey());
 
 			// Prepare JWT with claims set
-			JWTClaimsSet claimsSet = new JWTClaimsSet();
-			claimsSet.setClaim("token_type", parameters.get("bearer"));
-			claimsSet.setClaim("client_id", parameters.get("client_id"));
-			claimsSet.setExpirationTime(new Date(new Date().getTime() + 60 * 60 * 1000)); //5 min
+			JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
+					.claim("token_type", parameters.get("bearer"))
+					.claim("client_id", parameters.get("client_id"))
+					.expirationTime(new Date(new Date().getTime() + 60 * 60 * 1000)).build(); //5 min
 
 			SignedJWT signedJWT = new SignedJWT(new JWSHeader(JWSAlgorithm.RS256), claimsSet);
 

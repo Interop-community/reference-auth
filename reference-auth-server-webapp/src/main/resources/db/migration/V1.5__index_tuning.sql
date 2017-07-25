@@ -1,68 +1,18 @@
-CREATE INDEX idx_authentication_holder_request_parameter_owner_id
-  ON authentication_holder_request_parameter(owner_id);
+--
+-- Indexes for MySQL
+--
 
-CREATE INDEX idx_authentication_holder_extension_owner_id
-  ON authentication_holder_extension(owner_id);
-
-CREATE INDEX idx_authentication_holder_scope_owner_id
-  ON authentication_holder_scope(owner_id);
-
-CREATE INDEX idx_authentication_holder_response_type_owner_id
-  ON authentication_holder_response_type(owner_id);
-
-CREATE INDEX idx_saved_user_auth_authority_owner_id
-  ON saved_user_auth_authority(owner_id);
-
-CREATE INDEX idx_launch_context_access_token_id
-  ON launch_context(access_token_id);
-
-CREATE INDEX idx_authentication_holder_resource_id_owner_id
-  ON authentication_holder_resource_id(owner_id);
-
-CREATE INDEX idx_authentication_holder_authority_owner_id
-  ON authentication_holder_authority(owner_id);
-
-CREATE INDEX idx_token_scope_owner_id
-  ON token_scope(owner_id);
-
-CREATE INDEX idx_approved_site_scope_owner_id
-  ON approved_site_scope(owner_id);
-
-CREATE INDEX idx_client_scope_owner_id
-  ON client_scope(owner_id);
-
-CREATE INDEX idx_client_response_type_owner_id
-  ON client_response_type(owner_id);
-
-CREATE INDEX idx_client_resource_owner_id
-  ON client_resource(owner_id);
-
-CREATE INDEX idx_client_post_logout_redirect_uri_owner_id
-  ON client_post_logout_redirect_uri(owner_id);
-
-CREATE INDEX idx_client_redirect_uri_owner_id
-  ON client_redirect_uri(owner_id);
-
-CREATE INDEX idx_client_request_uri_owner_id
-  ON client_request_uri(owner_id);
-
-CREATE INDEX idx_client_grant_type_owner_id
-  ON client_grant_type(owner_id);
-
-CREATE INDEX idx_client_default_acr_value_owner_id
-  ON client_default_acr_value(owner_id);
-
-CREATE INDEX idx_client_claims_redirect_uri_owner_id
-  ON client_claims_redirect_uri(owner_id);
-
-CREATE INDEX idx_client_contact_owner_id
-  ON client_contact(owner_id);
-
-CREATE INDEX idx_client_authority_owner_id
-  ON client_authority(owner_id);
-
-ALTER TABLE client_grant_type
-  ADD UNIQUE KEY uk_client_details (owner_id, grant_type);
-
-ALTER TABLE whitelisted_site
-  ADD UNIQUE KEY uk_whitelisted_site (client_id);
+CREATE INDEX at_tv_idx ON access_token(token_value(767));
+CREATE INDEX ts_oi_idx ON token_scope(owner_id);
+CREATE INDEX at_exp_idx ON access_token(expiration);
+CREATE INDEX rf_ahi_idx ON refresh_token(auth_holder_id);
+CREATE INDEX cd_ci_idx ON client_details(client_id);
+CREATE INDEX at_ahi_idx ON access_token(auth_holder_id);
+CREATE INDEX aha_oi_idx ON authentication_holder_authority(owner_id);
+CREATE INDEX ahe_oi_idx ON authentication_holder_extension(owner_id);
+CREATE INDEX ahrp_oi_idx ON authentication_holder_request_parameter(owner_id);
+CREATE INDEX ahri_oi_idx ON authentication_holder_resource_id(owner_id);
+CREATE INDEX ahrt_oi_idx ON authentication_holder_response_type(owner_id);
+CREATE INDEX ahs_oi_idx ON authentication_holder_scope(owner_id);
+CREATE INDEX ac_ahi_idx ON authorization_code(auth_holder_id);
+CREATE INDEX suaa_oi_idx ON saved_user_auth_authority(owner_id);
