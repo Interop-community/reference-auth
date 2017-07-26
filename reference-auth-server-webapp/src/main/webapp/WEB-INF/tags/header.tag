@@ -40,39 +40,47 @@
         $.i18n.init({
             fallbackLng: "en",
             lng: "${config.locale}",
-            resGetPath: "resources/js/locale/__lng__/messages.json"
+            resGetPath: "resources/js/locale/__lng__/__ns__.json",
+            ns: {
+                namespaces: ${config.languageNamespacesString},
+                defaultNs: '${config.defaultLanguageNamespace}'
+            },
+            fallbackNS: ${config.languageNamespacesString}
         });
         moment.locale("${config.locale}");
-    	// safely set the title of the application
-    	function setPageTitle(title) {
-    		document.title = "${config.topbarTitle} - " + title;
-    	}
-    	
-		// get the info of the current user, if available (null otherwise)
-    	function getUserInfo() {
-    		return ${userInfoJson};
-    	}
-		
-		// get the authorities of the current user, if available (null otherwise)
-		function getUserAuthorities() {
-			return ${userAuthorities};
-		}
-		
-		// is the current user an admin?
-		// NOTE: this is just for  
-		function isAdmin() {
-			var auth = getUserAuthorities();
-			if (auth && _.contains(auth, "ROLE_ADMIN")) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-    </script>    
+        // safely set the title of the application
+        function setPageTitle(title) {
+            document.title = "${config.topbarTitle} - " + title;
+        }
+
+        // get the info of the current user, if available (null otherwise)
+        function getUserInfo() {
+            return ${userInfoJson};
+        }
+
+        // get the authorities of the current user, if available (null otherwise)
+        function getUserAuthorities() {
+            return ${userAuthorities};
+        }
+
+        // is the current user an admin?
+        // NOTE: this is just for
+        function isAdmin() {
+            var auth = getUserAuthorities();
+            if (auth && _.contains(auth, "ROLE_ADMIN")) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        var heartMode = ${config.heartMode};
+
+    </script>
 </head>
 
 <body>
 
 <div id="wrap">
 
-<!-- Start body -->
+    <!-- Start body -->
