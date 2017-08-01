@@ -30,7 +30,7 @@
 
 	<context-param>
 		<param-name>spring.profiles.default</param-name>
-		<param-value>local</param-value>
+		<param-value>local,users-local</param-value>
 	</context-param>
 
 	<!-- Creates the Spring Container shared by all Servlets and Filters -->

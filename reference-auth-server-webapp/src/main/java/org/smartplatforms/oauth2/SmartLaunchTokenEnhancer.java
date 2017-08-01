@@ -6,7 +6,9 @@ import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.PlainJWT;
 import com.nimbusds.jwt.SignedJWT;
 import org.mitre.jwt.signer.service.JWTSigningAndValidationService;
 import org.mitre.jwt.signer.service.impl.JWKSetCacheService;
@@ -142,7 +144,7 @@ public class SmartLaunchTokenEnhancer implements TokenEnhancer {
                         userInfo.getSub(), token, customClaims);
 
                 // attach the id token to the parent access token
-                token.setIdToken(idTokenEntity);
+                token.setIdToken(idTokenEntity.getJwt());
             } else {
                 // can't create an id token if we can't find the user
                 logger.warn("Request for ID token when no user is present.");

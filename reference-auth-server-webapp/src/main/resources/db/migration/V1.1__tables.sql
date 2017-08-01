@@ -2,6 +2,13 @@
 -- Tables for OIDC Server functionality, MySQL
 --
 
+CREATE TABLE IF NOT EXISTS launch_context (
+	id BIGINT AUTO_INCREMENT PRIMARY KEY,
+	access_token_id BIGINT,
+	name VARCHAR(255),
+	value VARCHAR(255)
+);
+
 CREATE TABLE IF NOT EXISTS access_token (
 	id BIGINT AUTO_INCREMENT PRIMARY KEY,
 	token_value VARCHAR(4096),
