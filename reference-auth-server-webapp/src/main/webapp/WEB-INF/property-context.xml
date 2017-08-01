@@ -24,7 +24,7 @@
             http://www.springframework.org/schema/context
             http://www.springframework.org/schema/context/spring-context-3.0.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
   <beans profile="users-local">
-    <context:property-placeholder location="classpath:config/auth.properties"/>
+    <context:property-placeholder location="classpath:config/auth.properties" system-properties-mode="OVERRIDE"/>
   </beans>
 
   <beans profile="users-ldap">
