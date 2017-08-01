@@ -53,7 +53,7 @@ INSERT INTO client_grant_type (owner_id, grant_type) VALUES
 	((SELECT id from client_details where client_id = 'client'), 'authorization_code'),
 	((SELECT id from client_details where client_id = 'client'), 'urn:ietf:params:oauth:grant_type:redelegate'),
 	((SELECT id from client_details where client_id = 'client'), 'implicit'),
-	((SELECT id from client_details where client_id = 'client'), 'refresh_token')
+	((SELECT id from client_details where client_id = 'client'), 'refresh_token'),
 	((SELECT id from client_details where client_id = 'fhir_demo'), 'implicit'),
 	((SELECT id from client_details where client_id = 'fhir_demo'), 'refresh_token'),
 	((SELECT id from client_details where client_id = 'fhir_demo'), 'authorization_code');
