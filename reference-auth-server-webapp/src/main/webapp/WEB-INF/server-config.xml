@@ -49,6 +49,10 @@
 
     </bean>
 
+    <security:http auto-config="true" use-expressions="true" pattern="/api/user-info" >
+        <security:csrf disabled="true" />
+    </security:http>
+
     <!-- This needs done before OpenID Connects other security because they include a root/** pattern -->
     <security:http pattern="/Launch"
                    use-expressions="true"
@@ -65,6 +69,7 @@
         <security:custom-filter ref="corsFilter" after="SECURITY_CONTEXT_FILTER" />
         <security:expression-handler ref="oauthWebExpressionHandler" />
         <security:access-denied-handler ref="oauthAccessDeniedHandler" />
+        <security:csrf disabled="true"/>
     </security:http>
 
     <security:http pattern="/mock/token"
@@ -75,6 +80,7 @@
 
         <security:intercept-url pattern="/mock/token" access="permitAll" /> <!-- allow all calls without auth for CORS stuff -->
         <security:custom-filter ref="corsFilterForMock" after="SECURITY_CONTEXT_FILTER" />
+        <security:csrf disabled="true"/>
     </security:http>
 
     <security:http pattern="/mock/authorize"
@@ -85,6 +91,7 @@
 
         <security:intercept-url pattern="/mock/token" access="permitAll" /> <!-- allow all calls without auth for CORS stuff -->
         <security:custom-filter ref="corsFilterForMock" after="SECURITY_CONTEXT_FILTER" />
+        <security:csrf disabled="true"/>
     </security:http>
 
 </beans>
