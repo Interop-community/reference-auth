@@ -10,6 +10,7 @@ import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.PlainJWT;
 import com.nimbusds.jwt.SignedJWT;
+import org.hspconsortium.platform.authentication.launch.LaunchContextAuthenticationInterceptor;
 import org.mitre.jwt.signer.service.JWTSigningAndValidationService;
 import org.mitre.jwt.signer.service.impl.JWKSetCacheService;
 import org.mitre.jwt.signer.service.impl.SymmetricKeyJWTValidatorCacheService;
@@ -160,6 +161,9 @@ public class SmartLaunchTokenEnhancer implements TokenEnhancer {
 
         @SuppressWarnings("unchecked")
         Map<String, String> contextMap = (HashMap<String,String>)gson.fromJson(extensions, HashMap.class);
+
+        // remove our authentication launch parameter (if it exists), the application doesn't need it...nor should it have it.
+        contextMap.remove(LaunchContextAuthenticationInterceptor.USER_EMAIL_LAUNCH_CONTEXT_PARAM);
 
         Set<LaunchContextEntity> context = FluentIterable
                 .from(contextMap.entrySet())

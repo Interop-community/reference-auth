@@ -186,9 +186,7 @@ public class SmartTofuUserApprovalHandler extends TofuUserApprovalHandler implem
 		ClientDetails client = clientDetailsService.loadClientByClientId(clientId);
 
 		// This must be re-parsed here because SECOAUTH forces us to call things in a strange order
-		if (Boolean.parseBoolean(authorizationRequest.getApprovalParameters().get("user_oauth_approval"))
-				&& authorizationRequest.getExtensions().get(CSRF) != null
-				&& authorizationRequest.getExtensions().get(CSRF).equals(authorizationRequest.getApprovalParameters().get(CSRF))) {
+		if (Boolean.parseBoolean(authorizationRequest.getApprovalParameters().get("user_oauth_approval"))) {
 
 			authorizationRequest.setApproved(true);
 

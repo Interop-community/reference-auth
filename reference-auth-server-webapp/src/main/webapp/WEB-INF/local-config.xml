@@ -66,6 +66,10 @@
                 <mvc:mapping path="/**"/>
                 <bean class="org.hspconsortium.platform.authentication.persona.PersonaAuthInterceptor"/>
             </mvc:interceptor>
+            <mvc:interceptor>
+                <mvc:mapping path="/**"/>
+                <bean class="org.hspconsortium.platform.authentication.launch.LaunchContextAuthenticationInterceptor"/>
+            </mvc:interceptor>
         </mvc:interceptors>
     </beans>
 </beans>
