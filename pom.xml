@@ -37,7 +37,6 @@
     <modules>
         <module>reference-auth-security</module>
         <module>reference-auth-server-webapp</module>
-        <module>reference-auth-server-ldap-webapp</module>
         <module>reference-auth-server-firebase-webapp</module>
     </modules>
 
