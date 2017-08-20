@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 
-echo "starting reference-auth-server-firebase-webapp..."
-cd reference-auth-server-firebase-webapp
+echo "starting reference-auth-server-webapp..."
+cd reference-auth-server-webapp
 java \
   -Xms64M \
   -Xmx128M \
+  -Dspring.profiles.active=local,users-local \
   -jar target/dependency/jetty-runner.jar \
   --config src/main/resources/jetty.xml \
   target/*.war

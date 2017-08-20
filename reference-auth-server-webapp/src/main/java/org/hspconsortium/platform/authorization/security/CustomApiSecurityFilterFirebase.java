@@ -9,11 +9,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 
 import javax.inject.Inject;
@@ -31,9 +33,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class FirebaseJwtFilter extends GenericFilterBean {
+@Component("customApiSecurityFilter")
+@Profile("users-firebase")
+public class CustomApiSecurityFilterFirebase extends GenericFilterBean implements CustomApiSecurityFilter {
 
-    private final Logger log = LoggerFactory.getLogger(FirebaseJwtFilter.class);
+    private final Logger log = LoggerFactory.getLogger(CustomApiSecurityFilterFirebase.class);
 
     @Value("${hspc.platform.auth.cookieName}")
     private String cookieName;
@@ -50,7 +54,7 @@ public class FirebaseJwtFilter extends GenericFilterBean {
     @Autowired
     private JpaUserInfoRepository jpaUserInfoRepository;
 
-    public FirebaseJwtFilter() {
+    public CustomApiSecurityFilterFirebase() {
     }
 
     @Override
@@ -99,7 +103,7 @@ public class FirebaseJwtFilter extends GenericFilterBean {
         return ImmutableList.copyOf(authorities);
     }
 
-    private List<GrantedAuthority> defaultAuths(){
+    private List<GrantedAuthority> defaultAuths() {
         List<GrantedAuthority> auths = new ArrayList<GrantedAuthority>();
         GrantedAuthority a = new SimpleGrantedAuthority("ROLE_USER");
         auths.add(a);

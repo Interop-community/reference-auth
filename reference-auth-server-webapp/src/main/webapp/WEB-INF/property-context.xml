@@ -43,4 +43,17 @@
     <util:properties id="authProperties" location="classpath:config/auth.properties"/>
   </beans>
 
+  <beans profile="users-firebase">
+    <bean id="propertiesPlacholder" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+      <property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE"/>
+      <property name="searchSystemEnvironment" value="true"/>
+      <property name="locations">
+        <list>
+          <value>classpath:config/auth.properties</value>
+          <value>classpath:config/firebase.properties</value>
+        </list>
+      </property>
+    </bean>
+  </beans>
+
 </beans>

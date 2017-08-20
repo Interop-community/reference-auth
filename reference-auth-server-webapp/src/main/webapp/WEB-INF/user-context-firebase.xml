@@ -16,18 +16,14 @@
   limitations under the License.
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:mvc="http://www.springframework.org/schema/mvc"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:tx="http://www.springframework.org/schema/tx"
-       xmlns:context="http://www.springframework.org/schema/context"
        xmlns:security="http://www.springframework.org/schema/security"
-       xmlns:oauth="http://www.springframework.org/schema/security/oauth2"
-       xsi:schemaLocation="http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2-2.0.xsd
-		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.1.xsd
-		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.2.xsd
-		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
-		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.1.xsd
-		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.1.xsd">
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.2.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
     <bean id="firebaseUserInfoRepository" primary="true"
           class="org.hspconsortium.platform.authorization.repository.impl.FirebaseUserInfoRepository">
@@ -38,7 +34,6 @@
     </security:authentication-manager>
 
     <bean id="firebaseJwtAuthProvider" class="org.hspconsortium.platform.authorization.security.FirebaseJwtAuthenticationProvider"/>
-    <bean id="firebaseJwtFilter" class="org.hspconsortium.platform.authorization.security.FirebaseJwtFilter" />
     <bean id="firebaseJwtAuthEntryPoint" class="org.hspconsortium.platform.authorization.security.FirebaseJwtLoginUrlAuthenticationEntryPoint">
         <constructor-arg name="loginFormUrl" value="${hspc.platform.accountLoginPage}"/>
         <constructor-arg name="baseUrl" value="${oidc.issuer}"/>
@@ -49,7 +44,7 @@
     <security:http authentication-manager-ref="authenticationManager" create-session="stateless" use-expressions="true" entry-point-ref="firebaseJwtAuthEntryPoint" >
         <security:intercept-url pattern="/**" access="permitAll"/>
         <security:custom-filter ref="authRequestFilter" after="SECURITY_CONTEXT_FILTER" />
-        <security:custom-filter ref="firebaseJwtFilter" before="PRE_AUTH_FILTER" />
+        <security:custom-filter ref="customApiSecurityFilter" before="PRE_AUTH_FILTER" />
         <security:anonymous />
         <security:expression-handler ref="oauthWebExpressionHandler" />
         <security:headers>
@@ -62,7 +57,7 @@
         <property name="filters">
             <list>
                 <ref bean="authRequestFilter"/>
-                <ref bean="firebaseJwtFilter"/>
+                <ref bean="customApiSecurityFilter"/>
             </list>
         </property>
     </bean>

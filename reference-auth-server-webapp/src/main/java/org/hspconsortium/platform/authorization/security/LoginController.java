@@ -2,15 +2,16 @@ package org.hspconsortium.platform.authorization.security;
 
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 @Controller
+@Profile("users-firebase")
 public class LoginController {
 
     @Value("${hspc.platform.accountLoginPage}")

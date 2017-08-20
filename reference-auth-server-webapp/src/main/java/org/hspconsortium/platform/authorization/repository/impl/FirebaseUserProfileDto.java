@@ -1,8 +1,6 @@
 package org.hspconsortium.platform.authorization.repository.impl;
 
-/**
- * Created by mike on 4/29/17.
- */
+
 public class FirebaseUserProfileDto {
     private String email;
     private String uid;

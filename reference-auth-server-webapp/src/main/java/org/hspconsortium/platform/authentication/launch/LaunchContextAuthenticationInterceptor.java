@@ -33,8 +33,6 @@ public class LaunchContextAuthenticationInterceptor extends HandlerInterceptorAd
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object handler) throws Exception {
         if (httpServletRequest.getServletPath().startsWith("/authorize")) {
             authenticateByLaunchContext(httpServletRequest);
-        } else {
-            System.out.println(httpServletRequest.getServletPath());
         }
 
         return true;

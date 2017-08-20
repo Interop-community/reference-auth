@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
 
-echo "starting reference-auth-server-webapp..."
+echo "starting reference-auth-server-webapp with ldap user management"
+cd reference-auth-server-ldap-webapp
 java \
   -Xms64M \
   -Xmx128M \
+  -Dspring.profiles.active=local,users-ldap \
   -jar target/dependency/jetty-runner.jar \
   --config src/main/resources/jetty.xml \
   target/*.war
