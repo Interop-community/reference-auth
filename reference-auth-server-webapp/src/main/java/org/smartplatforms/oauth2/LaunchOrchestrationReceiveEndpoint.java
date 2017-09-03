@@ -61,45 +61,9 @@ public class LaunchOrchestrationReceiveEndpoint {
 
     @RequestMapping(value = "/Launch", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
     public void handleLaunchRequest(HttpServletRequest request, HttpServletResponse response, @RequestBody String jsonString) {
-        Map<String, Object> jsonMap = new HashMap<>();
-        try {
-
-            HttpSession sessionObj = request.getSession();
-
-            JsonObject json = new JsonParser().parse(jsonString).getAsJsonObject();
-            JsonObject jsonParams = json.get("parameters").getAsJsonObject();
-
-            JsonElement jsonLaunchId = jsonParams.get("launch_id");
-            String launchId = null;
-            if (jsonLaunchId != null) {
-                launchId = jsonLaunchId.getAsString();
-            }
-
-            Map<String, Object> launchContextParams = buildLaunchContextParamsMap(jsonParams);
-
-            LaunchContext launchContext = createLaunchContext(launchId, launchContextParams);
-
-            SecurityContext securityContext = (SecurityContext) sessionObj.getAttribute("SPRING_SECURITY_CONTEXT");
-            if (securityContext != null) {
-                Authentication authentication = securityContext.getAuthentication();
-                User user = (User) authentication.getPrincipal();
-                jsonMap.put("username", user.getUsername());
-            } else {  //TODO this shouldn't happen when we turn authentication back on
-                jsonMap.put("username", "none");
-            }
-
-            //TODO: get actual values
-            jsonMap.put("created_by", "hspc_platform");
-            jsonMap.put("launch_id", launchContext.getLaunchId());
-            jsonMap.put("created_at", new Date().toString());
-            Map<String, Object> retMap = new Gson().fromJson(json.get("parameters"), new TypeToken<HashMap<String, Object>>() {
-            }.getType());
-            jsonMap.put("parameters", retMap);
-
-
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
-        }
+        HttpSession sessionObj = request.getSession();
+        SecurityContext securityContext = (SecurityContext) sessionObj.getAttribute("SPRING_SECURITY_CONTEXT");
+        Map<String, Object> jsonMap = createLaunchContext(jsonString, securityContext);
 
         response.setHeader("Content-Type", "application/json;charset=utf-8");
         try {
@@ -133,5 +97,38 @@ public class LaunchOrchestrationReceiveEndpoint {
             }
         }
         return launchContextParams;
+    }
+
+    Map<String, Object> createLaunchContext(String jsonString, SecurityContext securityContext){
+        Map<String, Object> jsonMap = new HashMap<>();
+        JsonObject json = new JsonParser().parse(jsonString).getAsJsonObject();
+        JsonObject jsonParams = json.get("parameters").getAsJsonObject();
+
+        JsonElement jsonLaunchId = jsonParams.get("launch_id");
+        String launchId = null;
+        if (jsonLaunchId != null) {
+            launchId = jsonLaunchId.getAsString();
+        }
+
+        Map<String, Object> launchContextParams = buildLaunchContextParamsMap(jsonParams);
+
+        LaunchContext launchContext = createLaunchContext(launchId, launchContextParams);
+
+        if (securityContext != null) {
+            Authentication authentication = securityContext.getAuthentication();
+            User user = (User) authentication.getPrincipal();
+            jsonMap.put("username", user.getUsername());
+        } else {  //TODO this shouldn't happen when we turn authentication back on
+            jsonMap.put("username", "none");
+        }
+
+        //TODO: get actual values
+        jsonMap.put("created_by", "hspc_platform");
+        jsonMap.put("launch_id", launchContext.getLaunchId());
+        jsonMap.put("created_at", new Date().toString());
+        Map<String, Object> retMap = new Gson().fromJson(json.get("parameters"), new TypeToken<HashMap<String, Object>>() {
+        }.getType());
+        jsonMap.put("parameters", retMap);
+        return jsonMap;
     }
 }
