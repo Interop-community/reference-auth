@@ -34,6 +34,7 @@
     </security:authentication-manager>
 
     <bean id="firebaseJwtAuthProvider" class="org.hspconsortium.platform.authorization.security.FirebaseJwtAuthenticationProvider"/>
+
     <bean id="firebaseJwtAuthEntryPoint" class="org.hspconsortium.platform.authorization.security.FirebaseJwtLoginUrlAuthenticationEntryPoint">
         <constructor-arg name="loginFormUrl" value="${hspc.platform.accountLoginPage}"/>
         <constructor-arg name="baseUrl" value="${oidc.issuer}"/>

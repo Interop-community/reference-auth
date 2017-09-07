@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 echo "starting reference-auth-server-webapp with ldap user management"
-cd reference-auth-server-ldap-webapp
+cd reference-auth-server-webapp
 java \
   -Xms64M \
   -Xmx128M \

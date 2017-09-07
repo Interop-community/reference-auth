@@ -44,8 +44,7 @@ public class MappedLdapAuthoritiesPopulator implements LdapAuthoritiesPopulator 
     private JdbcTemplate jdbcTemplate;
 
     @Override
-    public Collection<? extends GrantedAuthority> getGrantedAuthorities(
-            DirContextOperations userData, String username) {
+    public Collection<? extends GrantedAuthority> getGrantedAuthorities(DirContextOperations userData, String username) {
         List<? extends GrantedAuthority> authorities = null;
         String quString = "SELECT * from authorities where username = ?";
         authorities = jdbcTemplate.query(quString, new String[] { username },
