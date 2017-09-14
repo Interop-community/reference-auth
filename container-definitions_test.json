@@ -1,0 +1,22 @@
+[
+  {
+    "name": "reference-auth",
+    "image": "nexus.hspconsortium.org:18083/hspc/reference-auth:latest",
+    "cpu": 0,
+    "portMappings": [
+      {
+        "containerPort": 8060,
+        "hostPort": 8060,
+        "protocol": "tcp"
+      }
+    ],
+    "memory": 300,
+    "essential": true,
+    "environment": [
+      {
+        "name": "EXAMPLE_NAME",
+        "value": "EXAMPLE_VALUE"
+      }
+    ]
+  }
+]
