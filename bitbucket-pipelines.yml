@@ -1,6 +1,6 @@
 # This project uses the GitFlow Workflow as defined here:
 #   https://www.atlassian.com/git/tutorials/comparing-workflows#GitFlow-workflow
-image: maven:3.3.9-jdk-8
+image: maven:3.3.9
 
 pipelines:
   default:
