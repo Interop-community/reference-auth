@@ -8,27 +8,21 @@ Welcome to the HSPC Reference Authorization server!  The HSPC Reference Authoriz
 
 [HSPC Sandbox](https://sandbox.hspconsortium.org)
 
-## reference-auth-server-ldap-webapp
-LDAP-backed overly of the webapp module that overlays MITRE's OpenID Connect server webapp.  MySQL is used to store the OpenID Connect configuration and LDAP is used to store the user information.
+## reference-auth-server-webapp
+
+The auth server can be run in three modes, OIC (local mysql), Firebase (test account server), and LDAP.  A run_local script exists for each of these modes:
+
+* run_local_firebase.sh (preferred, uses the hspc-test account system) 
+* run_local_local.sh (uses the OIC support for user accounts in the local mysql database) 
+* run_local_ldap.sh (uses an external LDAP system for user accounts) 
 
 ## How do I get set up?
 
 ### Preconditions
-    MySQL must be installed for both the webapp and the ldap-webapp (using InnoDB tables). These files exist in the reference-auth-server-webapp repository.
-    From MySQL
-    mysql> create database oic;  **Note: use the "latin1 - default collation" when creating the oic schema.  This will prevent a "Row size too large error" when running mysql_database_tables.sql.
-    mysql> use oic;
-    mysql> source {install path}/reference-auth-server-webapp/src/main/resources/db/openidconnect/mysql/mysql_database_tables.sql;
-    mysql> source {install path}/reference-auth-server-webapp/src/main/resources/db/openidconnect/mysql/mysql_users.sql;
-    mysql> source {install path}/reference-auth-server-webapp/src/main/resources/db/openidconnect/mysql/mysql_system_scopes.sql;
-    mysql> source {install path}/reference-auth-server-webapp/src/main/resources/db/openidconnect/mysql/mysql_clients.sql;
-    *note See HSPC applications for loading individual OAuth client configurations
+    
+* Install MySQL 5.7
 
-### Alternate
-    The complete configuration for the HSPC codebase may be loaded using a single script.
-    See the reference-impl repository for details.
-
-### Install ApacheDS LDAP Server
+### (Optional) Install ApacheDS LDAP Server
 
 Home:
     https://directory.apache.org/apacheds/
@@ -45,7 +39,7 @@ Create User account/ Group etc...
 
 ### Build and Run
     mvn clean install
-    deploy reference-auth-server-ldap-webapp/target/hspc-reference-authorization.war to Tomcat
+    ./run_local_firebase.sh (or the mode of your choice)
 
 ### Verify
 * http://localhost:8060/
