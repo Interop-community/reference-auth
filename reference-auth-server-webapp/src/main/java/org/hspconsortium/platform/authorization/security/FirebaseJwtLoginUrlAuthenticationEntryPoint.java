@@ -22,7 +22,8 @@ public class FirebaseJwtLoginUrlAuthenticationEntryPoint extends LoginUrlAuthent
         try {
             loginFormBuilder.append("?afterAuth=");
             loginFormBuilder.append(URLEncoder.encode(this.baseUrl, "UTF-8"));
-            loginFormBuilder.append(request.getServletPath().equals("/") ? "" : URLEncoder.encode(request.getServletPath(), "UTF-8"));
+            String servletPath = getServletPath(request);
+            loginFormBuilder.append(servletPath.equals("") ? "" : URLEncoder.encode(servletPath, "UTF-8"));
             if (request.getQueryString() != null) {
                 loginFormBuilder.append(URLEncoder.encode("?" + request.getQueryString(), "UTF-8"));
             }
@@ -30,5 +31,15 @@ public class FirebaseJwtLoginUrlAuthenticationEntryPoint extends LoginUrlAuthent
             e.printStackTrace();
         }
         return loginFormBuilder.toString();
+    }
+
+    private String getServletPath(HttpServletRequest request) {
+        String servletPath = request.getServletPath();
+
+        if (servletPath.startsWith("/")) {
+            return servletPath.substring(1);
+        }
+
+        return servletPath;
     }
 }
