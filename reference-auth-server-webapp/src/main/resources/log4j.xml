@@ -30,44 +30,44 @@
 
     <!-- Application Loggers -->
     <logger name="org.mitre.openid">
-        <level value="error"/>
+        <level value="info"/>
     </logger>
     <logger name="org.mitre.oauth2">
-        <level value="error"/>
+        <level value="info"/>
     </logger>
     <logger name="org.mitre.discovery">
-        <level value="error"/>
+        <level value="info"/>
     </logger>
     <logger name="org.mitre.jose">
-        <level value="error"/>
+        <level value="info"/>
     </logger>
     <logger name="org.mitre.jwt">
-        <level value="error"/>
+        <level value="info"/>
     </logger>
     <logger name="org.mitre.util">
-        <level value="error"/>
+        <level value="info"/>
     </logger>
 
     <!-- 3rdparty Loggers -->
     <logger name="org.springframework.core">
-        <level value="error"/>
+        <level value="info"/>
     </logger>
 
     <logger name="org.springframework.beans">
-        <level value="error"/>
+        <level value="info"/>
     </logger>
 
     <logger name="org.springframework.context">
-        <level value="error"/>
+        <level value="info"/>
     </logger>
 
     <logger name="org.springframework.web">
-        <level value="error"/>
+        <level value="info"/>
     </logger>
 
     <!-- Root Logger -->
     <root>
-        <priority value="error"/>
+        <priority value="info"/>
         <appender-ref ref="console"/>
     </root>
 

@@ -70,7 +70,7 @@ public class SmartOAuth2RequestFactory extends ConnectOAuth2RequestFactory {
 		}
 
         if (!validAud) {
-            ret.getExtensions().put("invalid_launch", "Incorrect service URL (aud): " + aud);
+            ret.getExtensions().put("invalid_aud", "Incorrect service URL (aud): " + aud);
         } else {
             if (launchId != null) {
                 try {

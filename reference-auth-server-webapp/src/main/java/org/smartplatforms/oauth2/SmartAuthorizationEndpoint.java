@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.oauth2.common.exceptions.InvalidClientException;
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.security.oauth2.provider.endpoint.AuthorizationEndpoint;
@@ -74,6 +75,11 @@ public class SmartAuthorizationEndpoint extends AuthorizationEndpoint implements
 
 		AuthorizationRequest authorizationRequest = (AuthorizationRequest) model
 				.get("authorizationRequest");
+
+		// verify launch is valid
+		if(authorizationRequest != null && authorizationRequest.getExtensions().containsKey("invalid_aud")){
+			throw new InvalidClientException("Invalid aud, verify the iss is registered with the auth server.");
+		}
 
 		// If launch context is needed, redirect to an external service to
 		// go and get it
