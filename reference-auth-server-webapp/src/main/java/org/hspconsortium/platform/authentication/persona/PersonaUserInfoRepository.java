@@ -26,7 +26,7 @@ public abstract class PersonaUserInfoRepository implements UserInfoRepository {
     public static final String ANONYMOUS_USER = "anonymousUser";
     public static final String PERSONA_USERNAME_REGEX = "\\A[a-zA-Z0-9]{1,50}@[a-zA-Z0-9]{1,20}\\Z";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PersonaUserInfoRepository.class);
+    private static final Logger log = LoggerFactory.getLogger(PersonaUserInfoRepository.class);
 
     Pattern personaPattern = Pattern.compile(PERSONA_USERNAME_REGEX);
 
@@ -89,13 +89,17 @@ public abstract class PersonaUserInfoRepository implements UserInfoRepository {
         UserPersonaDto userPersonaDto;
 
         try {
+            log.info("Attempting to fetch user info for persona: " + username);
             userPersonaDto = restTemplate.getForObject(personaInfoEndpoint + username, UserPersonaDto.class);
         } catch (Exception ex) {
             return null;
         }
 
         if (userPersonaDto == null) {
+            log.info("Unable to fetch info for persona: " + username) ;
             return null;
+        } else {
+            log.info("Successfully fetched user info for persona: " + username + ", with name: " + userPersonaDto.getName());
         }
 
         UserInfo userInfo = new DefaultUserInfo();
