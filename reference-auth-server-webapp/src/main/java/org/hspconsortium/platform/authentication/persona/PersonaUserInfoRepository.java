@@ -32,7 +32,7 @@ public abstract class PersonaUserInfoRepository implements UserInfoRepository {
 
     protected LoadingCache<String, Optional<UserInfo>> userInfoCache;
 
-    @Value("${hspc.platform.sandbox.host}${hspc.platform.sandbox.personaInfoPath}")
+    @Value("${hspc.platform.sandbox.api.host}${hspc.platform.sandbox.personaInfoPath}")
     private String personaInfoEndpoint;
 
     @Value("${hspc.platform.userInfoCacheTimeout:2}")
@@ -87,10 +87,11 @@ public abstract class PersonaUserInfoRepository implements UserInfoRepository {
     private UserInfo fetchUserInfoForPersona(String username) {
         RestTemplate restTemplate = new RestTemplate();
         UserPersonaDto userPersonaDto;
+        String personaInfoUrl = personaInfoEndpoint + username;
 
         try {
-            log.info("Attempting to fetch user info for persona: " + username);
-            userPersonaDto = restTemplate.getForObject(personaInfoEndpoint + username, UserPersonaDto.class);
+            log.info("Attempting to fetch user info for persona: " + username + " at URL " + personaInfoUrl);
+            userPersonaDto = restTemplate.getForObject(personaInfoUrl, UserPersonaDto.class);
         } catch (Exception ex) {
             return null;
         }

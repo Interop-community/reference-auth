@@ -95,7 +95,7 @@
 
         if (username && username.length && looksLikePersona(username)) {
             e.preventDefault();
-            var personaAuthEndpoint = "<spring:eval expression="@authProperties.getProperty('hspc.platform.sandbox.host')"/><spring:eval expression="@authProperties.getProperty('hspc.platform.sandbox.personaAuthPath')"/>";
+            var personaAuthEndpoint = "<spring:eval expression="@authProperties.getProperty('hspc.platform.sandbox.api.host')"/><spring:eval expression="@authProperties.getProperty('hspc.platform.sandbox.personaAuthPath')"/>";
 
             $.ajax({
                 type: "POST",
