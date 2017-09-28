@@ -21,6 +21,8 @@ The auth server can be run in three modes, OIC (local mysql), Firebase (test acc
 ### Preconditions
     
 * Install MySQL 5.7
+* Will need to use creds root/password
+* Create oic schema. Use "latin1 - default collation"
 
 ### (Optional) Install ApacheDS LDAP Server
 
