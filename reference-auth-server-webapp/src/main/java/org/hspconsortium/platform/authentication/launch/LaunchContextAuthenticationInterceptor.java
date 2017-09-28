@@ -51,7 +51,9 @@ public class LaunchContextAuthenticationInterceptor extends HandlerInterceptorAd
             } catch (URISyntaxException e) {
                 return;
             }
-            launchId = parameters.get("launch").get(0);
+            if (parameters.get("launch") != null) {
+                launchId = parameters.get("launch").get(0);
+            }
         } else {
             return;
         }
