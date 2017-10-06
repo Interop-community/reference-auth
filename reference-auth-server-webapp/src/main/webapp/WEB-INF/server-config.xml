@@ -33,7 +33,8 @@
 
     <import resource="property-context.xml" />
 
-    <bean id="configBean" class="org.mitre.openid.connect.config.ConfigurationPropertiesBean">
+    <!-- The properties defined in the config bean are available in the .jsp pages -->
+    <bean id="configBean" class="org.hspconsortium.platform.config.HspcConfigurationPropertiesBean">
 
         <!-- This property sets the root URL of the server, known as the issuer. -->
         <property name="issuer" value="${oidc.issuer}" />
@@ -46,6 +47,11 @@
 
         <!-- This property sets the lifetime of registration access tokens, in seconds. Leave it unset (null) for no rotation. -->
         <!-- <property name="regTokenLifeTime" value="172800" /> -->
+
+        <!-- Add some properties we want to make available to JSP pages -->
+        <property name="forgotPasswordUrl" value="${forgotPasswordUrl}"/>
+        <property name="newUserUrl" value="${newUserUrl}"/>
+        <property name="personaAuthUrl" value="${hspc.platform.sandbox.api.host}${hspc.platform.sandbox.personaAuthPath}"/>
 
     </bean>
 

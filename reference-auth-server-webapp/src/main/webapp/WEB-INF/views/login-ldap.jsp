@@ -66,16 +66,14 @@
                 </div>
                 <div>
 					<span class="help-block pull-left">
-                        <spring:eval var="newUserUrl" expression="@ldapProperties.newUserUrl"/>
-                        <c:if test="${not empty fn:trim(newUserUrl)}">
-                            <a href="${newUserUrl}" name="register_new_account"
+                        <c:if test="${not empty fn:trim(config.newUserUrl)}">
+                            <a href="${config.newUserUrl}" name="register_new_account"
                                target="_self" class="login-form-text">Create New Account</a>
                         </c:if>
      				</span>
                     <span class="help-block pull-right">
-                        <spring:eval var="forgotPasswordUrl" expression="@ldapProperties.forgotPasswordUrl"/>
-                        <c:if test="${not empty fn:trim(forgotPasswordUrl)}">
-                            <a href="${forgotPasswordUrl}" name="forgot_password"
+                        <c:if test="${not empty fn:trim(config.forgotPasswordUrl)}">
+                            <a href="${config.forgotPasswordUrl}" name="forgot_password"
                                target="_self" class="login-form-text">Forgot Password?</a>
                         </c:if>
                     </span>
@@ -95,7 +93,7 @@
 
         if (username && username.length && looksLikePersona(username)) {
             e.preventDefault();
-            var personaAuthEndpoint = "<spring:eval expression="@authProperties.getProperty('hspc.platform.sandbox.api.host')"/><spring:eval expression="@authProperties.getProperty('hspc.platform.sandbox.personaAuthPath')"/>";
+            var personaAuthEndpoint = "${config.personaAuthUrl}";
 
             $.ajax({
                 type: "POST",
