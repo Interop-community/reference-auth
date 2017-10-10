@@ -17,23 +17,34 @@
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:util="http://www.springframework.org/schema/util"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans
-            http://www.springframework.org/schema/beans/spring-beans.xsd
-            http://www.springframework.org/schema/context
-            http://www.springframework.org/schema/context/spring-context-3.0.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+       xmlns:encryption="http://www.jasypt.org/schema/encryption"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.jasypt.org/schema/encryption http://www.jasypt.org/schema/encryption/jasypt-spring31-encryption-1.xsd">
+
+  <!-- configure property decryption -->
+  <bean id="environmentVariablesConfiguration" class="org.jasypt.encryption.pbe.config.EnvironmentStringPBEConfig">
+    <property name="algorithm" value="PBEWithMD5AndTripleDES" />
+    <property name="passwordSysPropertyName" value="JASYPT_ENCRYPTOR_PASSWORD" />
+  </bean>
+
+  <bean id="configurationEncryptor" class="org.jasypt.encryption.pbe.StandardPBEStringEncryptor">
+    <property name="config" ref="environmentVariablesConfiguration" />
+  </bean>
 
   <!-- load in default properties -->
-  <context:property-placeholder location="classpath:config/auth.properties" ignore-unresolvable="true" order="2"/>
+  <encryption:encryptable-property-placeholder encryptor="configurationEncryptor"
+                                               location="classpath:config/auth.properties"
+                                               ignore-unresolvable="true" order="2"/>
 
   <!-- override default properties with environment specific properties -->
   <beans profile="test">
-    <context:property-placeholder location="classpath:config/auth-test.properties" ignore-unresolvable="true" order="1"/>
+    <encryption:encryptable-property-placeholder encryptor="configurationEncryptor"
+                                                 location="classpath:config/auth-test.properties"
+                                                 ignore-unresolvable="true" order="1"/>
   </beans>
-
   <beans profile="prod">
-    <context:property-placeholder location="classpath:config/auth-prod.properties" ignore-unresolvable="true" order="1"/>
+    <encryption:encryptable-property-placeholder encryptor="configurationEncryptor"
+                                                 location="classpath:config/auth-prod.properties"
+                                                 ignore-unresolvable="true" order="1"/>
   </beans>
-
 </beans>
