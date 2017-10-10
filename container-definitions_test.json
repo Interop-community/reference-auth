@@ -1,6 +1,6 @@
 [
   {
-    "name": "reference-auth",
+    "name": "hspc-reference-auth",
     "image": "nexus.hspconsortium.org:18083/hspc/reference-auth:latest",
     "cpu": 0,
     "portMappings": [
