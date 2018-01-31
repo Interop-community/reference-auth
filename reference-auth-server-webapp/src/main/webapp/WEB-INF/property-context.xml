@@ -17,52 +17,34 @@
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:util="http://www.springframework.org/schema/util"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans
-            http://www.springframework.org/schema/beans/spring-beans.xsd
-            http://www.springframework.org/schema/context
-            http://www.springframework.org/schema/context/spring-context-3.0.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
-  <beans profile="users-local">
-    <bean id="propertiesPlacholder" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-      <property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE"/>
-      <property name="searchSystemEnvironment" value="true"/>
-      <property name="locations">
-        <list>
-          <value>classpath:config/auth.properties</value>
-        </list>
-      </property>
-    </bean>
-    <context:property-placeholder location="classpath:config/auth.properties" system-properties-mode="OVERRIDE"/>
-  </beans>
+       xmlns:encryption="http://www.jasypt.org/schema/encryption"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.jasypt.org/schema/encryption http://www.jasypt.org/schema/encryption/jasypt-spring31-encryption-1.xsd">
 
-  <beans profile="users-ldap">
-    <bean id="propertiesPlacholder" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-      <property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE"/>
-      <property name="searchSystemEnvironment" value="true"/>
-      <property name="locations">
-        <list>
-          <value>classpath:config/auth.properties</value>
-          <value>classpath:config/ldap.properties</value>
-        </list>
-      </property>
-    </bean>
-    <!-- make these available to login.jsp -->
-    <util:properties id="ldapProperties" location="classpath:config/ldap.properties"/>
-    <util:properties id="authProperties" location="classpath:config/auth.properties"/>
-  </beans>
+  <!-- configure property decryption -->
+  <bean id="environmentVariablesConfiguration" class="org.jasypt.encryption.pbe.config.EnvironmentStringPBEConfig">
+    <property name="algorithm" value="PBEWithMD5AndTripleDES" />
+    <property name="passwordEnvName" value="JASYPT_ENCRYPTOR_PASSWORD" />
+  </bean>
 
-  <beans profile="users-firebase">
-    <bean id="propertiesPlacholder" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-      <property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE"/>
-      <property name="searchSystemEnvironment" value="true"/>
-      <property name="locations">
-        <list>
-          <value>classpath:config/auth.properties</value>
-          <value>classpath:config/firebase.properties</value>
-        </list>
-      </property>
-    </bean>
-  </beans>
+  <bean id="configurationEncryptor" class="org.jasypt.encryption.pbe.StandardPBEStringEncryptor">
+    <property name="config" ref="environmentVariablesConfiguration" />
+  </bean>
 
+  <!-- load in default properties -->
+  <encryption:encryptable-property-placeholder encryptor="configurationEncryptor"
+                                               location="classpath:config/auth.properties"
+                                               ignore-unresolvable="true" order="2"/>
+
+  <!-- override default properties with environment specific properties -->
+  <beans profile="test">
+    <encryption:encryptable-property-placeholder encryptor="configurationEncryptor"
+                                                 location="classpath:config/auth-test.properties"
+                                                 ignore-unresolvable="true" order="1"/>
+  </beans>
+  <beans profile="prod">
+    <encryption:encryptable-property-placeholder encryptor="configurationEncryptor"
+                                                 location="classpath:config/auth-prod.properties"
+                                                 ignore-unresolvable="true" order="1"/>
+  </beans>
 </beans>

@@ -51,7 +51,7 @@
         <bean id="oauthRequestValidator" class="org.mitre.oauth2.token.ScopeServiceAwareOAuth2RequestValidator"/>
     </beans>
 
-    <beans profile="production,uat">
+    <beans profile="!local">
         <!-- this bean does require a SMART launch -->
         <bean id="oauthRequestValidator" class="org.smartplatforms.oauth2.ScopeValidator"/>
     </beans>
