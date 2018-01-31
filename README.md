@@ -10,11 +10,11 @@ Welcome to the HSPC Reference Authorization server!  The HSPC Reference Authoriz
 
 ## reference-auth-server-webapp
 
-The auth server can be run in three modes, OIC (local mysql), Firebase (test account server), and LDAP.  A run_local script exists for each of these modes:
+The auth server can be run in three modes, OIC (local mysql), Firebase (test account server), and LDAP.  A run-local script exists for each of these modes:
 
-* run_local_firebase.sh (preferred, uses the hspc-test account system) 
-* run_local_local.sh (uses the OIC support for user accounts in the local mysql database) 
-* run_local_ldap.sh (uses an external LDAP system for user accounts) 
+* run-local-firebase.sh (preferred, uses the hspc-test account system) 
+* run-local-local.sh (uses the OIC support for user accounts in the local mysql database) 
+* run-local-ldap.sh (uses an external LDAP system for user accounts) 
 
 ## How do I get set up?
 
@@ -41,7 +41,7 @@ Create User account/ Group etc...
 
 ### Build and Run
     mvn clean install
-    ./run_local_firebase.sh (or the mode of your choice)
+    ./run-local-firebase.sh (or the mode of your choice)
 
 ### Verify
 * http://localhost:8060/
