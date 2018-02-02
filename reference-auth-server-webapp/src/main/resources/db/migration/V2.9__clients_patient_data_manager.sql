@@ -6,9 +6,7 @@ INSERT INTO client_scope (owner_id, scope) VALUES
   ((SELECT id from client_details where client_id = 'patient_data_manager'), 'profile'),
   ((SELECT id from client_details where client_id = 'patient_data_manager'), 'offline_access'),
   ((SELECT id from client_details where client_id = 'patient_data_manager'), 'launch'),
-  ((SELECT id from client_details where client_id = 'patient_data_manager'), 'patient/*.*'),
-  ((SELECT id from client_details where client_id = 'patient_data_manager'), 'patient/*.read'),
-  ((SELECT id from client_details where client_id = 'patient_data_manager'), 'patient/*.write');
+  ((SELECT id from client_details where client_id = 'patient_data_manager'), 'patient/*.*');
 
 INSERT INTO client_grant_type (owner_id, grant_type) VALUES
   ((SELECT id from client_details where client_id = 'patient_data_manager'), 'authorization_code');
