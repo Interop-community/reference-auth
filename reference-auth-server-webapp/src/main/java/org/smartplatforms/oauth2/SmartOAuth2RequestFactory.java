@@ -7,6 +7,8 @@ import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import org.mitre.oauth2.service.ClientDetailsEntityService;
 import org.mitre.openid.connect.request.ConnectOAuth2RequestFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.stereotype.Service;
@@ -18,7 +20,9 @@ import java.util.regex.Pattern;
 @Service
 public class SmartOAuth2RequestFactory extends ConnectOAuth2RequestFactory {
 
-    private Gson gson = new Gson();
+	private static final Logger logger = LoggerFactory.getLogger(SmartOAuth2RequestFactory.class);
+
+	private Gson gson = new Gson();
 
     @Autowired
 	private LaunchContextResolver launchContextResolver;
@@ -70,6 +74,10 @@ public class SmartOAuth2RequestFactory extends ConnectOAuth2RequestFactory {
 		}
 
         if (!validAud) {
+            logger.warn("Incorrect service URL (aud): " + aud);
+            for (String serviceUrl : serviceURLs) {
+                logger.warn("Acceptable serviceUrl includes: " + serviceUrl);
+            }
             ret.getExtensions().put("invalid_aud", "Incorrect service URL (aud): " + aud);
         } else {
             if (launchId != null) {
@@ -79,9 +87,11 @@ public class SmartOAuth2RequestFactory extends ConnectOAuth2RequestFactory {
 
                     ret.getExtensions().put("launch_context", gson.toJson(params));
                 } catch (NeedUnmetException e1) {
+                    logger.warn("Couldn't resolve launch id: " + launchId);
                     ret.getExtensions().put("invalid_launch", "Couldn't resolve launch id: " + launchId);
                 }
             } else if (requestingLaunch) { // asking for launch, but no launch ID provided
+                logger.warn("external_launch_required");
                 ret.getExtensions().put("external_launch_required", launchReqs);
             }
         }

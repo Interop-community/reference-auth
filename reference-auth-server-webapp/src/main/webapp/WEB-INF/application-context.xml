@@ -89,6 +89,11 @@
   <!-- Import the data context -->
   <import resource="data-context.xml"/>
 
+  <!-- enable this to debug security calls -->
+  <!--
+  <security:debug/>
+  -->
+
   <!-- SPEL processors -->
   <security:global-method-security pre-post-annotations="enabled" proxy-target-class="true"
                                    authentication-manager-ref="authenticationManager">
