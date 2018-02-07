@@ -18,7 +18,7 @@ pipelines:
           script:
             # variables
             - export DOCKER_REPO="hspconsortium"
-            - export CONTAINER_NAME=$(mvn -q -Dexec.executable="echo" -Dexec.args='${project.artifactId}' --non-recursive exec:exec); echo $CONTAINER_NAME
+            - export CONTAINER_NAME=$(mvn -q -Dexec.executable="echo" -Dexec.args='${project.artifactId}' --non-recursive exec:exec -f reference-auth-server-webapp/pom.xml); echo $CONTAINER_NAME
             - export PROJECT_VERSION=$(mvn -q -Dexec.executable="echo" -Dexec.args='${project.version}' --non-recursive exec:exec); echo $PROJECT_VERSION
             - export IMAGE_NAME="${DOCKER_REPO}/${CONTAINER_NAME}:${PROJECT_VERSION}"; echo $IMAGE_NAME;
             - export IMAGE_PORT="8060"
