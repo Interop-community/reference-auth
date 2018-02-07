@@ -46,7 +46,7 @@ pipelines:
             - export TASK_VERSION=$(aws ecs register-task-definition --family hspc-reference-auth --container-definitions $(cat container-definitions.json | jq -c '.')  | jq --raw-output '.taskDefinition.revision')
             - echo "Registered ECS Task Definition - " $TASK_VERSION
             # update the service to use the latest task definition
-            - aws ecs update-service --cluster hspc-test --service hspc-reference-auth-service --task-definition hspc-reference-auth:$TASK_VERSION
+            - aws ecs update-service --cluster hspc-test --service hspc-reference-auth-service --task-definition $CONTAINER_NAME:$TASK_VERSION
     feature/*:
       - step:
           caches:
