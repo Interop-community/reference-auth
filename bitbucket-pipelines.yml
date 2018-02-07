@@ -17,8 +17,9 @@ pipelines:
             - maven
           script:
             - echo $BITBUCKET_BRANCH
-            - if [[ "$BITBUCKET_BRANCH" == "develop" ]] then echo "develop branch" else echo "not develop branch" fi
-            - if [[ "$BITBUCKET_BRANCH" == "master" ]] then echo "master branch" else echo "not master branch" fi
+            - if [[ "$BITBUCKET_BRANCH"=="develop" ]]; then echo "develop branch"; else echo "not develop branch"; fi
+            - if [[ "$BITBUCKET_BRANCH"=="master" ]]; then echo "master branch"; else echo "not master branch"; fi
+            - exit(1);
             # Deploy to hspc-nexus
             - mvn -V -B -s settings.xml deploy -P DEPLOY-HSPC,hspc-nexus
             # install ASW CLI and jq library
