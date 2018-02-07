@@ -20,10 +20,10 @@ pipelines:
             - mvn -V -B -s settings.xml deploy -P DEPLOY-HSPC,hspc-nexus
             # variables
             - export DOCKER_REPO="hspconsortium"
-            - export IMAGE_NAME=$(mvn -q -Dexec.executable="echo" -Dexec.args='${project.artifactId}' --non-recursive exec:exec -f reference-auth-server-webapp/pom.xml); echo $CONTAINER_NAME
+            - export IMAGE_NAME=$(mvn -q -Dexec.executable="echo" -Dexec.args='${project.artifactId}' --non-recursive exec:exec -f reference-auth-server-webapp/pom.xml); echo $IMAGE_NAME
             - export CONTAINER_NAME=hspc-reference-auth; echo $CONTAINER_NAME
             - export PROJECT_VERSION=$(mvn -q -Dexec.executable="echo" -Dexec.args='${project.version}' --non-recursive exec:exec); echo $PROJECT_VERSION
-            - export IMAGE_COORDINATES="${DOCKER_REPO}/${CONTAINER_NAME}:${PROJECT_VERSION}"; echo $IMAGE_COORDINATES;
+            - export IMAGE_COORDINATES="${DOCKER_REPO}/${IMAGE_NAME}:${PROJECT_VERSION}"; echo $IMAGE_COORDINATES;
             - export IMAGE_PORT="8060"
             - export IMAGE_MEMORY_RESERVATION="400"
             - export SPRING_PROFILES_ACTIVE="test,users-firebase";
