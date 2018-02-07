@@ -16,6 +16,8 @@ pipelines:
           caches:
             - maven
           script:
+            # deploy to hspc-nexus
+            - mvn -V -B -s settings.xml deploy -P DEPLOY-HSPC,hspc-nexus
             # variables
             - export DOCKER_REPO="hspconsortium"
             - export CONTAINER_NAME=$(mvn -q -Dexec.executable="echo" -Dexec.args='${project.artifactId}' --non-recursive exec:exec -f reference-auth-server-webapp/pom.xml); echo $CONTAINER_NAME
@@ -24,8 +26,6 @@ pipelines:
             - export IMAGE_PORT="8060"
             - export IMAGE_MEMORY_RESERVATION="400"
             - export SPRING_PROFILES_ACTIVE="test,users-firebase";
-            # deploy to hspc-nexus
-            - mvn -V -B -s settings.xml deploy -P DEPLOY-HSPC,hspc-nexus
             # clear out the other jar files
             - rm reference-auth-server-webapp/target/*-sources.jar
             - rm reference-auth-server-webapp/target/*-javadoc.jar
