@@ -1,7 +1,7 @@
 [
   {
     "name": "{{CONTAINER_NAME}}",
-    "image": "{{IMAGE_NAME}}",
+    "image": "{{DOCKER_REPO}}/{{CONTAINER_NAME}}:{{PROJECT_VERSION}}",
     "cpu": 0,
     "portMappings": [
       {

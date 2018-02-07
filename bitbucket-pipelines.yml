@@ -35,7 +35,8 @@ pipelines:
             - docker push $IMAGE_NAME
             # Add jasypt pw to container definition
             - sed -i -e "s/{{CONTAINER_NAME}}/$CONTAINER_NAME/g" container-definitions.json
-            - sed -i -e "s/{{IMAGE_NAME}}/$IMAGE_NAME/g" container-definitions.json
+            - sed -i -e "s/{{DOCKER_REPO}}/$DOCKER_REPO/g" container-definitions.json
+            - sed -i -e "s/{{PROJECT_VERSION}}/$PROJECT_VERSION/g" container-definitions.json
             - sed -i -e "s/{{IMAGE_PORT}}/$IMAGE_PORT/g" container-definitions.json
             - sed -i -e "s/{{IMAGE_MEMORY_RESERVATION}}/$IMAGE_MEMORY_RESERVATION/g" container-definitions.json
             - sed -i -e "s/{{SPRING_PROFILES_ACTIVE}}/$SPRING_PROFILES_ACTIVE/g" container-definitions.json
