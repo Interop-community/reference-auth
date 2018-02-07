@@ -43,10 +43,11 @@ pipelines:
             - cat container-definitions.json
             - jq '.[].environment += [{"name":"JASYPT_ENCRYPTOR_PASSWORD", "value":"'$ENC_PW_TEST'"}]' container-definitions.json > tmp.json && mv tmp.json container-definitions.json
             # register the ECS task definition and capture the version
+            - export TASK_DEFINITION=hspc-reference-auth
             - export TASK_VERSION=$(aws ecs register-task-definition --family hspc-reference-auth --container-definitions $(cat container-definitions.json | jq -c '.')  | jq --raw-output '.taskDefinition.revision')
-            - echo "Registered ECS Task Definition - " $TASK_VERSION
+            - echo "Registered ECS Task Definition - $CONTAINER_NAME:$TASK_VERSION"
             # update the service to use the latest task definition
-            - aws ecs update-service --cluster hspc-test --service hspc-reference-auth-service --task-definition $CONTAINER_NAME:$TASK_VERSION
+            - aws ecs update-service --cluster hspc-test --service hspc-reference-auth-service --task-definition $TASK_DEFINITION:$TASK_VERSION
     feature/*:
       - step:
           caches:
