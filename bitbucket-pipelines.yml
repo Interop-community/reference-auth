@@ -20,7 +20,8 @@ pipelines:
             - mvn -V -B -s settings.xml deploy -P DEPLOY-HSPC,hspc-nexus
             # variables
             - export DOCKER_REPO="hspconsortium"
-            - export CONTAINER_NAME=$(mvn -q -Dexec.executable="echo" -Dexec.args='${project.artifactId}' --non-recursive exec:exec -f reference-auth-server-webapp/pom.xml); echo $CONTAINER_NAME
+            - export IMAGE_NAME=$(mvn -q -Dexec.executable="echo" -Dexec.args='${project.artifactId}' --non-recursive exec:exec -f reference-auth-server-webapp/pom.xml); echo $CONTAINER_NAME
+            - export CONTAINER_NAME=hspc-reference-auth; echo $CONTAINER_NAME
             - export PROJECT_VERSION=$(mvn -q -Dexec.executable="echo" -Dexec.args='${project.version}' --non-recursive exec:exec); echo $PROJECT_VERSION
             - export IMAGE_NAME="${DOCKER_REPO}/${CONTAINER_NAME}:${PROJECT_VERSION}"; echo $IMAGE_NAME;
             - export IMAGE_PORT="8060"
@@ -37,6 +38,7 @@ pipelines:
             - sed -i -e "s/{{CONTAINER_NAME}}/$CONTAINER_NAME/g" container-definitions.json
             - sed -i -e "s/{{DOCKER_REPO}}/$DOCKER_REPO/g" container-definitions.json
             - sed -i -e "s/{{PROJECT_VERSION}}/$PROJECT_VERSION/g" container-definitions.json
+            - sed -i -e "s/{{IMAGE_NAME}}/$IMAGE_NAME/g" container-definitions.json
             - sed -i -e "s/{{IMAGE_PORT}}/$IMAGE_PORT/g" container-definitions.json
             - sed -i -e "s/{{IMAGE_MEMORY_RESERVATION}}/$IMAGE_MEMORY_RESERVATION/g" container-definitions.json
             - sed -i -e "s/{{SPRING_PROFILES_ACTIVE}}/$SPRING_PROFILES_ACTIVE/g" container-definitions.json
@@ -45,7 +47,7 @@ pipelines:
             # register the ECS task definition and capture the version
             - export TASK_DEFINITION=hspc-reference-auth
             - export TASK_VERSION=$(aws ecs register-task-definition --family hspc-reference-auth --container-definitions $(cat container-definitions.json | jq -c '.')  | jq --raw-output '.taskDefinition.revision')
-            - echo "Registered ECS Task Definition - $CONTAINER_NAME:$TASK_VERSION"
+            - echo "Registered ECS Task Definition - $TASK_DEFINITION:$TASK_VERSION"
             # update the service to use the latest task definition
             - aws ecs update-service --cluster hspc-test --service hspc-reference-auth-service --task-definition $TASK_DEFINITION:$TASK_VERSION
     feature/*:
