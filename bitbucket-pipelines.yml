@@ -39,7 +39,7 @@ pipelines:
           name: *** MANUAL *** update the aws service
           script:
             - . set_env.sh
-            - . ci/build_container_definition.sh
+            - . ci/build_container_definition.sh $ENC_PW_TEST
             # register the ECS task definition and capture the version
             - export TASK_VERSION=$(aws ecs register-task-definition --family "$AWS_CONTAINER_NAME" --container-definitions $(cat container-definitions.json | jq -c '.')  | jq --raw-output '.taskDefinition.revision')
             - echo "Registered ECS Task Definition - $AWS_CONTAINER_NAME:$TASK_VERSION"
@@ -74,7 +74,7 @@ pipelines:
           trigger: manual
           script:
             - . set_env.sh
-            - . ci/build_container_definition.sh
+            - . ci/build_container_definition.sh $ENC_PW_PROD
             # register the ECS task definition and capture the version
             - export TASK_VERSION=$(aws ecs register-task-definition --family "$AWS_CONTAINER_NAME" --container-definitions $(cat container-definitions.json | jq -c '.')  | jq --raw-output '.taskDefinition.revision')
             - echo "Registered ECS Task Definition - $AWS_CONTAINER_NAME:$TASK_VERSION"
