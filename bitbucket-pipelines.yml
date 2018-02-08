@@ -21,7 +21,7 @@ pipelines:
             # clear out the other jar files
             - rm reference-auth-server-webapp/target/*-sources.jar
             - rm reference-auth-server-webapp/target/*-javadoc.jar
-            - . ci/build_set_env.sh
+            - . ci/build_set_env.sh test
           artifacts:
             - set_env.sh
             - reference-auth-server-webapp/target/hspc-reference-auth-server-webapp-*.war
@@ -29,9 +29,6 @@ pipelines:
       - step:
           name: build docker and upload to docker hub
           script:
-            - ls
-            - ls reference-auth-server-webapp/target
-            - cat set_env.sh
             - . set_env.sh
             - echo $IMAGE_COORDINATES
             # build docker image and push
