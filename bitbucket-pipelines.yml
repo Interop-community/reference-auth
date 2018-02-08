@@ -36,7 +36,7 @@ pipelines:
             - docker build -t $IMAGE_COORDINATES .
             - docker push $IMAGE_COORDINATES
       - step:
-          name: update the aws service
+          name: *** MANUAL *** update the aws service
           script:
             - . set_env.sh
             - . ci/build_container_definition.sh
