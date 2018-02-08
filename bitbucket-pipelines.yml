@@ -36,7 +36,7 @@ pipelines:
             - docker build -t $IMAGE_COORDINATES .
             - docker push $IMAGE_COORDINATES
       - step:
-          name: MANUALLY update the aws service
+          name: AUTOMATICALLY update the aws test service
           script:
             - . set_env.sh
             - . ci/build_container_definition.sh $ENC_PW_TEST
@@ -70,7 +70,7 @@ pipelines:
             - docker build -t $IMAGE_COORDINATES .
             - docker push $IMAGE_COORDINATES
       - step:
-          name: MANUALLY update the aws service
+          name: MANUALLY update the aws prod service
           trigger: manual
           script:
             - . set_env.sh
