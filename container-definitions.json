@@ -1,6 +1,6 @@
 [
   {
-    "name": "{{CONTAINER_NAME}}",
+    "name": "{{AWS_CONTAINER_NAME}}",
     "image": "{{DOCKER_REPO}}/{{IMAGE_NAME}}:{{PROJECT_VERSION}}",
     "cpu": 0,
     "portMappings": [
