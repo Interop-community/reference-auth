@@ -24,11 +24,11 @@ pipelines:
             - . ci/build_set_env.sh
             - ls
             - ls ci
-            - . ci/set_env.shd
+            - . set_env.sh
       - step:
           name: build docker and upload to docker hub
           script:
-            - . ci/set_env.sh
+            - . set_env.sh
             # build docker image and push
             - docker login -u $DOCKER_ID -p $DOCKER_PASSWORD
             - docker build -t $IMAGE_COORDINATES .
@@ -36,7 +36,7 @@ pipelines:
       - step:
           name: update the aws service
           script:
-            - . ci/set_env.sh
+            - . set_env.sh
             - . ci/build_container_definition.sh
             # register the ECS task definition and capture the version
             - export TASK_VERSION=$(aws ecs register-task-definition --family $(AWS_CONTAINER_NAME) --container-definitions $(cat container-definitions.json | jq -c '.')  | jq --raw-output '.taskDefinition.revision')
@@ -58,7 +58,7 @@ pipelines:
       - step:
           name: build docker and upload to docker hub
           script:
-            - . ci/set_env.sh
+            - . set_env.sh
             # build docker image and push
             - docker login -u $DOCKER_ID -p $DOCKER_PASSWORD
             - docker build -t $IMAGE_COORDINATES .
@@ -67,7 +67,7 @@ pipelines:
           name: update the aws service
           trigger: manual
           script:
-            - . ci/set_env.sh
+            - . set_env.sh
             - . ci/build_container_definition.sh
             # register the ECS task definition and capture the version
             - export TASK_VERSION=$(aws ecs register-task-definition --family $(AWS_CONTAINER_NAME) --container-definitions $(cat container-definitions.json | jq -c '.')  | jq --raw-output '.taskDefinition.revision')
