@@ -22,12 +22,14 @@ pipelines:
             - rm reference-auth-server-webapp/target/*-sources.jar
             - rm reference-auth-server-webapp/target/*-javadoc.jar
             - . ci/build_set_env.sh
-            - ls
-            - ls ci
-            - . set_env.sh
+          artifacts:
+            - set_env.sh
+            - reference-auth-server-webapp/target/hspc-reference-auth-server-webapp-*.war
       - step:
           name: build docker and upload to docker hub
           script:
+            - ls
+            - ls reference-auth-server-webapp/target
             - . set_env.sh
             # build docker image and push
             - docker login -u $DOCKER_ID -p $DOCKER_PASSWORD
