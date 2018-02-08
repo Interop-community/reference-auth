@@ -55,19 +55,22 @@ pipelines:
             # clear out the other jar files
             - rm reference-auth-server-webapp/target/*-sources.jar
             - rm reference-auth-server-webapp/target/*-javadoc.jar
+            - . ci/build_set_env.sh prod
           artifacts:
-            - reference-auth-server-webapp/target/*.war
+            - set_env.sh
+            - reference-auth-server-webapp/target/hspc-reference-auth-server-webapp-*.war
+            - reference-auth-server-webapp/target/dependency/jetty-runner.jar
       - step:
           name: build docker and upload to docker hub
           script:
             - . set_env.sh
-            - export SPRING_PROFILES_ACTIVE="prod,users-firebase"; echo $SPRING_PROFILES_ACTIVE;
+            - echo $IMAGE_COORDINATES
             # build docker image and push
             - docker login -u $DOCKER_ID -p $DOCKER_PASSWORD
             - docker build -t $IMAGE_COORDINATES .
             - docker push $IMAGE_COORDINATES
       - step:
-          name: update the aws service
+          name: *** MANUAL *** update the aws service
           trigger: manual
           script:
             - . set_env.sh
