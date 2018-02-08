@@ -1,6 +1,8 @@
 # This project uses the GitFlow Workflow as defined here:
 #   https://www.atlassian.com/git/tutorials/comparing-workflows#GitFlow-workflow
-image: ericlineback/hspc-base
+image: hspconsortium/hspc-ubuntu-base
+clone:           # the 'clone' section
+  depth: 1       # the depth, in this case the clone will contain last one commits
 
 pipelines:
   default:
@@ -11,32 +13,50 @@ pipelines:
   branches:
     develop:
       - step:
+          name: build, upload to nexus, build image, upload to docker, deploy to aws
           caches:
             - maven
           script:
-            # Deploy to hspc-nexus
-            - mvn -V -B -s settings.xml deploy -P DEPLOY-HSPC,hspc-nexus
-            # install ASW CLI and jq library
-#            - curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"
-#            - unzip awscli-bundle.zip
-#            - ./awscli-bundle/install -b ~/bin/aws
-#            - export PATH=~/bin:$PATH
-#            - curl -o /usr/local/bin/jq -L https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 && chmod +x /usr/local/bin/jq
+            # deploy to hspc-nexus
+#            - mvn -V -B -s settings.xml deploy -P DEPLOY-HSPC,hspc-nexus
+            # variables
+#            - export DOCKER_REPO="hspconsortium"
+#            - export IMAGE_NAME=$(mvn -q -Dexec.executable="echo" -Dexec.args='${project.artifactId}' --non-recursive exec:exec -f reference-auth-server-webapp/pom.xml); echo $IMAGE_NAME
+#            - export CONTAINER_NAME=hspc-reference-auth; echo $CONTAINER_NAME
+#            - export PROJECT_VERSION=$(mvn -q -Dexec.executable="echo" -Dexec.args='${project.version}' --non-recursive exec:exec); echo $PROJECT_VERSION
+#            - export IMAGE_COORDINATES="${DOCKER_REPO}/${IMAGE_NAME}:${PROJECT_VERSION}"; echo $IMAGE_COORDINATES;
+#            - export IMAGE_PORT="8060"
+#            - export IMAGE_MEMORY_RESERVATION="400"
+#            - export SPRING_PROFILES_ACTIVE="test,users-firebase";
             # clear out the other jar files
-            - rm reference-auth-server-webapp/target/*-sources.jar
-            - rm reference-auth-server-webapp/target/*-javadoc.jar
-            # build docker image and push to nexus.interopion.com:18083 (docker-interopion)
-            - export IMAGE_NAME=$(cat container-definitions_test.json | jq --raw-output '.[0].image')
-            - docker login -u $NEXUS_USR -p $NEXUS_PWD nexus.hspconsortium.org:18083
-            - docker build -t $IMAGE_NAME .
-            - docker push $IMAGE_NAME
+#            - rm reference-auth-server-webapp/target/*-sources.jar
+#            - rm reference-auth-server-webapp/target/*-javadoc.jar
+            # build docker image and push
+#            - docker login -u $DOCKER_ID -p $DOCKER_PASSWORD
+#            - docker build -t $IMAGE_COORDINATES .
+#            - docker push $IMAGE_COORDINATES
             # Add jasypt pw to container definition
-            - jq '.[].environment += [{"name":"JASYPT_ENCRYPTOR_PASSWORD", "value":"'$ENC_PW_TEST'"}]' container-definitions_test.json > tmp.json && mv tmp.json container-definitions_test.json
+            - sed -i -e "s/{{CONTAINER_NAME}}/$CONTAINER_NAME/g" container-definitions.json
+            - sed -i -e "s/{{DOCKER_REPO}}/$DOCKER_REPO/g" container-definitions.json
+            - sed -i -e "s/{{PROJECT_VERSION}}/$PROJECT_VERSION/g" container-definitions.json
+            - sed -i -e "s/{{IMAGE_NAME}}/$IMAGE_NAME/g" container-definitions.json
+            - sed -i -e "s/{{IMAGE_PORT}}/$IMAGE_PORT/g" container-definitions.json
+            - sed -i -e "s/{{IMAGE_MEMORY_RESERVATION}}/$IMAGE_MEMORY_RESERVATION/g" container-definitions.json
+            - sed -i -e "s/{{SPRING_PROFILES_ACTIVE}}/$SPRING_PROFILES_ACTIVE/g" container-definitions.json
+            - cat container-definitions.json
+            - jq '.[].environment += [{"name":"JASYPT_ENCRYPTOR_PASSWORD", "value":"'$ENC_PW_TEST'"}]' container-definitions.json > tmp.json && mv tmp.json container-definitions.json
             # register the ECS task definition and capture the version
-            - export TASK_VERSION=$(aws ecs register-task-definition --family hspc-reference-auth --container-definitions $(cat container-definitions_test.json | jq -c '.')  | jq --raw-output '.taskDefinition.revision')
-            - echo "Registered ECS Task Definition - " $TASK_VERSION
+            - export TASK_DEFINITION=hspc-reference-auth
+            - export TASK_VERSION=$(aws ecs register-task-definition --family hspc-reference-auth --container-definitions $(cat container-definitions.json | jq -c '.')  | jq --raw-output '.taskDefinition.revision')
+            - echo "Registered ECS Task Definition - $TASK_DEFINITION:$TASK_VERSION"
             # update the service to use the latest task definition
-            - aws ecs update-service --cluster hspc-test --service hspc-reference-auth-service --task-definition hspc-reference-auth:$TASK_VERSION
+#            - aws ecs update-service --cluster hspc-test --service hspc-reference-auth-service --task-definition $TASK_DEFINITION:$TASK_VERSION
+      - step:
+          name: build, upload to nexus, build image, upload to docker, deploy to aws
+          trigger: manual
+          script:
+            - echo "whats here?"
+            - ls
     feature/*:
       - step:
           caches:
@@ -57,26 +77,47 @@ pipelines:
             - mvn -B verify
     master:
       - step:
+          name: build, upload to nexus, build image, upload to docker
+          caches:
+            - maven
           script:
-            # Deploy to maven central
+            # deploy to hspc-nexus
+            - mvn -V -B -s settings.xml deploy -P DEPLOY-HSPC,hspc-nexus
+            # deploy to maven central
             - openssl aes-256-cbc -pass pass:$OPENSSL_PWD -in private-key.gpg.enc -out private-key.gpg -d
             - gpg --batch --import private-key.gpg
-#            - mvn -V -B -s settings.xml deploy -P DEPLOY,ossrh
-            # Deploy to hspc-nexus
             - mvn -V -B -s settings.xml deploy -P DEPLOY-HSPC,hspc-nexus
-            # install ASW CLI and jq library
-#            - curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"
-#            - unzip awscli-bundle.zip
-#            - ./awscli-bundle/install -b ~/bin/aws
-#            - export PATH=~/bin:$PATH
-#            - curl -o /usr/local/bin/jq -L https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 && chmod +x /usr/local/bin/jq
+            # variables
+            - export DOCKER_REPO="hspconsortium"
+            - export IMAGE_NAME=$(mvn -q -Dexec.executable="echo" -Dexec.args='${project.artifactId}' --non-recursive exec:exec -f reference-auth-server-webapp/pom.xml); echo $IMAGE_NAME
+            - export CONTAINER_NAME=hspc-reference-auth; echo $CONTAINER_NAME
+            - export PROJECT_VERSION=$(mvn -q -Dexec.executable="echo" -Dexec.args='${project.version}' --non-recursive exec:exec); echo $PROJECT_VERSION
+            - export IMAGE_COORDINATES="${DOCKER_REPO}/${IMAGE_NAME}:${PROJECT_VERSION}"; echo $IMAGE_COORDINATES;
+            - export IMAGE_PORT="8060"
+            - export IMAGE_MEMORY_RESERVATION="400"
+            - export SPRING_PROFILES_ACTIVE="test,users-firebase";
             # clear out the other jar files
             - rm reference-auth-server-webapp/target/*-sources.jar
             - rm reference-auth-server-webapp/target/*-javadoc.jar
-            # build docker image and push to nexus.interopion.com:18083 (docker-interopion)
-            - export IMAGE_NAME=$(cat container-definitions_test.json | jq --raw-output '.[0].image')
-            - docker login -u $NEXUS_USR -p $NEXUS_PWD nexus.hspconsortium.org:18083
-            - docker build -t $IMAGE_NAME .
-            - docker push $IMAGE_NAME
+            # build docker image and push
+            - docker login -u $DOCKER_ID -p $DOCKER_PASSWORD
+            - docker build -t $IMAGE_COORDINATES .
+            - docker push $IMAGE_COORDINATES
+            # Add jasypt pw to container definition
+#            - sed -i -e "s/{{CONTAINER_NAME}}/$CONTAINER_NAME/g" container-definitions.json
+#            - sed -i -e "s/{{DOCKER_REPO}}/$DOCKER_REPO/g" container-definitions.json
+#            - sed -i -e "s/{{PROJECT_VERSION}}/$PROJECT_VERSION/g" container-definitions.json
+#            - sed -i -e "s/{{IMAGE_NAME}}/$IMAGE_NAME/g" container-definitions.json
+#            - sed -i -e "s/{{IMAGE_PORT}}/$IMAGE_PORT/g" container-definitions.json
+#            - sed -i -e "s/{{IMAGE_MEMORY_RESERVATION}}/$IMAGE_MEMORY_RESERVATION/g" container-definitions.json
+#            - sed -i -e "s/{{SPRING_PROFILES_ACTIVE}}/$SPRING_PROFILES_ACTIVE/g" container-definitions.json
+#            - cat container-definitions.json
+#            - jq '.[].environment += [{"name":"JASYPT_ENCRYPTOR_PASSWORD", "value":"'$ENC_PW_TEST'"}]' container-definitions.json > tmp.json && mv tmp.json container-definitions.json
+            # register the ECS task definition and capture the version
+#            - export TASK_DEFINITION=hspc-reference-auth
+#            - export TASK_VERSION=$(aws ecs register-task-definition --family hspc-reference-auth --container-definitions $(cat container-definitions.json | jq -c '.')  | jq --raw-output '.taskDefinition.revision')
+#            - echo "Registered ECS Task Definition - $TASK_DEFINITION:$TASK_VERSION"
+            # update the service to use the latest task definition
+#            - aws ecs update-service --cluster hspc-test --service hspc-reference-auth-service --task-definition $TASK_DEFINITION:$TASK_VERSION
 options:
   docker: true
