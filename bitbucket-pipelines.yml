@@ -64,6 +64,7 @@ pipelines:
           name: build docker and upload to docker hub
           script:
             - . set_env.sh
+            - export SPRING_PROFILES_ACTIVE="prod,users-firebase"; echo $SPRING_PROFILES_ACTIVE;
             # build docker image and push
             - docker login -u $DOCKER_ID -p $DOCKER_PASSWORD
             - docker build -t $IMAGE_COORDINATES .
@@ -75,7 +76,7 @@ pipelines:
             - . set_env.sh
             - . ci/build_container_definition.sh
             # register the ECS task definition and capture the version
-            - export TASK_VERSION=$(aws ecs register-task-definition --family $(AWS_CONTAINER_NAME) --container-definitions $(cat container-definitions.json | jq -c '.')  | jq --raw-output '.taskDefinition.revision')
+            - export TASK_VERSION=$(aws ecs register-task-definition --family "$AWS_CONTAINER_NAME" --container-definitions $(cat container-definitions.json | jq -c '.')  | jq --raw-output '.taskDefinition.revision')
             - echo "Registered ECS Task Definition - $AWS_CONTAINER_NAME:$TASK_VERSION"
             # update the service to use the latest task definition
             - aws ecs update-service --cluster hspc-prod --service hspc-reference-auth-service --task-definition $AWS_CONTAINER_NAME:$TASK_VERSION
