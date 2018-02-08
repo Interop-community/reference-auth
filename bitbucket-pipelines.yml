@@ -21,8 +21,10 @@ pipelines:
             # clear out the other jar files
             - rm reference-auth-server-webapp/target/*-sources.jar
             - rm reference-auth-server-webapp/target/*-javadoc.jar
-          artifacts:
-            - reference-auth-server-webapp/target/*.war
+            - . ci/build_set_env.sh
+            - ls
+            - ls ci
+            - . ci/set_env.shd
       - step:
           name: build docker and upload to docker hub
           script:
