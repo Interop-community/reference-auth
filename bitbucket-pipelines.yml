@@ -41,7 +41,7 @@ pipelines:
             - . set_env.sh
             - . ci/build_container_definition.sh $ENC_PW_TEST
             # register the ECS task definition and capture the version
-            - export TASK_VERSION=$(aws ecs register-task-definition --family "$AWS_CONTAINER_NAME" --container-definitions $(cat container-definitions.json | jq -c '.')  | jq --raw-output '.taskDefinition.revision')
+            - export TASK_VERSION=$(aws ecs register-task-definition --family "$AWS_CONTAINER_NAME" --container-definitions $(cat ci/container-definitions.json | jq -c '.')  | jq --raw-output '.taskDefinition.revision')
             - echo "Registered ECS Task Definition - $AWS_CONTAINER_NAME:$TASK_VERSION"
             # update the service to use the latest task definition
             - aws ecs update-service --cluster hspc-test --service hspc-reference-auth-service --task-definition $AWS_CONTAINER_NAME:$TASK_VERSION
@@ -76,7 +76,7 @@ pipelines:
             - . set_env.sh
             - . ci/build_container_definition.sh $ENC_PW_PROD
             # register the ECS task definition and capture the version
-            - export TASK_VERSION=$(aws ecs register-task-definition --family "$AWS_CONTAINER_NAME" --container-definitions $(cat container-definitions.json | jq -c '.')  | jq --raw-output '.taskDefinition.revision')
+            - export TASK_VERSION=$(aws ecs register-task-definition --family "$AWS_CONTAINER_NAME" --container-definitions $(cat ci/container-definitions.json | jq -c '.')  | jq --raw-output '.taskDefinition.revision')
             - echo "Registered ECS Task Definition - $AWS_CONTAINER_NAME:$TASK_VERSION"
             # update the service to use the latest task definition
             - aws ecs update-service --cluster hspc-prod --service hspc-reference-auth-service --task-definition $AWS_CONTAINER_NAME:$TASK_VERSION
