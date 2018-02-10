@@ -7,7 +7,7 @@ echo "starting $0..."
 [[ -z "$1" ]] && { echo "usage: $0 {test | prod} port memory(mb)"; exit 1; } || echo "ENV: $1"
 [[ -z "$2" ]] && { echo "usage: $0 {test | prod} port memory(mb)"; exit 1; } || echo "ENV: $2"
 [[ -z "$3" ]] && { echo "usage: $0 {test | prod} port memory(mb)"; exit 1; } || echo "ENV: $3"
-[[ -z "$4" ]] && { POM='pom.xml' } || POM=$4
+[[ -z "$4" ]] && { POM='pom.xml' } || POM="$4/pom.xml"
 echo "POM: $POM"
 
 export DOCKER_REPO="hspconsortium"; echo DOCKER_REPO
