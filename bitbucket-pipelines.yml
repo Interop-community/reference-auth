@@ -21,10 +21,13 @@ pipelines:
             # clear out the other jar files
             - rm reference-auth-server-webapp/target/*-sources.jar
             - rm reference-auth-server-webapp/target/*-javadoc.jar
-            - . ci/build_set_env.sh test 8060 400 reference-auth-server-webapp
+            # get the ci scripts
+            - git clone https://bitbucket.org/hspconsortium/sandbox-ci.git
+            # build the set_env.sh script
+            - . sandbox-ci/build_set_env.sh test 8060 400 reference-auth-server-webapp
           artifacts:
             - set_env.sh
-            - reference-auth-server-webapp/target/hspc-reference-auth-server-webapp-*.war
+            - reference-auth-server-webapp/target/*.war
             - reference-auth-server-webapp/target/dependency/jetty-runner.jar
       - step:
           name: build docker and upload to docker hub
@@ -39,7 +42,10 @@ pipelines:
           name: AUTOMATICALLY update the aws test service
           script:
             - . set_env.sh
-            - . ci/build_container_definition.sh $ENC_PW_TEST
+            # get the ci scripts
+            - git clone https://bitbucket.org/hspconsortium/sandbox-ci.git
+            # build the container-definition.json
+            - . sandbox-ci/build_container_definition.sh $ENC_PW_TEST
             # register the ECS task definition and capture the version
             - export TASK_VERSION=$(aws ecs register-task-definition --family "$AWS_CONTAINER_NAME" --container-definitions $(cat ci/container-definitions.json | jq -c '.')  | jq --raw-output '.taskDefinition.revision')
             - echo "Registered ECS Task Definition - $AWS_CONTAINER_NAME:$TASK_VERSION"
@@ -58,6 +64,9 @@ pipelines:
             # clear out the other jar files
             - rm reference-auth-server-webapp/target/*-sources.jar
             - rm reference-auth-server-webapp/target/*-javadoc.jar
+            # get the ci scripts
+            - git clone https://bitbucket.org/hspconsortium/sandbox-ci.git
+            # build the set_env.sh script
             - . ci/build_set_env.sh prod 8060 400 reference-auth-server-webapp
           artifacts:
             - set_env.sh
@@ -77,6 +86,9 @@ pipelines:
           trigger: manual
           script:
             - . set_env.sh
+            # get the ci scripts
+            - git clone https://bitbucket.org/hspconsortium/sandbox-ci.git
+            # build the container-definition.json
             - . ci/build_container_definition.sh $ENC_PW_PROD
             # register the ECS task definition and capture the version
             - export TASK_VERSION=$(aws ecs register-task-definition --family "$AWS_CONTAINER_NAME" --container-definitions $(cat ci/container-definitions.json | jq -c '.')  | jq --raw-output '.taskDefinition.revision')
