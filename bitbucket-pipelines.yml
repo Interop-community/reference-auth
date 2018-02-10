@@ -17,16 +17,15 @@ pipelines:
           caches:
             - maven
           script:
-            - export TARGET=reference-auth-server-webapp
             - mvn -V -B -s settings.xml deploy -P DEPLOY-HSPC,hspc-nexus
             # clear out the other jar files
-            - rm $TARGET/target/*-sources.jar
-            - rm $TARGET/target/*-javadoc.jar
-            - . ci/build_set_env.sh test 8060 400 $TARGET
+            - rm reference-auth-server-webapp/target/*-sources.jar
+            - rm reference-auth-server-webapp/target/*-javadoc.jar
+            - . ci/build_set_env.sh test 8060 400 reference-auth-server-webapp
           artifacts:
             - set_env.sh
-            - $TARGET/target/hspc-$TARGET-*.war
-            - $TARGET/target/dependency/jetty-runner.jar
+            - reference-auth-server-webapp/target/hspc-reference-auth-server-webapp-*.war
+            - reference-auth-server-webapp/target/dependency/jetty-runner.jar
       - step:
           name: build docker and upload to docker hub
           script:
@@ -53,18 +52,17 @@ pipelines:
             - maven
           script:
             # Deploy to maven central
-            - export TARGET=reference-auth-server-webapp
             - openssl aes-256-cbc -pass pass:$OPENSSL_PWD -in private-key.gpg.enc -out private-key.gpg -d
             - gpg --batch --import private-key.gpg
             - mvn -V -B -s settings.xml deploy -P DEPLOY,ossrh
             # clear out the other jar files
-            - rm $TARGET/target/*-sources.jar
-            - rm $TARGET/target/*-javadoc.jar
-            - . ci/build_set_env.sh prod 8060 400 $TARGET
+            - rm reference-auth-server-webapp/target/*-sources.jar
+            - rm reference-auth-server-webapp/target/*-javadoc.jar
+            - . ci/build_set_env.sh prod 8060 400 reference-auth-server-webapp
           artifacts:
             - set_env.sh
-            - $TARGET/target/*.war
-            - $/target/dependency/jetty-runner.jar
+            - reference-auth-server-webapp/target/*.war
+            - reference-auth-server-webapp/target/dependency/jetty-runner.jar
       - step:
           name: build docker and upload to docker hub
           script:
