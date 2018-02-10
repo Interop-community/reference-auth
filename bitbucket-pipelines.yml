@@ -17,12 +17,13 @@ pipelines:
           caches:
             - maven
           script:
-            - mvn -V -B -s settings.xml deploy -P DEPLOY-HSPC,hspc-nexus
+#            - mvn -V -B -s settings.xml deploy -P DEPLOY-HSPC,hspc-nexus
             # clear out the other jar files
-            - rm reference-auth-server-webapp/target/*-sources.jar
-            - rm reference-auth-server-webapp/target/*-javadoc.jar
+#            - rm reference-auth-server-webapp/target/*-sources.jar
+#            - rm reference-auth-server-webapp/target/*-javadoc.jar
             # get the ci scripts
             - git clone https://bitbucket.org/hspconsortium/sandbox-ci.git
+            - find .
             # build the set-env.sh script
             - . sandbox-ci/bitbucket-pipeline-scripts/build-set-env.sh test 8060 400 reference-auth-server-webapp
           artifacts:
