@@ -21,7 +21,7 @@ pipelines:
             # clear out the other jar files
             - rm reference-auth-server-webapp/target/*-sources.jar
             - rm reference-auth-server-webapp/target/*-javadoc.jar
-            - . ci/build_set_env.sh test
+            - . ci/build_set_env.sh test 12000 400
           artifacts:
             - set_env.sh
             - reference-auth-server-webapp/target/hspc-reference-auth-server-webapp-*.war
@@ -44,7 +44,7 @@ pipelines:
             - export TASK_VERSION=$(aws ecs register-task-definition --family "$AWS_CONTAINER_NAME" --container-definitions $(cat ci/container-definitions.json | jq -c '.')  | jq --raw-output '.taskDefinition.revision')
             - echo "Registered ECS Task Definition - $AWS_CONTAINER_NAME:$TASK_VERSION"
             # update the service to use the latest task definition
-            - aws ecs update-service --cluster hspc-test --service hspc-reference-auth-service --task-definition $AWS_CONTAINER_NAME:$TASK_VERSION
+            - aws ecs update-service --cluster hspc-test --service "$AWS_SERVICE_NAME" --task-definition $AWS_CONTAINER_NAME:$TASK_VERSION
     master:
       - step:
           name: build jar and upload to nexus
@@ -55,7 +55,7 @@ pipelines:
             # clear out the other jar files
             - rm reference-auth-server-webapp/target/*-sources.jar
             - rm reference-auth-server-webapp/target/*-javadoc.jar
-            - . ci/build_set_env.sh prod
+            - . ci/build_set_env.sh prod 12000 400
           artifacts:
             - set_env.sh
             - reference-auth-server-webapp/target/hspc-reference-auth-server-webapp-*.war
@@ -79,7 +79,7 @@ pipelines:
             - export TASK_VERSION=$(aws ecs register-task-definition --family "$AWS_CONTAINER_NAME" --container-definitions $(cat ci/container-definitions.json | jq -c '.')  | jq --raw-output '.taskDefinition.revision')
             - echo "Registered ECS Task Definition - $AWS_CONTAINER_NAME:$TASK_VERSION"
             # update the service to use the latest task definition
-            - aws ecs update-service --cluster hspc-prod --service hspc-reference-auth-service --task-definition $AWS_CONTAINER_NAME:$TASK_VERSION
+            - aws ecs update-service --cluster hspc-prod --service "$AWS_SERVICE_NAME" --task-definition $AWS_CONTAINER_NAME:$TASK_VERSION
     feature/*:
       - step:
           caches:
