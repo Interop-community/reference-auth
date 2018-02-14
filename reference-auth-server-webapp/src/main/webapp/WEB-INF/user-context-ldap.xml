@@ -95,8 +95,8 @@
     <security:anonymous/>
     <security:expression-handler ref="oauthWebExpressionHandler"/>
     <security:headers>
-      <!-- allow the sandbox manager to launch in embedded mode -->
-      <security:frame-options policy="SAMEORIGIN" />
+        <!-- allow the sandbox manager to launch in embedded mode -->
+        <security:frame-options disabled="true" />
     </security:headers>
     <security:csrf disabled="true"/>
   </security:http>
