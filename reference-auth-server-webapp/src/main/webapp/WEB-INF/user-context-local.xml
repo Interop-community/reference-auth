@@ -55,9 +55,10 @@
     <security:anonymous/>
     <security:expression-handler ref="oauthWebExpressionHandler"/>
     <security:headers>
-      <security:frame-options policy="${hspc.platform.auth.frameOptions:DENY}" />
+      <!-- allow the sandbox manager to launch in embedded mode -->
+      <!-- local deployments must disable this because the different port means different hosts (can't use SAMEORIGIN) -->
+      <security:frame-options disabled="true" />
     </security:headers>
-    <security:csrf disabled="true"/>
   </security:http>
 
 </beans>
