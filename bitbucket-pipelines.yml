@@ -34,8 +34,8 @@ pipelines:
           name: update the aws task definition
           script:
             - git clone https://bitbucket.org/hspconsortium/sandbox-ci.git
-            - export SPRING_PROFILES_ACTIVE=test,users-firebase
             - . bitbucket-pipelines-env.sh auth test
+            - export SPRING_PROFILES_ACTIVE=test,users-firebase
             - export TEMPLATE_FILE="sandbox-ci/aws/templates/task-definition-template.json"
             - ./sandbox-ci/aws/scripts/env-substitution.sh $TEMPLATE_FILE
             - cat $(echo "$TEMPLATE_FILE")
