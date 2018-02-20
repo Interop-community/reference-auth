@@ -22,7 +22,7 @@ pipelines:
 #            - rm target/*-sources.jar
 #            - rm target/*-javadoc.jar
           artifacts:
-            - target/*.jar
+            - target/*.war
       - step:
           name: build docker and upload to docker hub
           script:
