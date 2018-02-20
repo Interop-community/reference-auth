@@ -18,8 +18,8 @@ pipelines:
             - maven
           script:
             - mvn -V -B -s settings.xml deploy -P DEPLOY-HSPC,hspc-nexus
-            - rm target/*-sources.jar
-            - rm target/*-javadoc.jar
+            - rm reference-auth-server-webapp/target/*-sources.jar
+            - rm reference-auth-server-webapp/target/*-javadoc.jar
           artifacts:
             - reference-auth-server-webapp/target/*.war
             - reference-auth-server-webapp/target/dependency/jetty-runner.jar
