@@ -18,7 +18,7 @@ pipelines:
             - git clone https://bitbucket.org/hspconsortium/sandbox-ci.git
             - rm bitbucket-pipelines-env.sh || true
             - . sandbox-ci/aws/scripts/aws-us-east-1-defaults.sh auth test >> bitbucket-pipelines-env.sh
-            - . sandbox-ci/docker/scripts/env-from-maven.sh >> bitbucket-pipelines-env.sh
+            - . sandbox-ci/docker/scripts/env-from-maven.sh reference-auth-server-webapp/pom.xml >> bitbucket-pipelines-env.sh
             - . bitbucket-pipelines-env-overrides.sh auth test >> bitbucket-pipelines-env.sh
             - cat bitbucket-pipelines-env.sh
             - chmod +x bitbucket-pipelines-env.sh
