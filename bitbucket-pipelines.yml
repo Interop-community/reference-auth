@@ -13,6 +13,18 @@ pipelines:
   branches:
     develop:
       - step:
+          name: prepare the environment file
+          script:
+            - git clone https://bitbucket.org/hspconsortium/sandbox-ci.git
+            - rm bitbucket-pipelines-env.sh || true
+            - . sandbox-ci/aws/scripts/aws-us-east-1-defaults.sh auth test >> bitbucket-pipelines-env.sh
+            - . sandbox-ci/docker/scripts/env-from-maven.sh >> bitbucket-pipelines-env.sh
+            - . bitbucket-pipelines-env-overrides.sh auth test >> bitbucket-pipelines-env.sh
+            - cat bitbucket-pipelines-env.sh
+            - chmod +x bitbucket-pipelines-env.sh
+          artifacts:
+            - bitbucket-pipelines-env.sh
+      - step:
           name: build the source code
           caches:
             - maven
@@ -26,23 +38,35 @@ pipelines:
       - step:
           name: build docker and upload to docker hub
           script:
-            - . bitbucket-pipelines-env.sh auth test
+            - . bitbucket-pipelines-env.sh
             - docker login -u $DOCKER_HUB_USERNAME -p $DOCKER_HUB_PASSWORD
-            - docker build -t $IMAGE_COORDINATES .
-            - docker push $IMAGE_COORDINATES
+            - docker build -t $DOCKER_IMAGE_COORDINATES .
+            - docker push $DOCKER_IMAGE_COORDINATES
       - step:
           name: update the aws task definition
           script:
             - git clone https://bitbucket.org/hspconsortium/sandbox-ci.git
-            - . bitbucket-pipelines-env.sh auth test
-            - export SPRING_PROFILES_ACTIVE=test,users-firebase
+            - . bitbucket-pipelines-env.sh
             - export TEMPLATE_FILE="sandbox-ci/aws/templates/task-definition-template.json"
             - ./sandbox-ci/aws/scripts/env-substitution.sh $TEMPLATE_FILE
             - cat $(echo "$TEMPLATE_FILE")
             - jq '.containerDefinitions[0].environment += [{"name":"JASYPT_ENCRYPTOR_PASSWORD", "value":"'$ENC_PW_TEST'"}]' ${TEMPLATE_FILE} > tmp.json && mv tmp.json ${TEMPLATE_FILE}
             - cat $(echo "$TEMPLATE_FILE")
             - export TASK_RESPONSE=$(aws ecs register-task-definition --region $AWS_REGION --cli-input-json file://$TEMPLATE_FILE)
+            # TODO this doesn't detect errors, but only captures the success message
             - echo $TASK_RESPONSE
+      - step:
+          name: Update the aws service
+          script:
+            - git clone https://bitbucket.org/hspconsortium/sandbox-ci.git
+            - . bitbucket-pipelines-env.sh
+            - export AWS_TASK_DEFINITION=$(aws ecs describe-task-definition --region $AWS_REGION --task-definition "$AWS_TASK_NAME")
+            - echo $AWS_TASK_DEFINITION
+            - export AWS_TASK_VERSION=$(echo $AWS_TASK_DEFINITION | jq --raw-output '.taskDefinition.revision')
+            - echo $AWS_TASK_VERSION
+            - export SERVICE_RESPONSE=$(aws ecs update-service --region $AWS_REGION --cluster ${AWS_CLUSTER_NAME} --service ${AWS_SERVICE_NAME} --task-definition ${AWS_TASK_NAME}:${AWS_TASK_VERSION})
+            # TODO this doesn't detect errors, but only captures the success message
+            - echo $SERVICE_RESPONSE
     master:
       - step:
           name: build jar and upload to nexus
