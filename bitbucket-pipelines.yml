@@ -26,7 +26,7 @@ pipelines:
       - step:
           name: build docker and upload to docker hub
           script:
-            - export DOCKER_PROJECT_VERSION=$(mvn -q -f reference-auth-server-webapp/pom.xml -Dexec.executable="echo" -Dexec.args='${project.version}' --non-recursive exec:exec)
+            - export DOCKER_PROJECT_VERSION=$(mvn -q -Dexec.executable="echo" -Dexec.args='${project.version}' --non-recursive exec:exec)
             - echo $DOCKER_PROJECT_VERSION
             - export DOCKER_IMAGE_COORDINATES="hspconsortium/auth:${DOCKER_PROJECT_VERSION}"
             - echo $DOCKER_IMAGE_COORDINATES
@@ -68,7 +68,7 @@ pipelines:
       - step:
           name: build docker and upload to docker hub
           script:
-            - export DOCKER_PROJECT_VERSION=$(mvn -q -f reference-auth-server-webapp/pom.xml -Dexec.executable="echo" -Dexec.args='${project.version}' --non-recursive exec:exec)
+            - export DOCKER_PROJECT_VERSION=$(mvn -q -Dexec.executable="echo" -Dexec.args='${project.version}' --non-recursive exec:exec)
             - export DOCKER_IMAGE_COORDINATES="hspconsortium/auth:${DOCKER_PROJECT_VERSION}"
             - docker login -u $DOCKER_HUB_USERNAME -p $DOCKER_HUB_PASSWORD
             - docker build -t $DOCKER_IMAGE_COORDINATES .
