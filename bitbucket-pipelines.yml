@@ -13,8 +13,14 @@ pipelines:
   branches:
     develop:
       - step:
-          name: prepare the environment file
+          name: build the source code
+          caches:
+            - maven
           script:
+            - mvn -V -B -s settings.xml deploy -P DEPLOY-HSPC,hspc-nexus
+            - rm reference-auth-server-webapp/target/*-sources.jar
+            - rm reference-auth-server-webapp/target/*-javadoc.jar
+            # capture the values needed for subsequent steps
             - git clone https://bitbucket.org/hspconsortium/sandbox-ci.git
             - rm bitbucket-pipelines-env.sh || true
             - . sandbox-ci/aws/scripts/aws-us-east-1-defaults.sh auth test >> bitbucket-pipelines-env.sh
@@ -23,18 +29,9 @@ pipelines:
             - cat bitbucket-pipelines-env.sh
             - chmod +x bitbucket-pipelines-env.sh
           artifacts:
-            - bitbucket-pipelines-env.sh
-      - step:
-          name: build the source code
-          caches:
-            - maven
-          script:
-            - mvn -V -B -s settings.xml deploy -P DEPLOY-HSPC,hspc-nexus
-            - rm reference-auth-server-webapp/target/*-sources.jar
-            - rm reference-auth-server-webapp/target/*-javadoc.jar
-          artifacts:
             - reference-auth-server-webapp/target/*.war
             - reference-auth-server-webapp/target/dependency/jetty-runner.jar
+            - bitbucket-pipelines-env.sh
       - step:
           name: build docker and upload to docker hub
           script:
@@ -57,6 +54,7 @@ pipelines:
             - echo $TASK_RESPONSE
       - step:
           name: Update the aws service
+          deployment: test
           script:
             - git clone https://bitbucket.org/hspconsortium/sandbox-ci.git
             - . bitbucket-pipelines-env.sh
@@ -99,6 +97,7 @@ pipelines:
             - docker push $IMAGE_COORDINATES
       - step:
           name: MANUALLY update the aws prod service
+          deployment: production
           trigger: manual
           script:
             - . set-env.sh
