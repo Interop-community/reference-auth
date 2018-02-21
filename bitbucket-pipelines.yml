@@ -37,7 +37,7 @@ pipelines:
           name: update the aws task definition
           script:
             - export TEMPLATE_FILE="aws/task-definition-test.json"
-            - export DOCKER_PROJECT_VERSION=$(mvn -q -f reference-auth-server-webapp/pom.xml -Dexec.executable="echo" -Dexec.args='${project.version}' --non-recursive exec:exec)
+            - export DOCKER_PROJECT_VERSION=$(mvn -q -Dexec.executable="echo" -Dexec.args='${project.version}' --non-recursive exec:exec)
             - export DOCKER_IMAGE_COORDINATES="hspconsortium/auth:${DOCKER_PROJECT_VERSION}"
             - jq ".containerDefinitions[0].image = \"$DOCKER_IMAGE_COORDINATES\"" ${TEMPLATE_FILE} > tmp.json && mv tmp.json ${TEMPLATE_FILE}
             - jq '.containerDefinitions[0].environment += [{"name":"JASYPT_ENCRYPTOR_PASSWORD", "value":"'$ENC_PW_TEST'"}]' ${TEMPLATE_FILE} > tmp.json && mv tmp.json ${TEMPLATE_FILE}
@@ -77,7 +77,7 @@ pipelines:
           name: update the aws task definition
           script:
             - export TEMPLATE_FILE="aws/task-definition-prod.json"
-            - export DOCKER_PROJECT_VERSION=$(mvn -q -f reference-auth-server-webapp/pom.xml -Dexec.executable="echo" -Dexec.args='${project.version}' --non-recursive exec:exec)
+            - export DOCKER_PROJECT_VERSION=$(mvn -q -Dexec.executable="echo" -Dexec.args='${project.version}' --non-recursive exec:exec)
             - export DOCKER_IMAGE_COORDINATES="hspconsortium/auth:${DOCKER_PROJECT_VERSION}"
             - jq ".containerDefinitions[0].image = \"$DOCKER_IMAGE_COORDINATES\"" ${TEMPLATE_FILE} > tmp.json && mv tmp.json ${TEMPLATE_FILE}
             - jq '.containerDefinitions[0].environment += [{"name":"JASYPT_ENCRYPTOR_PASSWORD", "value":"'$ENC_PW_PROD'"}]' ${TEMPLATE_FILE} > tmp.json && mv tmp.json ${TEMPLATE_FILE}
