@@ -59,7 +59,10 @@ pipelines:
           caches:
             - maven
           script:
-            - mvn -V -B -s settings.xml deploy -P DEPLOY-HSPC,hspc-nexus
+            # Deploy to maven central
+            - openssl aes-256-cbc -pass pass:$OPENSSL_PWD -in private-key.gpg.enc -out private-key.gpg -d
+            - gpg --batch --import private-key.gpg
+            - mvn -V -B -s settings.xml deploy -P DEPLOY,ossrh
             - rm reference-auth-server-webapp/target/*-sources.jar
             - rm reference-auth-server-webapp/target/*-javadoc.jar
           artifacts:
