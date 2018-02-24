@@ -31,7 +31,7 @@ pipelines:
             - export DOCKER_IMAGE_COORDINATES="hspconsortium/auth:${DOCKER_PROJECT_VERSION}"
             - echo $DOCKER_IMAGE_COORDINATES
             - docker login -u $DOCKER_HUB_USERNAME -p $DOCKER_HUB_PASSWORD
-            - docker build -t $DOCKER_IMAGE_COORDINATES .
+            - docker/build.sh test users-firebase
             - docker push $DOCKER_IMAGE_COORDINATES
       - step:
           name: update the aws task definition
@@ -76,7 +76,7 @@ pipelines:
             - export DOCKER_IMAGE_COORDINATES="hspconsortium/auth:${DOCKER_PROJECT_VERSION}"
             - echo $DOCKER_IMAGE_COORDINATES
             - docker login -u $DOCKER_HUB_USERNAME -p $DOCKER_HUB_PASSWORD
-            - docker build -t $DOCKER_IMAGE_COORDINATES .
+            - docker/build.sh prod users-firebase
             - docker push $DOCKER_IMAGE_COORDINATES
       - step:
           name: update the aws task definition
