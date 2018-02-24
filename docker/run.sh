@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+echo "Note: this should be run from the project root directory"
+
 profile="local"
 users="users-local"
 
@@ -10,6 +12,11 @@ if [ $# -gt 0 ]; then
         echo "usage: $0 {local | test | prod}";
         exit 1;
     fi
+fi
+
+if [ "$profile" == "local" ]; then
+  echo "run-docker does not support local because the host database isn't mapped.  Use another profile or use docker-compose to also start a database container.";
+  exit 1;
 fi
 
 echo "using $profile profile..."
@@ -34,16 +41,7 @@ echo "starting reference-auth-server-webapp..."
 # from the environment
 echo "JASYPT_ENCRYPTOR_PASSWORD=${JASYPT_ENCRYPTOR_PASSWORD}"
 
-echo "starting reference-auth-server-webapp..."
-cd reference-auth-server-webapp
+. docker/build.sh
 
-set -x
-
-java \
-  -Xms128M \
-  -Xmx256M \
-  -Dspring.profiles.active="${SPRING_PROFILES_ACTIVE}" \
-  -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5060 \
-  -jar target/dependency/jetty-runner.jar \
-  --config src/main/resources/jetty.xml \
-  target/*.war
+# run the container, using the arguments from the hosting environment
+docker run -i -e "SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}" -e "JASYPT_ENCRYPTOR_PASSWORD=${JASYPT_ENCRYPTOR_PASSWORD}" -p 8060:8060 -t hspconsortium/auth:latest

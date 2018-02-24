@@ -31,7 +31,7 @@ pipelines:
             - export DOCKER_IMAGE_COORDINATES="hspconsortium/auth:${DOCKER_PROJECT_VERSION}"
             - echo $DOCKER_IMAGE_COORDINATES
             - docker login -u $DOCKER_HUB_USERNAME -p $DOCKER_HUB_PASSWORD
-            - docker build -t $DOCKER_IMAGE_COORDINATES .
+            - docker/build.sh $DOCKER_PROJECT_VERSION
             - docker push $DOCKER_IMAGE_COORDINATES
       - step:
           name: update the aws task definition
@@ -41,7 +41,7 @@ pipelines:
             - export DOCKER_IMAGE_COORDINATES="hspconsortium/auth:${DOCKER_PROJECT_VERSION}"
             - jq ".containerDefinitions[0].image = \"$DOCKER_IMAGE_COORDINATES\"" ${TEMPLATE_FILE} > tmp.json && mv tmp.json ${TEMPLATE_FILE}
             - jq '.containerDefinitions[0].environment += [{"name":"JASYPT_ENCRYPTOR_PASSWORD", "value":"'$ENC_PW_TEST'"}]' ${TEMPLATE_FILE} > tmp.json && mv tmp.json ${TEMPLATE_FILE}
-            - jq '.containerDefinitions[0].environment += [{"name":"SPRING_PROFILES_ACTIVE", "value":"'test'"}]' ${TEMPLATE_FILE} > tmp.json && mv tmp.json ${TEMPLATE_FILE}
+            - jq '.containerDefinitions[0].environment += [{"name":"SPRING_PROFILES_ACTIVE", "value":"'test,users-firebase'"}]' ${TEMPLATE_FILE} > tmp.json && mv tmp.json ${TEMPLATE_FILE}
             - cat $(echo "$TEMPLATE_FILE")
             - echo $(aws ecs register-task-definition --region us-east-1 --cli-input-json file://$TEMPLATE_FILE)
       - step:
@@ -76,7 +76,7 @@ pipelines:
             - export DOCKER_IMAGE_COORDINATES="hspconsortium/auth:${DOCKER_PROJECT_VERSION}"
             - echo $DOCKER_IMAGE_COORDINATES
             - docker login -u $DOCKER_HUB_USERNAME -p $DOCKER_HUB_PASSWORD
-            - docker build -t $DOCKER_IMAGE_COORDINATES .
+            - docker/build.sh $DOCKER_PROJECT_VERSION
             - docker push $DOCKER_IMAGE_COORDINATES
       - step:
           name: update the aws task definition
@@ -86,7 +86,7 @@ pipelines:
             - export DOCKER_IMAGE_COORDINATES="hspconsortium/auth:${DOCKER_PROJECT_VERSION}"
             - jq ".containerDefinitions[0].image = \"$DOCKER_IMAGE_COORDINATES\"" ${TEMPLATE_FILE} > tmp.json && mv tmp.json ${TEMPLATE_FILE}
             - jq '.containerDefinitions[0].environment += [{"name":"JASYPT_ENCRYPTOR_PASSWORD", "value":"'$ENC_PW_PROD'"}]' ${TEMPLATE_FILE} > tmp.json && mv tmp.json ${TEMPLATE_FILE}
-            - jq '.containerDefinitions[0].environment += [{"name":"SPRING_PROFILES_ACTIVE", "value":"'prod'"}]' ${TEMPLATE_FILE} > tmp.json && mv tmp.json ${TEMPLATE_FILE}
+            - jq '.containerDefinitions[0].environment += [{"name":"SPRING_PROFILES_ACTIVE", "value":"'prod,users-firebase'"}]' ${TEMPLATE_FILE} > tmp.json && mv tmp.json ${TEMPLATE_FILE}
             - cat $(echo "$TEMPLATE_FILE")
             - echo $(aws ecs register-task-definition --region us-east-1 --cli-input-json file://$TEMPLATE_FILE)
       - step:
