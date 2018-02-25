@@ -16,4 +16,4 @@ export AWS_REGION="us-west-2"
 
 export AWS_CONTAINER_MEMORY_RESERVE=$(cat ${CONFIG_FILE} | jq --raw-output '.config.memory')
 
-export SPRING_PROFILES_ACTIVE="${ACTIVE_ENV}"
+export SPRING_PROFILES_ACTIVE="${ACTIVE_ENV},users-firebase"
