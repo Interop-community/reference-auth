@@ -3,7 +3,7 @@
 mvn -V -B -f ../pom.xml -s ../settings.xml deploy -P DEPLOY-HSPC,hspc-nexus
 rc=$?
 if [[ ${rc} -ne 0 ]] ; then
-  echo 'could not perform tests'; exit $rc
+  echo 'mvn build failed'; exit $rc
 fi
 
 rm ../reference-auth-server-webapp/target/*-sources.jar
