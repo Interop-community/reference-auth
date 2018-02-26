@@ -3,7 +3,7 @@
   "containerDefinitions": [
     {
       "name": "auth-test",
-      "image": "hspconsortium/auth:1.16.0",
+      "image": "hspconsortium/auth:1.16.2",
       "cpu": 0,
       "portMappings": [
         {
@@ -25,7 +25,7 @@
       "environment": [
         {
           "name": "JASYPT_ENCRYPTOR_PASSWORD",
-          "value": "not provided"
+          "value": "changeme"
         },
         {
           "name": "SPRING_PROFILES_ACTIVE",
