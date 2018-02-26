@@ -22,7 +22,7 @@ pipelines:
             - . ci-0-set-properties.sh
             - . ci-1-prepare-sources.sh
             - . ci-2-build-project.sh
-            - echo "inside: ${ENC_PW_TEST}"
+            - echo "Inside ${ENC_PW_TEST}"
           artifacts:
             - reference-auth-server-webapp/target/*.war
             - reference-auth-server-webapp/target/dependency/jetty-runner.jar
