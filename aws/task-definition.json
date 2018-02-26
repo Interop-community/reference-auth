@@ -25,7 +25,7 @@
       "environment": [
         {
           "name": "JASYPT_ENCRYPTOR_PASSWORD",
-          "value": "changeme"
+          "value": "not provided"
         },
         {
           "name": "SPRING_PROFILES_ACTIVE",

@@ -25,6 +25,7 @@ pipelines:
           artifacts:
             - reference-auth-server-webapp/target/*.war
             - reference-auth-server-webapp/target/dependency/jetty-runner.jar
+            - aws/task-definition.json
       - step:
           name: build docker and upload to docker hub
           script:
@@ -61,6 +62,7 @@ pipelines:
           artifacts:
             - reference-auth-server-webapp/target/*.war
             - reference-auth-server-webapp/target/dependency/jetty-runner.jar
+            - aws/task-definition.json
       - step:
           name: build docker and upload to docker hub
           script:
