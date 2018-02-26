@@ -1,27 +1,37 @@
 {
-  "family": "TBD",
+  "family": "auth-test",
   "containerDefinitions": [
     {
-      "name": "TBD",
-      "image": "TBD",
+      "name": "auth-test",
+      "image": "hspconsortium/auth:1.16.0-SNAPSHOT",
       "cpu": 0,
       "portMappings": [
         {
-          "containerPort": 0,
+          "containerPort": 8060,
           "hostPort": 0,
           "protocol": "tcp"
         }
       ],
-      "memoryReservation": 0,
+      "memoryReservation": 512,
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
-          "awslogs-group": "TBD",
+          "awslogs-group": "/ecs/auth-test",
           "awslogs-region": "us-west-2",
           "awslogs-stream-prefix": "ecs"
         }
       },
-      "essential": true
+      "essential": true,
+      "environment": [
+        {
+          "name": "JASYPT_ENCRYPTOR_PASSWORD",
+          "value": "changeme"
+        },
+        {
+          "name": "SPRING_PROFILES_ACTIVE",
+          "value": "test,users-firebase"
+        }
+      ]
     }
   ]
 }
