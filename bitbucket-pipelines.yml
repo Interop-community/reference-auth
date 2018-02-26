@@ -41,6 +41,7 @@ pipelines:
             - . ci-4-aws-task-update.sh
       - step:
           name: update the aws service
+          deployment: test
           script:
             - export TARGET_ENV=test
             - . ci-0-set-properties.sh
@@ -75,6 +76,7 @@ pipelines:
             - . ci-4-aws-task-update.sh
       - step:
           name: update the aws service
+          deployment: production
           trigger: manual
           script:
             - export TARGET_ENV=prod
