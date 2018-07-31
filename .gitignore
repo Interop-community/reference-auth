@@ -22,3 +22,6 @@ hs_err_pid*
 private-key.gpg
 /container-definitions.json-e
 container-definitions.json-e
+
+# docker target folder
+docker/target

@@ -1,0 +1,47 @@
+version: '2.3'
+
+services:
+  auth-db:
+    image: mysql:5.7
+    volumes:
+      - auth-db-data:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: "password"
+      MYSQL_DATABASE: "oic"
+      MYSQL_USER: "authusr"
+      MYSQL_PASSWORD: "password"
+
+  auth:
+    depends_on:
+      - auth-db
+    image: hspconsortium/auth:latest
+    restart: always
+    mem_reservation: 512m
+    environment:
+      DB_HOST: "auth-db"
+      DB_USER: "authusr"
+      DB_PASSWORD: "password"
+      DB_NAME: "oic"
+      DB_PORT: 3306
+      AUTH_HOST: "localhost"
+      AUTH_PORT: 8060
+#      API_DSTU2_HOST: "api-dstu2"
+#      API_DSTU2_PORT: 8075
+#      API_STU3_HOST: "api-stu3"
+#      API_STU3_PORT: 8076
+      SANDMAN_API_HOST: "sandman_api"
+      SANDMAN_API_PORT: 12000
+      JAVA_OPTS: "-agentlib:jdwp=transport=dt_socket,address=5060,server=y,suspend=n"
+
+  nginx:
+    depends_on:
+      - auth
+    image: hspconsortium/hspc-sandbox-nginx-auth:latest
+    ports:
+      - "8060:8060"
+    restart: always
+    mem_reservation: 64m
+
+volumes:
+  auth-db-data:
