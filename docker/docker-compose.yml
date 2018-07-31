@@ -1,11 +1,16 @@
-version: '2.3'
+version: '3'
 
 services:
   auth-db:
     image: mysql:5.7
     volumes:
       - auth-db-data:/var/lib/mysql
-    restart: always
+    deploy:
+      restart_policy:
+        condition: on-failure
+      resources:
+        reservations:
+          memory: 20M
     environment:
       MYSQL_ROOT_PASSWORD: "password"
       MYSQL_DATABASE: "oic"
@@ -16,8 +21,16 @@ services:
     depends_on:
       - auth-db
     image: hspconsortium/auth:latest
-    restart: always
-    mem_reservation: 512m
+    deploy:
+      restart_policy:
+        condition: on-failure
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 512M
+        reservations:
+          cpus: '0.2'
+          memory: 256M
     environment:
       DB_HOST: "auth-db"
       DB_USER: "authusr"
@@ -43,8 +56,12 @@ services:
     image: hspconsortium/hspc-sandbox-nginx-auth:latest
     ports:
       - "8060:8060"
-    restart: always
-    mem_reservation: 64m
+    deploy:
+      restart_policy:
+        condition: on-failure
+      resources:
+        reservations:
+          memory: 64M
 
 volumes:
   auth-db-data:
