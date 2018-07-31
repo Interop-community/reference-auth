@@ -50,7 +50,7 @@ services:
       SANDMAN_API_PORT: 12000
       JAVA_OPTS: "-agentlib:jdwp=transport=dt_socket,address=5060,server=y,suspend=n"
 
-  nginx:
+  nginx-auth:
     depends_on:
       - auth
     image: hspconsortium/hspc-sandbox-nginx-auth:latest
