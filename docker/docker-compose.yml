@@ -2,7 +2,7 @@ version: '3'
 
 services:
   auth-db:
-    image: mysql:5.7
+    image: mysql:5.7.23
     volumes:
       - auth-db-data:/var/lib/mysql
     deploy:
@@ -39,21 +39,14 @@ services:
       DB_PORT: 3306
       AUTH_HOST: "localhost"
       AUTH_PORT: 8060
-# these dependant systems are not available in a local docker compose
-#      API_DSTU2_HOST: "api-dstu2"
-#      API_DSTU2_PORT: 8075
-#      API_STU3_HOST: "api-stu3"
-#      API_STU3_PORT: 8076
-#      API_R4_HOST: "api-r4"
-#      API_R4_PORT: 8077
-      SANDMAN_API_HOST: "sandman_api"
+      SANDMAN_API_HOST: "host.docker.internal"
       SANDMAN_API_PORT: 12000
       JAVA_OPTS: "-agentlib:jdwp=transport=dt_socket,address=5060,server=y,suspend=n"
 
   nginx-auth:
     depends_on:
       - auth
-    image: hspconsortium/hspc-sandbox-nginx-auth:latest
+    image: hspconsortium/auth-nginx:latest
     ports:
       - "8060:8060"
     deploy:

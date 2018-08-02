@@ -6,6 +6,7 @@ if [ $# -gt 0 ]; then
 fi
 
 # files must be in a folder or subfolder
+rm -rf target
 mkdir -p target
 cp ../reference-auth-server-webapp/target/*.war target
 cp ../reference-auth-server-webapp/target/dependency/jetty-runner.jar target
