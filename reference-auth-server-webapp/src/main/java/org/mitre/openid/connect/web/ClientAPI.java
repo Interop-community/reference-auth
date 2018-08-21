@@ -428,6 +428,31 @@ public class ClientAPI {
         return HttpCodeView.VIEWNAME;
     }
 
+    /**
+     * Delete a client with clientId
+     *
+     * @param clientId
+     * @param modelAndView
+     * @return
+     */
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @RequestMapping(params = "clientId", method = RequestMethod.DELETE)
+    public String apiDeleteClientByClientId(@RequestParam("clientId") String clientId, ModelAndView modelAndView) {
+
+        ClientDetailsEntity client = clientService.loadClientByClientId(clientId);
+
+        if (client == null) {
+            logger.error("apiDeleteClient failed; client with clientId " + clientId + " could not be found.");
+            modelAndView.getModelMap().put(HttpCodeView.CODE, HttpStatus.NOT_FOUND);
+            modelAndView.getModelMap().put(JsonErrorView.ERROR_MESSAGE, "Could not delete client. The requested client with clientId " + clientId + "could not be found.");
+            return JsonErrorView.VIEWNAME;
+        } else {
+            modelAndView.getModelMap().put(HttpCodeView.CODE, HttpStatus.OK);
+            clientService.deleteClient(client);
+        }
+
+        return HttpCodeView.VIEWNAME;
+    }
 
     /**
      * Get an individual client
@@ -482,6 +507,114 @@ public class ClientAPI {
             return ClientEntityViewForAdmins.VIEWNAME;
         } else {
             return ClientEntityViewForUsers.VIEWNAME;
+        }
+    }
+
+    /**
+     * Get an individual client by clientId
+     *
+     * @param clientId
+     * @param m
+     * @return
+     */
+    @RequestMapping(method = RequestMethod.PUT, params = "clientId", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String apiUpdateClientByClientId(@RequestParam("clientId") String clientId, @RequestBody String jsonString, Model m, Authentication auth) {
+        JsonObject json = null;
+        ClientDetailsEntity client = null;
+
+        try {
+            // parse the client passed in (from JSON) and fetch the old client from the store
+            json = parser.parse(jsonString).getAsJsonObject();
+            client = gson.fromJson(json, ClientDetailsEntity.class);
+            client = validateSoftwareStatement(client);
+            if (client.getLogoUri() != null) {
+                if (client.getLogoUri().equals("null")) {
+                    client.setLogoUri(null);
+                }
+            }
+        } catch (JsonSyntaxException e) {
+            logger.error("apiUpdateClient failed due to JsonSyntaxException", e);
+            m.addAttribute(HttpCodeView.CODE, HttpStatus.BAD_REQUEST);
+            m.addAttribute(JsonErrorView.ERROR_MESSAGE, "Could not update client. The server encountered a JSON syntax exception. Contact a system administrator for assistance.");
+            return JsonErrorView.VIEWNAME;
+        } catch (IllegalStateException e) {
+            logger.error("apiUpdateClient failed due to IllegalStateException", e);
+            m.addAttribute(HttpCodeView.CODE, HttpStatus.BAD_REQUEST);
+            m.addAttribute(JsonErrorView.ERROR_MESSAGE, "Could not update client. The server encountered an IllegalStateException. Refresh and try again - if the problem persists, contact a system administrator for assistance.");
+            return JsonErrorView.VIEWNAME;
+        } catch (ValidationException e) {
+            logger.error("apiUpdateClient failed due to ValidationException", e);
+            m.addAttribute(HttpCodeView.CODE, HttpStatus.BAD_REQUEST);
+            m.addAttribute(JsonErrorView.ERROR_MESSAGE, "Could not update client. The server encountered a ValidationException.");
+            return JsonErrorView.VIEWNAME;
+        }
+
+        ClientDetailsEntity oldClient = clientService.loadClientByClientId(clientId);
+
+        if (oldClient == null) {
+            logger.error("apiUpdateClient failed; client with id " + clientId + " could not be found.");
+            m.addAttribute(HttpCodeView.CODE, HttpStatus.NOT_FOUND);
+            m.addAttribute(JsonErrorView.ERROR_MESSAGE, "Could not update client. The requested client with id " + clientId + "could not be found.");
+            return JsonErrorView.VIEWNAME;
+        }
+
+        // if they leave the client identifier empty, force it to be generated
+        if (Strings.isNullOrEmpty(client.getClientId())) {
+            client = clientService.generateClientId(client);
+        }
+
+        if (client.getTokenEndpointAuthMethod() == null ||
+                client.getTokenEndpointAuthMethod().equals(AuthMethod.NONE)) {
+            // we shouldn't have a secret for this client
+
+            client.setClientSecret(null);
+
+        } else if (client.getTokenEndpointAuthMethod().equals(AuthMethod.SECRET_BASIC)
+                || client.getTokenEndpointAuthMethod().equals(AuthMethod.SECRET_POST)
+                || client.getTokenEndpointAuthMethod().equals(AuthMethod.SECRET_JWT)) {
+
+            // if they've asked for us to generate a client secret (or they left it blank but require one), do so here
+            if (json.has("generateClientSecret") && json.get("generateClientSecret").getAsBoolean()
+                    || Strings.isNullOrEmpty(client.getClientSecret())) {
+                client = clientService.generateClientSecret(client);
+            }
+
+        } else if (client.getTokenEndpointAuthMethod().equals(AuthMethod.PRIVATE_KEY)) {
+
+            if (Strings.isNullOrEmpty(client.getJwksUri()) && client.getJwks() == null) {
+                logger.error("tried to create client with private key auth but no private key");
+                m.addAttribute(HttpCodeView.CODE, HttpStatus.BAD_REQUEST);
+                m.addAttribute(JsonErrorView.ERROR_MESSAGE, "Can not create a client with private key authentication without registering a key via the JWK Set URI or JWK Set Value.");
+                return JsonErrorView.VIEWNAME;
+            }
+
+            // otherwise we shouldn't have a secret for this client
+            client.setClientSecret(null);
+
+        } else {
+
+            logger.error("unknown auth method");
+            m.addAttribute(HttpCodeView.CODE, HttpStatus.BAD_REQUEST);
+            m.addAttribute(JsonErrorView.ERROR_MESSAGE, "Unknown auth method requested");
+            return JsonErrorView.VIEWNAME;
+
+
+        }
+
+        try {
+            ClientDetailsEntity newClient = clientService.updateClient(oldClient, client);
+            m.addAttribute(JsonEntityView.ENTITY, newClient);
+
+            if (AuthenticationUtilities.isAdmin(auth)) {
+                return ClientEntityViewForAdmins.VIEWNAME;
+            } else {
+                return ClientEntityViewForUsers.VIEWNAME;
+            }
+        } catch (IllegalArgumentException e) {
+            logger.error("Unable to save client: {}", e.getMessage());
+            m.addAttribute(HttpCodeView.CODE, HttpStatus.BAD_REQUEST);
+            m.addAttribute(JsonErrorView.ERROR_MESSAGE, "Unable to save client: " + e.getMessage());
+            return JsonErrorView.VIEWNAME;
         }
     }
 
