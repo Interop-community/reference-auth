@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-echo "Note: this should be run from the project root directory"
-
 profile="local"
 users="users-local"
 

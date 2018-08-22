@@ -1,0 +1,60 @@
+version: '3'
+
+services:
+  auth-db:
+    image: mysql:5.7.23
+    volumes:
+      - auth-db-data:/var/lib/mysql
+    deploy:
+      restart_policy:
+        condition: on-failure
+      resources:
+        reservations:
+          memory: 20M
+    environment:
+      MYSQL_ROOT_PASSWORD: "password"
+      MYSQL_DATABASE: "oic"
+      MYSQL_USER: "authusr"
+      MYSQL_PASSWORD: "password"
+
+  auth:
+    depends_on:
+      - auth-db
+    image: hspconsortium/auth:latest
+    deploy:
+      restart_policy:
+        condition: on-failure
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 512M
+        reservations:
+          cpus: '0.2'
+          memory: 256M
+    environment:
+      DB_HOST: "auth-db"
+      DB_USER: "authusr"
+      DB_PASSWORD: "password"
+      DB_NAME: "oic"
+      DB_PORT: 3306
+      AUTH_HOST: "localhost"
+      AUTH_PORT: 8060
+      SANDMAN_API_HOST: "host.docker.internal"
+      SANDMAN_API_PORT: 12000
+      JAVA_OPTS: "-agentlib:jdwp=transport=dt_socket,address=5060,server=y,suspend=n"
+
+  nginx-auth:
+    depends_on:
+      - auth
+    image: hspconsortium/auth-nginx:latest
+    ports:
+      - "8060:8060"
+    deploy:
+      restart_policy:
+        condition: on-failure
+      resources:
+        reservations:
+          memory: 64M
+
+volumes:
+  auth-db-data:
