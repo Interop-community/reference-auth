@@ -16,6 +16,15 @@ public class JwtService {
     @Value("${hspc.platform.jwt.signatureAlgorithm}")
     private String signatureAlgorithm;
 
+    public boolean jwtIsValid(String jwtString){
+        try{
+            Jwts.parser().setSigningKey(jwtKey).parseClaimsJws(jwtString);
+            return true;
+        } catch(Exception ex) {
+            return false;
+        }
+    }
+
     public String usernameFromJwt(String compactJws) {
         try {
             Jws<Claims> jws = Jwts.parser().setSigningKey(jwtKey).parseClaimsJws(compactJws);
