@@ -66,7 +66,7 @@ public class PersonaAuthInterceptor extends HandlerInterceptorAdapter {
         }
 
         // if there is no persona cookie, proceed as normal
-        if (hspcPersonaTokenCookie == null) {
+        if (hspcPersonaTokenCookie == null || (hspcPersonaTokenCookie.getValue().charAt(0) == '\'' && hspcPersonaTokenCookie.getValue().charAt(1) == '\'')) {
             return;
         }
 
