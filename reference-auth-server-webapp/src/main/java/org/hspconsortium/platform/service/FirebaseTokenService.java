@@ -32,7 +32,7 @@ public class FirebaseTokenService {
     @Value("${hspc.platform.firebase.databaseUrl}")
     private String firebaseDatabaseUrl;
 
-    private final Semaphore dataAccessSemaphore = new Semaphore(0);
+    private final Semaphore dataAccessSemaphore = new Semaphore(0, true);
     private FirebaseUserProfileDto userProfileDto = null;
 
     @Autowired
@@ -40,6 +40,18 @@ public class FirebaseTokenService {
 
     @Autowired
     private EncryptionService encryptionService;
+
+    public void initTempFirebase(String firebaseCredentialsString) {
+        InputStream firebaseCredentials = null;
+        firebaseCredentials = new ByteArrayInputStream(firebaseCredentialsString.getBytes());
+        firebaseDatabaseUrl = "https://hspc-tst.firebaseio.com";
+        FirebaseOptions options = new FirebaseOptions.Builder()
+                .setCredential(FirebaseCredentials.fromCertificate(firebaseCredentials))
+                .setDatabaseUrl(firebaseDatabaseUrl)
+                .build();
+
+        firebaseApp = FirebaseApp.initializeApp(options);
+    }
 
     @PostConstruct
     private void initFirebase() {
@@ -78,6 +90,7 @@ public class FirebaseTokenService {
 
     public FirebaseUserProfileDto getUserProfileInfo(String email) {
         userProfileDto = null;
+        FirebaseUserProfileDto localUserProfileDto;
         final FirebaseDatabase database = FirebaseDatabase.getInstance(firebaseApp);
         DatabaseReference ref = database.getReference("users");
 
@@ -102,7 +115,13 @@ public class FirebaseTokenService {
 
         try {
             dataAccessSemaphore.acquire();
-            return userProfileDto;
+            // If we get desperate:
+//            if (userProfileDto.getEmail().equals(email)) {
+//                return userProfileDto;
+//            } else {
+//                return null;
+//            }
+
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
