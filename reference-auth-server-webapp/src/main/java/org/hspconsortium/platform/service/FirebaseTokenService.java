@@ -17,7 +17,7 @@ import org.springframework.core.io.ResourceLoader;
 
 import javax.annotation.PostConstruct;
 import java.io.*;
-import java.util.concurrent.Semaphore;
+import java.util.concurrent.CountDownLatch;
 import java.util.stream.Collectors;
 
 public class FirebaseTokenService {
@@ -32,7 +32,6 @@ public class FirebaseTokenService {
     @Value("${hspc.platform.firebase.databaseUrl}")
     private String firebaseDatabaseUrl;
 
-    private final Semaphore dataAccessSemaphore = new Semaphore(0);
     private FirebaseUserProfileDto userProfileDto = null;
 
     @Autowired
@@ -40,6 +39,18 @@ public class FirebaseTokenService {
 
     @Autowired
     private EncryptionService encryptionService;
+
+    public void initTempFirebase(String firebaseCredentialsString) {
+        InputStream firebaseCredentials = null;
+        firebaseCredentials = new ByteArrayInputStream(firebaseCredentialsString.getBytes());
+        firebaseDatabaseUrl = "https://hspc-tst.firebaseio.com";
+        FirebaseOptions options = new FirebaseOptions.Builder()
+                .setCredential(FirebaseCredentials.fromCertificate(firebaseCredentials))
+                .setDatabaseUrl(firebaseDatabaseUrl)
+                .build();
+
+        firebaseApp = FirebaseApp.initializeApp(options);
+    }
 
     @PostConstruct
     private void initFirebase() {
@@ -76,7 +87,8 @@ public class FirebaseTokenService {
         }
     }
 
-    public FirebaseUserProfileDto getUserProfileInfo(String email) {
+    public synchronized FirebaseUserProfileDto getUserProfileInfo(String email) {
+        CountDownLatch countDownLatch = new CountDownLatch(1);
         userProfileDto = null;
         final FirebaseDatabase database = FirebaseDatabase.getInstance(firebaseApp);
         DatabaseReference ref = database.getReference("users");
@@ -84,28 +96,26 @@ public class FirebaseTokenService {
         ref.orderByChild("email").startAt(email).endAt(email).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.getChildrenCount() < 1) {
-                    dataAccessSemaphore.release();
-                    return;
+                if (dataSnapshot.getChildrenCount() > 0) {
+                    userProfileDto = dataSnapshot.getChildren().iterator().next().getValue(FirebaseUserProfileDto.class);
                 }
-                userProfileDto = dataSnapshot.getChildren().iterator().next().getValue(FirebaseUserProfileDto.class);
-                dataAccessSemaphore.release();
+                countDownLatch.countDown();
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 DatabaseError err = databaseError;
                 log.error(err.getMessage());
-                dataAccessSemaphore.release();
+                countDownLatch.countDown();
             }
         });
 
         try {
-            dataAccessSemaphore.acquire();
-            return userProfileDto;
+            countDownLatch.await();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
         return userProfileDto;
     }
 }
