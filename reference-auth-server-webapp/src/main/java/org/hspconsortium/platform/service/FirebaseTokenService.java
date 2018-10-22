@@ -40,18 +40,6 @@ public class FirebaseTokenService {
     @Autowired
     private EncryptionService encryptionService;
 
-    public void initTempFirebase(String firebaseCredentialsString) {
-        InputStream firebaseCredentials = null;
-        firebaseCredentials = new ByteArrayInputStream(firebaseCredentialsString.getBytes());
-        firebaseDatabaseUrl = "https://hspc-tst.firebaseio.com";
-        FirebaseOptions options = new FirebaseOptions.Builder()
-                .setCredential(FirebaseCredentials.fromCertificate(firebaseCredentials))
-                .setDatabaseUrl(firebaseDatabaseUrl)
-                .build();
-
-        firebaseApp = FirebaseApp.initializeApp(options);
-    }
-
     @PostConstruct
     private void initFirebase() {
         InputStream firebaseCredentials = null;
