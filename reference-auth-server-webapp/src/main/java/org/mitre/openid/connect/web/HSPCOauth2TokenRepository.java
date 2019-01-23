@@ -1,6 +1,7 @@
 package org.mitre.openid.connect.web;
 
 import org.mitre.oauth2.model.OAuth2AccessTokenEntity;
+import org.mitre.oauth2.model.OAuth2RefreshTokenEntity;
 import org.mitre.oauth2.repository.impl.JpaOAuth2TokenRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +24,12 @@ public class HSPCOauth2TokenRepository {
 
     public Set<OAuth2AccessTokenEntity> getAllAccessTokensForUser(String id) {
         TypedQuery<OAuth2AccessTokenEntity> query = this.manager.createNamedQuery("OAuth2AccessTokenEntity.getByUser", OAuth2AccessTokenEntity.class);
+        query.setParameter("user", id);
+        return new LinkedHashSet(query.getResultList());
+    }
+
+    public Set<OAuth2RefreshTokenEntity> getAllRefreshTokensForUser(String id) {
+        TypedQuery<OAuth2RefreshTokenEntity> query = this.manager.createNamedQuery("OAuth2RefreshTokenEntity.getByUser", OAuth2RefreshTokenEntity.class);
         query.setParameter("user", id);
         return new LinkedHashSet(query.getResultList());
     }

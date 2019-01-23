@@ -2,6 +2,7 @@ package org.mitre.oauth2.web;
 
 import com.google.common.collect.Sets;
 import org.mitre.oauth2.model.OAuth2AccessTokenEntity;
+import org.mitre.oauth2.model.OAuth2RefreshTokenEntity;
 import org.mitre.openid.connect.web.HSPCOauth2TokenRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,14 +16,20 @@ public class HSPCTokenService {
 
     private static final Logger logger = LoggerFactory.getLogger(HSPCTokenService.class);
 
-    private HSPCOauth2TokenRepository tokenRepository;
+    private HSPCOauth2TokenRepository accessTokenRepository;
+
+
 
     public HSPCTokenService(HSPCOauth2TokenRepository tokenRepository) {
-        this.tokenRepository = tokenRepository;
+        this.accessTokenRepository = tokenRepository;
     }
 
     public Set<OAuth2AccessTokenEntity> getAllAccessTokensForUser(String id) {
-        return this.tokenRepository.getAllAccessTokensForUser("jsmith@kolbrich1");
+        return this.accessTokenRepository.getAllAccessTokensForUser("rajitha.katipalli@imail.org");
+    }
+
+    public Set<OAuth2RefreshTokenEntity> getAllRefreshTokensForUser(String id) {
+        return this.accessTokenRepository.getAllRefreshTokensForUser("rajitha.katipalli@imail.org");
     }
 
 }

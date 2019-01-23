@@ -172,7 +172,7 @@ public class TokenAPI {
             produces = {"application/json"}
     )
     public String getAllRefreshTokens(ModelMap m, Principal p) {
-        Set<OAuth2RefreshTokenEntity> allTokens = this.tokenService.getAllRefreshTokensForUser(p.getName());
+        Set<OAuth2RefreshTokenEntity> allTokens = this.hspcTokenService.getAllRefreshTokensForUser(p.getName());
         m.put("entity", allTokens);
         return "tokenApiView";
     }
