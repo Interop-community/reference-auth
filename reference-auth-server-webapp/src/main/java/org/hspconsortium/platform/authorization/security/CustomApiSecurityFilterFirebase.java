@@ -81,7 +81,7 @@ public class CustomApiSecurityFilterFirebase extends GenericFilterBean implement
                 }
                 return new FirebaseJwtAuthenticationToken();
             } catch (FirebaseAuthException e) {
-                throw new UnauthorizedUserException("Failed Firebase authentication.", e);
+                return new FirebaseJwtAuthenticationToken();
             }
         }
         return null;
