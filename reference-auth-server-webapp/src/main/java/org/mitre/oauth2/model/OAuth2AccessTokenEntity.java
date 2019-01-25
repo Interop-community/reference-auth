@@ -53,7 +53,8 @@ import com.nimbusds.jwt.JWT;
         @NamedQuery(name = OAuth2AccessTokenEntity.QUERY_BY_CLIENT, query = "select a from OAuth2AccessTokenEntity a where a.client = :" + OAuth2AccessTokenEntity.PARAM_CLIENT),
         @NamedQuery(name = OAuth2AccessTokenEntity.QUERY_BY_TOKEN_VALUE, query = "select a from OAuth2AccessTokenEntity a where a.jwt = :" + OAuth2AccessTokenEntity.PARAM_TOKEN_VALUE),
         @NamedQuery(name = OAuth2AccessTokenEntity.QUERY_BY_APPROVED_SITE, query = "select a from OAuth2AccessTokenEntity a where a.approvedSite = :" + OAuth2AccessTokenEntity.PARAM_APPROVED_SITE),
-        @NamedQuery(name = OAuth2AccessTokenEntity.QUERY_BY_RESOURCE_SET, query = "select a from OAuth2AccessTokenEntity a join a.permissions p where p.resourceSet.id = :" + OAuth2AccessTokenEntity.PARAM_RESOURCE_SET_ID)
+        @NamedQuery(name = OAuth2AccessTokenEntity.QUERY_BY_RESOURCE_SET, query = "select a from OAuth2AccessTokenEntity a join a.permissions p where p.resourceSet.id = :" + OAuth2AccessTokenEntity.PARAM_RESOURCE_SET_ID),
+        @NamedQuery(name = OAuth2AccessTokenEntity.QUERY_BY_USER, query = "select a from OAuth2AccessTokenEntity a WHERE a.authenticationHolder.id IN (SELECT b.id FROM AuthenticationHolderEntity b WHERE b.userAuth.id IN (SELECT c.id FROM SavedUserAuthentication c WHERE c.name = :" + OAuth2AccessTokenEntity.PARAM_USER + ")) AND (a.expiration > CURRENT_TIMESTAMP OR a.expiration IS NULL)")
 })
 @org.codehaus.jackson.map.annotate.JsonSerialize(using = OAuth2AccessTokenJackson1Serializer.class)
 @org.codehaus.jackson.map.annotate.JsonDeserialize(using = OAuth2AccessTokenJackson1Deserializer.class)
@@ -68,6 +69,7 @@ public class OAuth2AccessTokenEntity implements OAuth2AccessToken {
     public static final String QUERY_EXPIRED_BY_DATE = "OAuth2AccessTokenEntity.getAllExpiredByDate";
     public static final String QUERY_ALL = "OAuth2AccessTokenEntity.getAll";
     public static final String QUERY_BY_RESOURCE_SET = "OAuth2AccessTokenEntity.getByResourceSet";
+    public static final String QUERY_BY_USER = "OAuth2AccessTokenEntity.getByUser";
 
     public static final String PARAM_TOKEN_VALUE = "tokenValue";
     public static final String PARAM_CLIENT = "client";
@@ -75,6 +77,7 @@ public class OAuth2AccessTokenEntity implements OAuth2AccessToken {
     public static final String PARAM_DATE = "date";
     public static final String PARAM_RESOURCE_SET_ID = "rsid";
     public static final String PARAM_APPROVED_SITE = "approvedSite";
+    public static final String PARAM_USER = "user";
 
     public static final String ID_TOKEN_FIELD_NAME = "id_token";
 

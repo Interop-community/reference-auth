@@ -1,6 +1,7 @@
 package org.hspconsortium.platform.authorization.security;
 
 import com.google.common.collect.ImmutableList;
+import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
 import org.hspconsortium.platform.service.FirebaseTokenService;
 import org.mitre.openid.connect.model.UserInfo;
@@ -15,6 +16,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.common.exceptions.UnauthorizedUserException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 
@@ -72,11 +74,15 @@ public class CustomApiSecurityFilterFirebase extends GenericFilterBean implement
     private FirebaseJwtAuthenticationToken getAuthIfCookieExists(HttpServletRequest httpServletRequest) {
         String jwt = resolveToken(httpServletRequest);
         if (jwt != null) {
-            FirebaseToken token = firebaseTokenService.validateToken(jwt);
-            if (token != null) {
-                return new FirebaseJwtAuthenticationToken(token, retrieveAuthorities(token.getEmail()));
+            try {
+                FirebaseToken token = firebaseTokenService.validateToken(jwt);
+                if (token != null) {
+                    return new FirebaseJwtAuthenticationToken(token, retrieveAuthorities(token.getEmail()));
+                }
+                return new FirebaseJwtAuthenticationToken();
+            } catch (FirebaseAuthException e) {
+                return new FirebaseJwtAuthenticationToken();
             }
-            return new FirebaseJwtAuthenticationToken();
         }
         return null;
     }

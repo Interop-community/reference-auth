@@ -1,5 +1,6 @@
 package org.hspconsortium.platform.authorization.repository.impl;
 
+import com.google.firebase.auth.UserRecord;
 import org.hspconsortium.platform.authentication.persona.PersonaUserInfoRepository;
 import org.hspconsortium.platform.service.FirebaseTokenService;
 import org.mitre.openid.connect.model.DefaultUserInfo;
@@ -14,16 +15,16 @@ public class FirebaseUserInfoRepository extends PersonaUserInfoRepository {
     @Override
     public UserInfo getRealUserByUsername(String username) {
         // validate username against Firebase
-        FirebaseUserProfileDto firebaseUserProfileDto = firebaseTokenService.getUserProfileInfo(username);
-        if(firebaseUserProfileDto == null)
+        UserRecord userProfileInfo = firebaseTokenService.getUserProfileInfo(username);
+        if(userProfileInfo == null)
             return null;
 
         UserInfo userInfo = new DefaultUserInfo();
 
-        userInfo.setSub(firebaseUserProfileDto.getUid());
-        userInfo.setPreferredUsername(firebaseUserProfileDto.getEmail());
-        userInfo.setEmail(firebaseUserProfileDto.getEmail());
-        userInfo.setName(firebaseUserProfileDto.getDisplayName());
+        userInfo.setSub(userProfileInfo.getUid());
+        userInfo.setPreferredUsername(userProfileInfo.getEmail());
+        userInfo.setEmail(userProfileInfo.getEmail());
+        userInfo.setName(userProfileInfo.getDisplayName());
 
         return userInfo;
     }
