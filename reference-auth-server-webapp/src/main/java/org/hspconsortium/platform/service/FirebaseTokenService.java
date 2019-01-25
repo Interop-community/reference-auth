@@ -68,7 +68,7 @@ public class FirebaseTokenService {
         try {
             return FirebaseAuth.getInstance().getUserByEmail(email);
         } catch (FirebaseAuthException e) {
-            throw new UnauthorizedUserException("Failed Firebase authentication.", e);
+            return null;
         }
     }
 }
