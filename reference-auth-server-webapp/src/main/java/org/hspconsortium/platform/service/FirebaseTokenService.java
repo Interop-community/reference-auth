@@ -1,23 +1,22 @@
 package org.hspconsortium.platform.service;
 
+import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseCredentials;
+import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
-import com.google.firebase.database.*;
-import com.google.firebase.tasks.Task;
-import com.google.firebase.tasks.Tasks;
+import com.google.firebase.auth.UserRecord;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hspconsortium.platform.authorization.repository.impl.FirebaseUserProfileDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.security.oauth2.common.exceptions.UnauthorizedUserException;
 
 import javax.annotation.PostConstruct;
 import java.io.*;
-import java.util.concurrent.CountDownLatch;
 import java.util.stream.Collectors;
 
 public class FirebaseTokenService {
@@ -32,8 +31,6 @@ public class FirebaseTokenService {
     @Value("${hspc.platform.firebase.databaseUrl}")
     private String firebaseDatabaseUrl;
 
-    private FirebaseUserProfileDto userProfileDto = null;
-
     @Autowired
     private ResourceLoader resourceLoader;
 
@@ -41,7 +38,7 @@ public class FirebaseTokenService {
     private EncryptionService encryptionService;
 
     @PostConstruct
-    private void initFirebase() {
+    private void initFirebase() throws IOException {
         InputStream firebaseCredentials = null;
         try {
             InputStream encryptedFirebaseCredentials = null;
@@ -56,54 +53,22 @@ public class FirebaseTokenService {
         }
 
         FirebaseOptions options = new FirebaseOptions.Builder()
-                .setCredential(FirebaseCredentials.fromCertificate(firebaseCredentials))
+                .setCredentials(GoogleCredentials.fromStream(firebaseCredentials))
                 .setDatabaseUrl(firebaseDatabaseUrl)
                 .build();
 
         firebaseApp = FirebaseApp.initializeApp(options);
     }
 
-    public FirebaseToken validateToken(String firebaseJwt) {
-        try {
-            FirebaseAuth firebaseAuth = FirebaseAuth.getInstance(firebaseApp);
-            Task<FirebaseToken> varifiedToken = firebaseAuth.verifyIdToken(firebaseJwt);
-            Tasks.await(varifiedToken);
-            return varifiedToken.getResult();
-        } catch (Throwable ex) {
-            log.info("Expired token value: " + firebaseJwt);
-            return null;
-        }
+    public FirebaseToken validateToken(String firebaseJwt) throws FirebaseAuthException {
+        return FirebaseAuth.getInstance().verifyIdToken(firebaseJwt);
     }
 
-    public synchronized FirebaseUserProfileDto getUserProfileInfo(String email) {
-        CountDownLatch countDownLatch = new CountDownLatch(1);
-        userProfileDto = null;
-        final FirebaseDatabase database = FirebaseDatabase.getInstance(firebaseApp);
-        DatabaseReference ref = database.getReference("users");
-
-        ref.orderByChild("email").startAt(email).endAt(email).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.getChildrenCount() > 0) {
-                    userProfileDto = dataSnapshot.getChildren().iterator().next().getValue(FirebaseUserProfileDto.class);
-                }
-                countDownLatch.countDown();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                DatabaseError err = databaseError;
-                log.error(err.getMessage());
-                countDownLatch.countDown();
-            }
-        });
-
+    public synchronized UserRecord getUserProfileInfo(String email) {
         try {
-            countDownLatch.await();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            return FirebaseAuth.getInstance().getUserByEmail(email);
+        } catch (FirebaseAuthException e) {
+            throw new UnauthorizedUserException("Failed Firebase authentication.", e);
         }
-
-        return userProfileDto;
     }
 }

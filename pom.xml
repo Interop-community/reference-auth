@@ -32,7 +32,7 @@
         <javax.inject.version>1</javax.inject.version>
         <jjwt.version>0.7.0</jjwt.version>
         <jetty-runner.version>9.4.6.v20170531</jetty-runner.version>
-        <firebase-admin.version>4.1.4</firebase-admin.version>
+        <firebase-admin.version>6.7.0</firebase-admin.version>
         <jasypt.version>1.9.2</jasypt.version>
     </properties>
 
