@@ -24,6 +24,9 @@ The auth server can be run in three modes:
 ### How do I set up?
 This project uses Java 8.  Please make sure that your Project SDK is set to use Java 8.
 
+### Preconditions
+Need a mysql an empty mysql schema named `oic`. The default Character Set for the schema needs to be `Latin1`. This schema will be populated as you start your server.
+
 #### Step 1: Maven Build
 In the terminal, run the following command:
 
