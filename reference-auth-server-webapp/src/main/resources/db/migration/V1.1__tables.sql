@@ -183,7 +183,7 @@ CREATE TABLE IF NOT EXISTS client_details (
 	code_challenge_method VARCHAR(256),
 
 	UNIQUE (client_id)
-) CHARACTER SET latin1;
+);
 
 CREATE TABLE IF NOT EXISTS client_request_uri (
 	owner_id BIGINT,
