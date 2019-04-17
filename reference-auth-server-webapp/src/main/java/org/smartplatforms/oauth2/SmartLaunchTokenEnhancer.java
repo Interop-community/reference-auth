@@ -139,6 +139,7 @@ public class SmartLaunchTokenEnhancer implements TokenEnhancer {
                 customClaims.put("displayName", userInfo.getName());
                 customClaims.put("organizationName", userInfo.getWebsite());
                 customClaims.put("email", userInfo.getEmail());
+                customClaims.put("fhirUser", userInfo.getProfile());
 
                 OAuth2AccessTokenEntity idTokenEntity = connectTokenService.createIdToken(client,
                         originalAuthRequest, claimsBuilder.build().getIssueTime(),
