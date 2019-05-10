@@ -4,6 +4,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
+import com.nimbusds.jose.JOSEObjectType;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jwt.JWT;
@@ -32,6 +33,8 @@ import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 import org.springframework.stereotype.Service;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -88,7 +91,7 @@ public class SmartLaunchTokenEnhancer implements TokenEnhancer {
     };
 
     @Override
-    public OAuth2AccessToken enhance(OAuth2AccessToken accessToken,	OAuth2Authentication authentication)  {
+    public OAuth2AccessToken enhance(OAuth2AccessToken accessToken,	OAuth2Authentication authentication) {
         OAuth2AccessTokenEntity token = (OAuth2AccessTokenEntity) accessToken;
         OAuth2Request originalAuthRequest = authentication.getOAuth2Request();
 
@@ -109,7 +112,16 @@ public class SmartLaunchTokenEnhancer implements TokenEnhancer {
 
         JWSAlgorithm signingAlg = jwtService.getDefaultSigningAlgorithm();
 
-        SignedJWT signed = new SignedJWT(new JWSHeader(signingAlg), claimsBuilder.build());
+        SignedJWT signed;
+        try {
+            signed = new SignedJWT(new JWSHeader(signingAlg, new JOSEObjectType("JWT"), null, null, new URI(configBean.getIssuer() + "jwk"), null, null, null, null, null,
+                    jwtService.getDefaultSignerKeyId(), null, null),
+                    claimsBuilder.build());
+        } catch (URISyntaxException e) {
+            signed = new SignedJWT(new JWSHeader(signingAlg, new JOSEObjectType("JWT"), null, null, null, null, null, null, null, null,
+                    jwtService.getDefaultSignerKeyId(), null, null),
+                    claimsBuilder.build());
+        }
 
         jwtService.signJwt(signed);
 
