@@ -136,7 +136,7 @@ public class SmartLaunchTokenEnhancer implements TokenEnhancer {
          * Also, there must be a user authentication involved in the request for it to be considered
          * OIDC and not OAuth, so we check for that as well.
          */
-        if (originalAuthRequest.getScope().contains(SystemScopeService.OPENID_SCOPE)
+        if ((originalAuthRequest.getScope().contains(SystemScopeService.OPENID_SCOPE) || originalAuthRequest.getScope().contains("fhirUser"))
                 && !authentication.isClientOnly()) {
 
             String username = authentication.getName();
