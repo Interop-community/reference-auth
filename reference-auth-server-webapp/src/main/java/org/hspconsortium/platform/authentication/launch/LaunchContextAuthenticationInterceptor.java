@@ -1,4 +1,5 @@
 package org.hspconsortium.platform.authentication.launch;
+// comment
 
 import org.apache.commons.lang.StringUtils;
 import org.hspconsortium.platform.authorization.launchcontext.LaunchContextHolder;
