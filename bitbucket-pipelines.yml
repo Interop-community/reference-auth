@@ -22,7 +22,7 @@ pipelines:
         - echo "Project Version - ${PROJECT_VERSION}"
         - sed -i -e "s/{{PROJECT_VERSION}}/$PROJECT_VERSION/g" ci/container-definitions_test.json
         - cat ci/container-definitions_test.json
-        - sed -i -e "s/{{CREDENTIALS}}/$ENC_PW_TEST/g" ci/container-definitions_test.json
+        - sed -i -e "s/{{CREDENTIALS}}/${ENC_PW_TEST}/g" ci/container-definitions_test.json
         - cat ci/container-definitions_test.json
         # build docker image and push to docker
         - export IMAGE_NAME=$(cat ci/container-definitions_test.json | jq --raw-output '.[0].image')
