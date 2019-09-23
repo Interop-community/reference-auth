@@ -100,7 +100,7 @@ pipelines:
             - maven
           script:
             - mvn clean verify
-      hotfix/*:
+    hotfix/*:
         - step:
             caches:
               - maven
