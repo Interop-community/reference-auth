@@ -16,7 +16,7 @@
     "environment": [
       {
         "name": "JASYPT_ENCRYPTOR_PASSWORD",
-        "value": "changeme"
+        "value": "{{CREDENTIALS}}"
       },
       {
         "name": "SPRING_PROFILES_ACTIVE",
