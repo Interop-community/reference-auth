@@ -1,0 +1,35 @@
+[
+  {
+    "name": "auth-test",
+    "image": "hspconsortium/auth:{{PROJECT_VERSION}}",
+    "cpu": 0,
+    "portMappings": [
+      {
+        "containerPort": 8060,
+        "hostPort": 0,
+        "protocol": "tcp"
+      }
+    ],
+    "memory": 600,
+    "memoryReservation": 400,
+    "essential": true,
+    "environment": [
+      {
+        "name": "JASYPT_ENCRYPTOR_PASSWORD",
+        "value": "changeme"
+      },
+      {
+        "name": "SPRING_PROFILES_ACTIVE",
+        "value": "test,users-firebase"
+      }
+    ],
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+        "awslogs-group": "/ecs/auth-test",
+        "awslogs-region": "us-west-2",
+        "awslogs-stream-prefix": "ecs"
+      }
+    }
+  }
+]

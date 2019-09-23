@@ -1,187 +1,118 @@
 # This project uses the GitFlow Workflow as defined here:
 #   https://www.atlassian.com/git/tutorials/comparing-workflows#GitFlow-workflow
-image: hspconsortium/hspc-ubuntu-base
-clone:           # the 'clone' section
-  depth: 1       # the depth, in this case the clone will contain last one commits
+image: hspconsortium/ci-base-image:latest
 
 pipelines:
-  default:
-    - step:
-        script:
-          - echo "Please use a GitFlow branch"
-          - exit 1;
   branches:
+    # In the GitFlow Workflow, the develop branch is the main development branch
+    # and the parent to all feature branches.
+    # CD Pipeline:
+    #  - Commits to develop are automatically pushed to dev
+    #  - Commits to develop are released to the maven repo as snapshot versions
     develop:
-      - step:
-          name: Build and push to Test
-          caches:
-            - maven
-          script:
-            # maven test, build and deploy artifact to nexus
-            - export TARGET_ENV=test
-            - export CREDENTIALS=${ENC_PW_TEST}
-            - CONFIG_FILE="../aws/task-config.json"
-            - export PROJECT_NAME="auth"
-            - export PROJECT_FULL_NAME="${PROJECT_NAME}-${TARGET_ENV}"
-            - export PROJECT_VERSION=$(mvn -f ../pom.xml -q -Dexec.executable="echo" -Dexec.args='${project.version}' --non-recursive exec:exec)
-            - export DOCKER_IMAGE_COORDINATES="hspconsortium/${PROJECT_NAME}:${PROJECT_VERSION}"
-            - export SPRING_PROFILES_ACTIVE="${TARGET_ENV},users-firebase"
-            - export TEMPLATE_FILE="../aws/task-definition.json"
-            - export VERSION_SNAPSHOT_REGEX="^[0-9]+\.[0-9]+\.[0-9]+-SNAPSHOT$"
-            - export VERSION_RELEASE_REGEX="^[0-9]+\.[0-9]+\.[0-9]+$"
-            - if [[ ! ${PROJECT_VERSION} =~ ${VERSION_SNAPSHOT_REGEX} ]]; then echo "not a snapshot version"; exit 1; fi
-            # build dynamic container-definitions
-            - jq ".family = \"$PROJECT_FULL_NAME\"" ${TEMPLATE_FILE} > tmp.json && mv tmp.json ${TEMPLATE_FILE}
-            - jq ".containerDefinitions[0].name = \"$PROJECT_FULL_NAME\"" ${TEMPLATE_FILE} > tmp.json && mv tmp.json ${TEMPLATE_FILE}
-            - jq ".containerDefinitions[0].image = \"$DOCKER_IMAGE_COORDINATES\"" ${TEMPLATE_FILE} > tmp.json && mv tmp.json ${TEMPLATE_FILE}
-            - jq ".containerDefinitions[0].logConfiguration.options.\"awslogs-group\" = \"/ecs/$PROJECT_FULL_NAME\"" ${TEMPLATE_FILE} > tmp.json && mv tmp.json ${TEMPLATE_FILE}
-            - jq "(.containerDefinitions[0].environment[] | select(.name == \"JASYPT_ENCRYPTOR_PASSWORD\") | .value) |= \""${CREDENTIALS}"\"" ${TEMPLATE_FILE} > tmp.json && mv tmp.json ${TEMPLATE_FILE}
-            - jq "(.containerDefinitions[0].environment[] | select(.name == \"SPRING_PROFILES_ACTIVE\") | .value) |= \"${SPRING_PROFILES_ACTIVE}\"" ${TEMPLATE_FILE} > tmp.json && mv tmp.json ${TEMPLATE_FILE}
-            - cat ${TEMPLATE_FILE}
-            # build docker image and push to nexus
-            - mvn -V -B -f ../pom.xml -s ../settings.xml deploy -P DEPLOY-HSPC,hspc-nexus
-            - rc=$?
-            - if [[ ${rc} -ne 0 ]] ; then echo 'mvn build failed'; exit $rc; fi
-            - rm ../reference-auth-server-webapp/target/*-sources.jar
-            - rm ../reference-auth-server-webapp/target/*-javadoc.jar
-            - docker login -u ${DOCKER_HUB_USERNAME} -p ${DOCKER_HUB_PASSWORD}
-            - cd ../docker; ./build.sh $DOCKER_IMAGE_COORDINATES
-            - cd ../ci
-            - echo "docker push..."
-            - docker push "$DOCKER_IMAGE_COORDINATES"
-            # register the ECS task definition and capture the version ?? ASK
-            - export TASK_VERSION=$(aws ecs register-task-definition --execution-role-arn arn:aws:iam::888922156537:role/ecsTaskExecutionRole --family interopio-auth-td --container-definitions $(cat ci/container-definitions_dev.json | jq -c '.')  | jq --raw-output '.taskDefinition.revision')
-            - echo "Registered ECS Task Definition - " $TASK_VERSION
-            - echo $(aws ecs register-task-definition --region us-west-2 --family ${PROJECT_FULL_NAME} --cli-input-json file://${TEMPLATE_FILE})
-            # get the most recent task definition (assumes the task definition was just added)
-            - export AWS_TASK_DEFINITION=$(aws ecs describe-task-definition --region us-west-2 --task-definition ${PROJECT_FULL_NAME})
-            - export AWS_TASK_REVISION=$(echo ${AWS_TASK_DEFINITION} | jq --raw-output '.taskDefinition.revision')
-            # update the service to this task definition
-            - echo $(aws ecs update-service --region us-west-2 --cluster hspc-${TARGET_ENV} --service ${PROJECT_FULL_NAME} --task-definition ${PROJECT_FULL_NAME}:${AWS_TASK_REVISION})
-          artifacts:
-            - reference-auth-server-webapp/target/*.war
-            - reference-auth-server-webapp/target/dependency/jetty-runner.jar
-            - aws/task-definition.json
-      - step:
-          name: Create Release (this will cause the master branch to build and release to STAGE)
-          caches:
-            - maven
-          trigger: manual
-          script:
-            # This mess of bash commands implements the gitflow release process
-            - export PROJECT_VERSION=$(mvn -q -Dexec.executable="echo" -Dexec.args='${project.version}' --non-recursive exec:exec)
-            - export RELEASE_VERSION=$(echo $PROJECT_VERSION | cut -d '-' -f 1)
-            - MAJOR_VER=$(echo $RELEASE_VERSION | cut -d "." -f 1) && MINOR_VER=$(echo $RELEASE_VERSION | cut -d "." -f 2) && PATCH_VER=$(echo $RELEASE_VERSION | cut -d "." -f 3) && NEXT_PATCH_VER=$((PATCH_VER+1)) && export NEXT_VERSION=$MAJOR_VER.$MINOR_VER.$NEXT_PATCH_VER-SNAPSHOT
-            #- git fetch --unshallow
-            - git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
-            - git fetch origin
-            - git checkout -b release/$RELEASE_VERSION
-            - cat pom.xml
-            - xmlstarlet ed -P -N my=http://maven.apache.org/POM/4.0.0 -u my:project/my:version -v $RELEASE_VERSION pom.xml | sponge pom.xml
-            - cat pom.xml
-            - git add .
-            - git commit -m "Incrementing to next release version $RELEASE_VERSION"
-            - git checkout -b master origin/master
-            - git merge release/$RELEASE_VERSION
-            - git tag $RELEASE_VERSION
-            - git push origin master
-            - git push origin $RELEASE_VERSION
-            - git checkout develop
-            - git merge release/$RELEASE_VERSION
-            - cat pom.xml
-            - xmlstarlet ed -P -N my=http://maven.apache.org/POM/4.0.0 -u my:project/my:version -v $NEXT_VERSION pom.xml | sponge pom.xml
-            - cat pom.xml
-            - git add .
-            - git commit -m "Incrementing to next snapshot version $NEXT_VERSION"
-            - git push origin develop
+    - step:
+        name: Build and push to Test
+        script:
+        # maven test, build and deploy artifact to maven-snapshots
+#        - mvn -V -B -s ci/settings.xml deploy
+        # run sonar analysis
+#        - mvn sonar:sonar -Dsonar.host.url=$SONAR_URL -Dsonar.login=$SONAR_KEY -Dsonar.projectName=HSPConsortium-Auth-Server
+        # build dynamic container-definitions
+        - export PROJECT_VERSION=$(mvn -q -Dexec.executable="echo" -Dexec.args='${project.version}' --non-recursive exec:exec)
+        - echo "Project Version - " $PROJECT_VERSION
+        - sed -i -e "s/{{PROJECT_VERSION}}/$PROJECT_VERSION/g" ci/container-definitions_test.json
+        - cat ci/container-definitions_test.json
+        # build docker image and push to docker
+        - export IMAGE_NAME=$(cat ci/container-definitions_test.json | jq --raw-output '.[0].image')
+        - docker login -u $NEXUS_USR -p $NEXUS_PWD
+        - docker build -t $IMAGE_NAME .
+        - docker push $IMAGE_NAME
+        # register the ECS task definition and capture the version
+        - jq "(.containerDefinitions[0].environment[] | select(.name == \"JASYPT_ENCRYPTOR_PASSWORD\") | .value) |= \""${CREDENTIALS}"\"" ci/container-definitions_test.json > tmp.json && mv tmp.json ci/container-definitions_test.json
+        - cat ci/container-definitions_test.json
+        - export TASK_VERSION=$(aws ecs register-task-definition --region us-west-2 --family auth-test --container-definitions $(cat ../ci/container-definitions_test.json | jq -c '.')  | jq --raw-output '.taskDefinition.revision')
+        - echo "Registered ECS Task Definition - " $TASK_VERSION
+        # update the service to use the latest task definition
+        - aws ecs update-service --cluster hspc-test --service auth-test --task-definition auth-test:$TASK_VERSION
+    - step:
+        name: Create Release (this will cause the master branch to build and release to test)
+        trigger: manual
+        script:
+        # This mess of bash commands implements the gitflow release process
+        - export PROJECT_VERSION=$(mvn -q -Dexec.executable="echo" -Dexec.args='${project.version}' --non-recursive exec:exec)
+        - export RELEASE_VERSION=$(echo $PROJECT_VERSION | cut -d '-' -f 1)
+        - MAJOR_VER=$(echo $RELEASE_VERSION | cut -d "." -f 1) && MINOR_VER=$(echo $RELEASE_VERSION | cut -d "." -f 2) && PATCH_VER=$(echo $RELEASE_VERSION | cut -d "." -f 3) && NEXT_PATCH_VER=$((PATCH_VER+1)) && export NEXT_VERSION=$MAJOR_VER.$MINOR_VER.$NEXT_PATCH_VER-SNAPSHOT
+        #- git fetch --unshallow
+        - git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
+        - git fetch origin
+        - git checkout -b release/$RELEASE_VERSION
+        - cat pom.xml
+        - xmlstarlet ed -P -N my=http://maven.apache.org/POM/4.0.0 -u my:project/my:version -v $RELEASE_VERSION pom.xml | sponge pom.xml
+        - cat pom.xml
+        - git add .
+        - git commit -m "Incremeinting to next release version $RELEASE_VERSION"
+        - git checkout -b master origin/master
+        - git merge release/$RELEASE_VERSION
+        - git tag $RELEASE_VERSION
+        - git push origin master
+        - git push origin $RELEASE_VERSION
+        - git checkout develop
+        - git merge release/$RELEASE_VERSION
+        - cat pom.xml
+        - xmlstarlet ed -P -N my=http://maven.apache.org/POM/4.0.0 -u my:project/my:version -v $NEXT_VERSION pom.xml | sponge pom.xml
+        - cat pom.xml
+        - git add .
+        - git commit -m "Incrementing to next snapshot version $NEXT_VERSION"
+        - git push origin develop
     feature/*:
-      - step:
-          caches:
-            - maven
-          script:
-            - mvn clean verify
+    - step:
+        caches:
+        - maven
+        script:
+        - mvn clean verify
     hotfix/*:
-        - step:
-            caches:
-              - maven
-            script:
-              - mvn clean verify
+    - step:
+        caches:
+        - maven
+        script:
+        - mvn clean verify
     master:
-      - step:
-          caches:
-            - maven
-          name: Deploy to stage
-          deployment: stage
-          script:
-            # maven test, build and deploy artifact to nexus
-            - export TARGET_ENV=stage
-            - export CREDENTIALS=${ENC_PW_STAGE}
-            - CONFIG_FILE="../aws/task-config.json"
-            - export PROJECT_NAME="auth"
-            - export PROJECT_FULL_NAME="${PROJECT_NAME}-${TARGET_ENV}"
-            - export PROJECT_VERSION=$(mvn -f ../pom.xml -q -Dexec.executable="echo" -Dexec.args='${project.version}' --non-recursive exec:exec)
-            - export DOCKER_IMAGE_COORDINATES="hspconsortium/${PROJECT_NAME}:${PROJECT_VERSION}"
-            - export SPRING_PROFILES_ACTIVE="${TARGET_ENV},users-firebase"
-            - export TEMPLATE_FILE="../aws/task-definition.json"
-            - export VERSION_SNAPSHOT_REGEX="^[0-9]+\.[0-9]+\.[0-9]+-SNAPSHOT$"
-            - export VERSION_RELEASE_REGEX="^[0-9]+\.[0-9]+\.[0-9]+$"
-            - if [[ ! ${PROJECT_VERSION} =~ ${VERSION_RELEASE_REGEX} ]]; then echo "not a release version"; exit 1; fi
-            # build dynamic container-definitions
-            - jq ".family = \"$PROJECT_FULL_NAME\"" ${TEMPLATE_FILE} > tmp.json && mv tmp.json ${TEMPLATE_FILE}
-            - jq ".containerDefinitions[0].name = \"$PROJECT_FULL_NAME\"" ${TEMPLATE_FILE} > tmp.json && mv tmp.json ${TEMPLATE_FILE}
-            - jq ".containerDefinitions[0].image = \"$DOCKER_IMAGE_COORDINATES\"" ${TEMPLATE_FILE} > tmp.json && mv tmp.json ${TEMPLATE_FILE}
-            - jq ".containerDefinitions[0].logConfiguration.options.\"awslogs-group\" = \"/ecs/$PROJECT_FULL_NAME\"" ${TEMPLATE_FILE} > tmp.json && mv tmp.json ${TEMPLATE_FILE}
-            - jq "(.containerDefinitions[0].environment[] | select(.name == \"JASYPT_ENCRYPTOR_PASSWORD\") | .value) |= \""${CREDENTIALS}"\"" ${TEMPLATE_FILE} > tmp.json && mv tmp.json ${TEMPLATE_FILE}
-            - jq "(.containerDefinitions[0].environment[] | select(.name == \"SPRING_PROFILES_ACTIVE\") | .value) |= \"${SPRING_PROFILES_ACTIVE}\"" ${TEMPLATE_FILE} > tmp.json && mv tmp.json ${TEMPLATE_FILE}
-            - cat ${TEMPLATE_FILE}
-            # build docker image and push to nexus
-            - mvn -V -B -f ../pom.xml -s ../settings.xml deploy -P DEPLOY-HSPC,hspc-nexus
-            - rc=$?
-            - if [[ ${rc} -ne 0 ]] ; then echo 'mvn build failed'; exit $rc; fi
-            - rm ../reference-auth-server-webapp/target/*-sources.jar
-            - rm ../reference-auth-server-webapp/target/*-javadoc.jar
-            - docker login -u ${DOCKER_HUB_USERNAME} -p ${DOCKER_HUB_PASSWORD}
-            - cd ../docker; ./build.sh $DOCKER_IMAGE_COORDINATES
-            - cd ../ci
-            - echo "docker push..."
-            - docker push "$DOCKER_IMAGE_COORDINATES"
-            # register the ECS task definition and capture the version ?? ASK
-            - export TASK_VERSION=$(aws ecs register-task-definition --execution-role-arn arn:aws:iam::888922156537:role/ecsTaskExecutionRole --family interopio-auth-td --container-definitions $(cat ci/container-definitions_dev.json | jq -c '.')  | jq --raw-output '.taskDefinition.revision')
-            - echo "Registered ECS Task Definition - " $TASK_VERSION
-            - echo $(aws ecs register-task-definition --region us-west-2 --family ${PROJECT_FULL_NAME} --cli-input-json file://${TEMPLATE_FILE})
-            # get the most recent task definition (assumes the task definition was just added)
-            - export AWS_TASK_DEFINITION=$(aws ecs describe-task-definition --region us-west-2 --task-definition ${PROJECT_FULL_NAME})
-            - export AWS_TASK_REVISION=$(echo ${AWS_TASK_DEFINITION} | jq --raw-output '.taskDefinition.revision')
-            # update the service to this task definition
-            - echo $(aws ecs update-service --region us-west-2 --cluster hspc-${TARGET_ENV} --service ${PROJECT_FULL_NAME} --task-definition ${PROJECT_FULL_NAME}:${AWS_TASK_REVISION})
-          artifacts:
-            - reference-auth-server-webapp/target/*.war
-            - reference-auth-server-webapp/target/dependency/jetty-runner.jar
-            - aws/task-definition.json
-      - step:
-          caches:
-            - maven
-          name: Deploy to Prod
-          deployment: production
-          trigger: manual
-          script:
-            # build dynamic container-definitions
-            - jq ".family = \"$PROJECT_FULL_NAME\"" ${TEMPLATE_FILE} > tmp.json && mv tmp.json ${TEMPLATE_FILE}
-            - jq ".containerDefinitions[0].name = \"$PROJECT_FULL_NAME\"" ${TEMPLATE_FILE} > tmp.json && mv tmp.json ${TEMPLATE_FILE}
-            - jq ".containerDefinitions[0].image = \"$DOCKER_IMAGE_COORDINATES\"" ${TEMPLATE_FILE} > tmp.json && mv tmp.json ${TEMPLATE_FILE}
-            - jq ".containerDefinitions[0].logConfiguration.options.\"awslogs-group\" = \"/ecs/$PROJECT_FULL_NAME\"" ${TEMPLATE_FILE} > tmp.json && mv tmp.json ${TEMPLATE_FILE}
-            - jq "(.containerDefinitions[0].environment[] | select(.name == \"JASYPT_ENCRYPTOR_PASSWORD\") | .value) |= \""${CREDENTIALS}"\"" ${TEMPLATE_FILE} > tmp.json && mv tmp.json ${TEMPLATE_FILE}
-            - jq "(.containerDefinitions[0].environment[] | select(.name == \"SPRING_PROFILES_ACTIVE\") | .value) |= \"${SPRING_PROFILES_ACTIVE}\"" ${TEMPLATE_FILE} > tmp.json && mv tmp.json ${TEMPLATE_FILE}
-            - cat ${TEMPLATE_FILE}
-            # register the ECS task definition and capture the version ?? ASK
-            - export TASK_VERSION=$(aws ecs register-task-definition --execution-role-arn arn:aws:iam::888922156537:role/ecsTaskExecutionRole --family interopio-auth-prod-td --container-definitions $(cat ./ci/container-definitions_prod.json | jq -c '.')  | jq --raw-output '.taskDefinition.revision')
-            - echo "Task definition:" $TASK_VERSION
-            - echo $(aws ecs register-task-definition --region us-west-2 --family ${PROJECT_FULL_NAME} --cli-input-json file://${TEMPLATE_FILE})
-            # get the most recent task definition (assumes the task definition was just added)
-            - export AWS_TASK_DEFINITION=$(aws ecs describe-task-definition --region us-west-2 --task-definition ${PROJECT_FULL_NAME})
-            - export AWS_TASK_REVISION=$(echo ${AWS_TASK_DEFINITION} | jq --raw-output '.taskDefinition.revision')
-            # update the service to this task definition
-            - echo $(aws ecs update-service --region us-west-2 --cluster hspc-${TARGET_ENV} --service ${PROJECT_FULL_NAME} --task-definition ${PROJECT_FULL_NAME}:${AWS_TASK_REVISION})
+    - step:
+        caches:
+        - maven
+        name: Deploy to test
+        deployment: test
+        script:
+        # maven test, build and deploy artifact to nexus.interopion.com/maven-snapshots
+        - mvn -V -B -s ci/settings.xml deploy
+        # build dynamic container-definitions
+        - export PROJECT_VERSION=$(mvn -q -Dexec.executable="echo" -Dexec.args='${project.version}' --non-recursive exec:exec)
+        - sed -i -e "s/{{PROJECT_VERSION}}/$PROJECT_VERSION/g" ci/container-definitions_stage.json
+        # build docker image and push to nexus.interopion.com:18083 (docker-interopion)
+        - export IMAGE_NAME=$(cat ci/container-definitions_stage.json | jq --raw-output '.[0].image')
+        - docker login -u $NEXUS_USR -p $NEXUS_PWD nexus.interopion.com:18083
+        - docker build -t $IMAGE_NAME .
+        - docker push $IMAGE_NAME
+        # register the ECS task definition and capture the version
+        - export TASK_VERSION=$(aws ecs register-task-definition --execution-role-arn arn:aws:iam::888922156537:role/ecsTaskExecutionRole --family interopio-auth-test-td --container-definitions $(cat ci/container-definitions_stage.json | jq -c '.')  | jq --raw-output '.taskDefinition.revision')
+        - echo "Registered ECS Task Definition - " $TASK_VERSION
+        # update the service to use the latest task definition
+        - aws ecs update-service --cluster interopio-test --service interopio-auth-test-sv --task-definition interopio-auth-test-td:$TASK_VERSION
+    - step:
+        caches:
+        - maven
+        name: Deploy to Prod
+        deployment: production
+        trigger: manual
+        script:
+        # build dynamic container-definitions
+        - export PROJECT_VERSION=$(mvn -q -Dexec.executable="echo" -Dexec.args='${project.version}' --non-recursive exec:exec)
+        - sed -i -e "s/{{PROJECT_VERSION}}/$PROJECT_VERSION/g" ci/container-definitions_prod.json
+        # register the ECS task definition and capture the version
+        - export TASK_VERSION=$(aws ecs register-task-definition --execution-role-arn arn:aws:iam::888922156537:role/ecsTaskExecutionRole --family interopio-auth-prod-td --container-definitions $(cat ./ci/container-definitions_prod.json | jq -c '.')  | jq --raw-output '.taskDefinition.revision')
+        - echo "Task definition:" $TASK_VERSION
+        # update the service to use the latest task definition
+        - aws ecs update-service --cluster interopio-prod --service interopio-auth-prod-sv --task-definition interopio-auth-prod-td:$TASK_VERSION
 
 options:
   docker: true
