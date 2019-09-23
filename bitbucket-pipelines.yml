@@ -19,17 +19,17 @@ pipelines:
 #        - mvn sonar:sonar -Dsonar.host.url=$SONAR_URL -Dsonar.login=$SONAR_KEY -Dsonar.projectName=HSPConsortium-Auth-Server
         # build dynamic container-definitions
         - export PROJECT_VERSION=$(mvn -q -Dexec.executable="echo" -Dexec.args='${project.version}' --non-recursive exec:exec)
-        - echo "Project Version - " $PROJECT_VERSION
+        - echo "Project Version - ${PROJECT_VERSION}"
         - sed -i -e "s/{{PROJECT_VERSION}}/$PROJECT_VERSION/g" ci/container-definitions_test.json
+        - cat ci/container-definitions_test.json
+        - jq "(.containerDefinitions[0].environment[] | select(.name == \"JASYPT_ENCRYPTOR_PASSWORD\") | .value) |= \""${CREDENTIALS}"\"" ci/container-definitions_test.json > tmp.json && mv tmp.json ci/container-definitions_test.json
         - cat ci/container-definitions_test.json
         # build docker image and push to docker
         - export IMAGE_NAME=$(cat ci/container-definitions_test.json | jq --raw-output '.[0].image')
-        - docker login -u $NEXUS_USR -p $NEXUS_PWD
+        - docker login -u $DOCKER_HUB_USERNAME -p $DOCKER_HUB_PASSWORD
         - docker build -t $IMAGE_NAME .
         - docker push $IMAGE_NAME
         # register the ECS task definition and capture the version
-        - jq "(.containerDefinitions[0].environment[] | select(.name == \"JASYPT_ENCRYPTOR_PASSWORD\") | .value) |= \""${CREDENTIALS}"\"" ci/container-definitions_test.json > tmp.json && mv tmp.json ci/container-definitions_test.json
-        - cat ci/container-definitions_test.json
         - export TASK_VERSION=$(aws ecs register-task-definition --region us-west-2 --family auth-test --container-definitions $(cat ../ci/container-definitions_test.json | jq -c '.')  | jq --raw-output '.taskDefinition.revision')
         - echo "Registered ECS Task Definition - " $TASK_VERSION
         # update the service to use the latest task definition
