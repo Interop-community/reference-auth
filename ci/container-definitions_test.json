@@ -16,7 +16,7 @@
     "environment": [
       {
         "name": "JASYPT_ENCRYPTOR_PASSWORD",
-        "value": "{{CREDENTIALS}}"
+        "valueFrom": "arn:aws:secretsmanager:us-west-2:657600230790:secret:hspconsortium/test/master-encryption-key-Ji0AKX"
       },
       {
         "name": "SPRING_PROFILES_ACTIVE",
