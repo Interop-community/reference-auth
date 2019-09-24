@@ -20,7 +20,8 @@ pipelines:
         # build dynamic container-definitions
         - export PROJECT_VERSION=$(mvn -q -Dexec.executable="echo" -Dexec.args='${project.version}' --non-recursive exec:exec)
         - echo "Project Version - ${PROJECT_VERSION}"
-        - export CREDENTIALS="${ENC_PW_ESC_TEST}"
+        - export CREDENTIALS=${ENC_PW_ESC_TEST}
+        - echo "ENC_PW_ESC_TEST - ${ENC_PW_ESC_TEST}"
         - echo "CREDENTIALS - ${CREDENTIALS}"
         - sed -i -e "s/{{PROJECT_VERSION}}/$PROJECT_VERSION/g" ci/container-definitions_test.json
         - cat ci/container-definitions_test.json
