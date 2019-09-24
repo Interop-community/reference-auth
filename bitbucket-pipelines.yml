@@ -23,7 +23,7 @@ pipelines:
         - cat ci/container-definitions_test.json
         # build docker image and push to docker
         - export IMAGE_NAME=$(cat ci/container-definitions_test.json | jq --raw-output '.[0].image')
-        - echo "IMAGE_NAME: $IMAGE_NAME"
+        - echo "image name - $IMAGE_NAME"
         - docker login -u $DOCKER_HUB_USERNAME -p $DOCKER_HUB_PASSWORD
         - docker build -t $IMAGE_NAME .
         - docker push $IMAGE_NAME
