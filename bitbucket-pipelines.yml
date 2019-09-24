@@ -19,10 +19,11 @@ pipelines:
 #        - mvn sonar:sonar -Dsonar.host.url=$SONAR_URL -Dsonar.login=$SONAR_KEY -Dsonar.projectName=HSPConsortium-Auth-Server
         # build dynamic container-definitions
         - export PROJECT_VERSION=$(mvn -q -Dexec.executable="echo" -Dexec.args='${project.version}' --non-recursive exec:exec)
+        - export CREDENTIALS=$ENC_PW_ESC_TEST
         - echo "Project Version - ${PROJECT_VERSION}"
         - sed -i -e "s/{{PROJECT_VERSION}}/$PROJECT_VERSION/g" ci/container-definitions_test.json
         - cat ci/container-definitions_test.json
-        - sed -i -e "s/{{CREDENTIALS}}/$(ENC_PW_ESC_TEST)/g" ci/container-definitions_test.json
+        - sed -i -e "s/{{CREDENTIALS}}/${CREDENTIALS}/g" ci/container-definitions_test.json
         - cat ci/container-definitions_test.json
         # build docker image and push to docker
         - export IMAGE_NAME=$(cat ci/container-definitions_test.json | jq --raw-output '.[0].image')
