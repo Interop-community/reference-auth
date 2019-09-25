@@ -14,7 +14,7 @@ pipelines:
         name: Build and push to Test
         script:
         # maven test, build and deploy artifact to maven-snapshots
-        - mvn -V -B -s ci/settings.xml deploy
+        - mvn -V -B -s ci/settings.xml deploy -P DEPLOY-HSPC,hspc-nexus
         # run sonar analysis
 #        - mvn sonar:sonar -Dsonar.host.url=$SONAR_URL -Dsonar.login=$SONAR_KEY -Dsonar.projectName=HSPConsortium-Auth-Server
         # build dynamic container-definitions
