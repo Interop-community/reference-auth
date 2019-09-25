@@ -13,11 +13,13 @@
     "memory": 600,
     "memoryReservation": 400,
     "essential": true,
-    "environment": [
+    "secrets": [
       {
         "name": "JASYPT_ENCRYPTOR_PASSWORD",
         "valueFrom": "arn:aws:secretsmanager:us-west-2:657600230790:secret:hspconsortium/test/master-encryption-key-Ji0AKX"
-      },
+      }
+    ],
+    "environment": [
       {
         "name": "SPRING_PROFILES_ACTIVE",
         "value": "test,users-firebase"
