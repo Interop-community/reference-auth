@@ -1,6 +1,6 @@
 FROM openjdk:11-jdk
 
-ADD reference-auth-server-webapp/target/hspc-reference-auth-server-webapp.war app.war
+ADD reference-auth-server-webapp/target/hspc-reference-auth-server-webapp*.war app.war
 
 ADD reference-auth-server-webapp/target/dependency/jetty-runner.jar  jetty-runner.jar
 #ADD reference-auth-server-webapp/src/main/resources/jetty-ssl.xml jetty-ssl.xml
