@@ -11,5 +11,5 @@ ADD reference-auth-server-webapp/src/main/resources/jetty.xml jetty.xml
 #ADD ci/keystore-gen.sh pre-run.sh
 #RUN chmod +x pre-run.sh
 
-#ENTRYPOINT [ "sh", "-c", "./pre-run.sh && java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar jetty-runner.jar --config jetty-ssl.xml --path /auth app.war" ]
-ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar jetty-runner.jar --config jetty.xml --path /auth app.war" ]
+#ENTRYPOINT [ "sh", "-c", "./pre-run.sh && java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar jetty-runner.jar --config jetty-ssl.xml app.war" ]
+ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar jetty-runner.jar --config jetty.xml app.war" ]
