@@ -38,5 +38,8 @@
   <beans profile="users-firebase">
     <import resource="user-context-firebase.xml"/>
   </beans>
+  <beans profile="users-keycloak">
+    <import resource="user-context-keycloak.xml"/>
+  </beans>
 
 </beans>
