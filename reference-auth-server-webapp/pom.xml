@@ -197,6 +197,20 @@
             <artifactId>keycloak-spring-security-adapter</artifactId>
         </dependency>
 
+        <!--&lt;!&ndash;Solves JpaTransactionManager class not found&ndash;&gt;-->
+        <!--<dependency>-->
+            <!--<groupId>org.springframework</groupId>-->
+            <!--<artifactId>spring-orm</artifactId>-->
+            <!--<version>5.2.0.RELEASE</version>-->
+        <!--</dependency>-->
+
+        <!--&lt;!&ndash;Solves PersistenceProvider  &ndash;&gt;-->
+        <!--<dependency>-->
+            <!--<groupId>org.eclipse.persistence</groupId>-->
+            <!--<artifactId>org.eclipse.persistence.jpa</artifactId>-->
+            <!--<version>2.7.4</version>-->
+        <!--</dependency>-->
+
     </dependencies>
 
     <build>
@@ -230,7 +244,6 @@
                     <jettyXml>src/main/resources/jetty.xml</jettyXml>
                     <webAppConfig>
                         <allowDuplicateFragmentNames>true</allowDuplicateFragmentNames>
-                        <contextPath>/auth</contextPath>
                     </webAppConfig>
                 </configuration>
             </plugin>

@@ -33,7 +33,7 @@
         <mockito.version>1.9.5</mockito.version>
         <javax.inject.version>1</javax.inject.version>
         <jjwt.version>0.7.0</jjwt.version>
-        <jetty.version>9.4.6.v20170531</jetty.version>
+        <jetty.version>9.4.21.v20190926</jetty.version>
         <firebase-admin.version>6.7.0</firebase-admin.version>
         <jasypt.version>1.9.2</jasypt.version>
     </properties>
@@ -170,6 +170,18 @@
                 <artifactId>jackson-databind</artifactId>
                 <version>2.9.9</version>
             </dependency>
+            <!--&lt;!&ndash;Solves JpaTransactionManager class not found&ndash;&gt;-->
+            <!--<dependency>-->
+                <!--<groupId>org.springframework</groupId>-->
+                <!--<artifactId>spring-orm</artifactId>-->
+                <!--<version>5.2.0.RELEASE</version>-->
+            <!--</dependency>-->
+            <!--&lt;!&ndash;Solves PersistenceProvider  &ndash;&gt;-->
+            <!--<dependency>-->
+                <!--<groupId>org.eclipse.persistence</groupId>-->
+                <!--<artifactId>org.eclipse.persistence.jpa</artifactId>-->
+                <!--<version>2.7.4</version>-->
+            <!--</dependency>-->
         </dependencies>
     </dependencyManagement>
 </project>

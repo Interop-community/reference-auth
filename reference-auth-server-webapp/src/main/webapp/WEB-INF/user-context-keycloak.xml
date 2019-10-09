@@ -1,28 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:security="http://www.springframework.org/schema/security"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="
-       http://www.springframework.org/schema/beans
-       http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://www.springframework.org/schema/context
-       http://www.springframework.org/schema/context/spring-context.xsd
-       http://www.springframework.org/schema/security
-       http://www.springframework.org/schema/security/spring-security.xsd">
+       xmlns:oauth="http://www.springframework.org/schema/security/oauth2"
+       xsi:schemaLocation="http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2-2.0.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
 
-    <context:component-scan base-package="org.keycloak.adapters.springsecurity" />
+    <context:component-scan annotation-config="true"
+                            base-package="org.mitre, org.hspconsortium.platform, org.smartplatforms, org.keycloak.adapters.springsecurity"/>
+
+<!--
+    <bean id="localUserInfoRepository" primary="true"
+          class="org.hspconsortium.platform.authorization.repository.impl.LocalUserInfoRepository">
+    </bean>
+-->
 
     <security:authentication-manager alias="authenticationManager">
-        <security:authentication-provider ref="keycloakAuthenticationProvider" />
+        <security:authentication-provider ref="keycloakAuthenticationProvider"/>
     </security:authentication-manager>
 
     <bean id="adapterDeploymentContext" class="org.keycloak.adapters.springsecurity.AdapterDeploymentContextFactoryBean">
-        <constructor-arg value="/WEB-INF/keycloak.json" />
+        <constructor-arg value="/WEB-INF/keycloak-local.json" />
     </bean>
 
     <bean id="keycloakAuthenticationEntryPoint" class="org.keycloak.adapters.springsecurity.authentication.KeycloakAuthenticationEntryPoint">
-        <constructor-arg ref="adapterDeploymentContext"></constructor-arg>
+        <constructor-arg index="0" value="adapterDeploymentContext" />
+        <constructor-arg index="1" value="apiRequestMatcher" />
     </bean>
     <bean id="keycloakAuthenticationProvider" class="org.keycloak.adapters.springsecurity.authentication.KeycloakAuthenticationProvider" />
     <bean id="keycloakPreAuthActionsFilter" class="org.keycloak.adapters.springsecurity.filter.KeycloakPreAuthActionsFilter" />
@@ -57,4 +67,32 @@
         <security:intercept-url pattern="/admin**" access="ROLE_ADMIN" />
         <security:custom-filter ref="logoutFilter" position="LOGOUT_FILTER" />
     </security:http>
+
+
+    <mvc:view-controller path="/login" view-name="login"/>
+
+<!--
+    <bean id="logoutSuccessHandler"
+          class="org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler">
+        <property name="targetUrlParameter" value="${LOGOUT_SUCCESS_URL_PROPERTY}"/>
+    </bean>
+-->
+
+<!--
+    <security:http authentication-manager-ref="authenticationManager" disable-url-rewriting="true"
+                   use-expressions="true">
+        <security:form-login login-page="/login" authentication-failure-url="/login?error=failure"
+                             authentication-success-handler-ref="authenticationTimeStamper"/>
+        <security:intercept-url pattern="/**" access="permitAll"/>
+        <security:custom-filter ref="authRequestFilter" after="SECURITY_CONTEXT_FILTER"/>
+        <security:logout logout-url="/logout" success-handler-ref="logoutSuccessHandler"/>
+        <security:anonymous/>
+        <security:expression-handler ref="oauthWebExpressionHandler"/>
+        <security:headers>
+            &lt;!&ndash; allow the sandbox manager to launch in embedded mode &ndash;&gt;
+            <security:frame-options disabled="true"/>
+        </security:headers>
+    </security:http>
+-->
+
 </beans>
