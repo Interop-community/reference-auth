@@ -11,7 +11,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 @Controller
-@Profile("users-firebase")
+@Profile("users-keycloak")
 public class LoginController {
 
     @Value("${hspc.platform.accountLoginPage}")

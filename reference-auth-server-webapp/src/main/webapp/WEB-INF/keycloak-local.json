@@ -20,15 +20,11 @@
   "connection-pool-size" : 20,
   "disable-trust-manager": false,
   "allow-any-hostname" : false,
-  "truststore" : "path/to/truststore.jks",
-  "truststore-password" : "geheim",
-  "client-keystore" : "path/to/client-keystore.jks",
-  "client-keystore-password" : "geheim",
-  "client-key-password" : "geheim",
-  "token-minimum-time-to-live" : 10,
-  "min-time-between-jwks-requests" : 10,
-  "public-key-cache-ttl": 86400,
-  "redirect-rewrite-rules" : {
-    "^/wsmaster/api/(.*)$" : "/api/$1"
+  "truststore" : "keycloak.jks",
+  "truststore-password" : "secret",
+  "token-store" : "cookie",
+  "principal-attribute": "sub, preferred_username, email, name",
+  "token-minimum-time-to-live" : 250,
+  "verify-token-audience" : "true"
   }
 }
