@@ -225,7 +225,7 @@
                     <jettyXml>src/main/resources/jetty.xml</jettyXml>
                     <webAppConfig>
                         <allowDuplicateFragmentNames>true</allowDuplicateFragmentNames>
-                        <contextPath>/auth</contextPath>
+                        <!--<contextPath>/auth</contextPath>-->
                     </webAppConfig>
                 </configuration>
             </plugin>
