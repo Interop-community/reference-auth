@@ -197,6 +197,12 @@
             <artifactId>keycloak-spring-security-adapter</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.googlecode.json-simple</groupId>
+            <artifactId>json-simple</artifactId>
+            <version>1.1.1</version>
+        </dependency>
+
         <!--&lt;!&ndash;Solves JpaTransactionManager class not found&ndash;&gt;-->
         <!--<dependency>-->
             <!--<groupId>org.springframework</groupId>-->
@@ -347,6 +353,42 @@
                 </configuration>
             </plugin>
 -->
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifestFile>WEB-INF/MANIFEST.MF</manifestFile>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <!--This plugin was added to override/load our version of the openid-connect-common-SimpleGrantedAuthorityStringConverter class-->
+            <plugin>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.2</version>
+                <executions>
+                    <execution>
+                        <id>shade</id>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <phase>package</phase>
+                        <configuration>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <filters>
+                                <filter>
+                                    <artifact>org.mitre:openid-connect-common</artifact>
+                                    <excludes>
+                                        <exclude>org.mitre.oauth2.model.convert.SimpleGrantedAuthorityStringConverter</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 </project>

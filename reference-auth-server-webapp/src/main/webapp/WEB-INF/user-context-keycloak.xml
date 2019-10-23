@@ -1,43 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:mvc="http://www.springframework.org/schema/mvc"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:tx="http://www.springframework.org/schema/tx"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:security="http://www.springframework.org/schema/security"
-       xmlns:oauth="http://www.springframework.org/schema/security/oauth2"
-       xsi:schemaLocation="http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2-2.0.xsd
-		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
-		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.2.xsd
-		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
-		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd
-		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/security
+       http://www.springframework.org/schema/security/spring-security.xsd">
 
     <context:component-scan annotation-config="true"
                             base-package="org.mitre, org.hspconsortium.platform, org.smartplatforms, org.keycloak.adapters.springsecurity"/>
 
-<!--
-    <bean id="localUserInfoRepository" primary="true"
-          class="org.hspconsortium.platform.authorization.repository.impl.LocalUserInfoRepository">
+    <bean id="keycloakUserInfoRepository" primary="true"
+          class="org.hspconsortium.platform.authorization.repository.impl.KeycloakUserInfoRepository">
     </bean>
--->
 
-    <security:authentication-manager alias="authenticationManager">
+    <security:authentication-manager id="keycloakAuthenticationManager">
         <security:authentication-provider ref="keycloakAuthenticationProvider"/>
     </security:authentication-manager>
 
     <bean id="adapterDeploymentContext" class="org.keycloak.adapters.springsecurity.AdapterDeploymentContextFactoryBean">
-        <constructor-arg value="/WEB-INF/keycloak-local.json" />
+        <constructor-arg value="/WEB-INF/keycloak.json" />
     </bean>
 
     <bean id="keycloakAuthenticationEntryPoint" class="org.keycloak.adapters.springsecurity.authentication.KeycloakAuthenticationEntryPoint">
-        <constructor-arg index="0" value="adapterDeploymentContext" />
-        <constructor-arg index="1" value="apiRequestMatcher" />
+        <constructor-arg index="0" ref="adapterDeploymentContext" />
+        <!--<constructor-arg index="1" ref="requestMatcher" />-->
     </bean>
     <bean id="keycloakAuthenticationProvider" class="org.keycloak.adapters.springsecurity.authentication.KeycloakAuthenticationProvider" />
     <bean id="keycloakPreAuthActionsFilter" class="org.keycloak.adapters.springsecurity.filter.KeycloakPreAuthActionsFilter" />
     <bean id="keycloakAuthenticationProcessingFilter" class="org.keycloak.adapters.springsecurity.filter.KeycloakAuthenticationProcessingFilter">
-        <constructor-arg name="authenticationManager" ref="authenticationManager" />
+        <constructor-arg name="authenticationManager" ref="keycloakAuthenticationManager" />
     </bean>
 
     <bean id="keycloakLogoutHandler" class="org.keycloak.adapters.springsecurity.authentication.KeycloakLogoutHandler">
@@ -60,16 +56,17 @@
         </property>
     </bean>
 
-    <security:http auto-config="false" entry-point-ref="keycloakAuthenticationEntryPoint">
+    <security:http auto-config="false" authentication-manager-ref="keycloakAuthenticationManager" entry-point-ref="keycloakAuthenticationEntryPoint">
         <security:custom-filter ref="keycloakPreAuthActionsFilter" before="LOGOUT_FILTER" />
         <security:custom-filter ref="keycloakAuthenticationProcessingFilter" before="FORM_LOGIN_FILTER" />
-        <security:intercept-url pattern="/customers**" access="ROLE_USER" />
-        <security:intercept-url pattern="/admin**" access="ROLE_ADMIN" />
+        <security:intercept-url pattern="/**" access="permitAll()"/>
+        <!--<security:intercept-url pattern="/sso/login**" access="permitAll()" />-->
+        <!--<security:intercept-url pattern="/**" access="isAuthenticated()" />-->
+        <!--<security:intercept-url pattern="/admin**" access="ROLE_ADMIN" />-->
         <security:custom-filter ref="logoutFilter" position="LOGOUT_FILTER" />
     </security:http>
 
-
-    <mvc:view-controller path="/login" view-name="login"/>
+    <!--<mvc:view-controller path="/login" view-name="login"/>-->
 
 <!--
     <bean id="logoutSuccessHandler"

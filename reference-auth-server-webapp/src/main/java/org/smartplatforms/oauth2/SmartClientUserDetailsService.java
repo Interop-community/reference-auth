@@ -37,7 +37,7 @@ import java.util.Collection;
 import java.util.HashSet;
 
 /**
- * Shim layer to convert a ClientDetails service into a UserDetails service
+ * Shim layer to org.mitre.oauth2.model.convert a ClientDetails service into a UserDetails service
  * 
  * @author AANGANES
  *

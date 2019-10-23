@@ -1,12 +1,12 @@
-# HSPC Reference Auth Parent
+# Logica Reference Auth Parent
 
-Welcome to the HSPC Reference Authorization server!  The HSPC Reference Authorization server contains a MITRE OpenID Connect server in two flavors, a MySQL-backed and an LDAP-backed web application.  This version is the LDAP-backed version.
+Welcome to the Logica Reference Authorization server!  The Logica Reference Authorization server contains a MITRE OpenID Connect server in two flavors, a MySQL-backed and an LDAP-backed web application.  This version is the LDAP-backed version.
 
-# HSPC Sandbox
+# Logica Sandbox
 
-*Note:* If you are wanting to build and test SMART on FHIR Apps, it is recommended that you use the free cloud-hosted version of the HSPC Sandbox.
+*Note:* If you are wanting to build and test SMART on FHIR Apps, it is recommended that you use the free cloud-hosted version of the Logica Sandbox.
 
-[HSPC Sandbox](https://sandbox.hspconsortium.org)
+[Logica Sandbox](https://sandbox.logicahealth.org)
 
 ## reference-auth-server-webapp
 

@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 
+jenv local openjdk64-11.0.2
+
 profile="local"
-users="users-local"
+users="users-keycloak"
 
 if [ $# -gt 0 ]; then
     if [ "$1" == "local" ] || [ "$1" == "test" ] || [ "$1" == "prod" ]; then

@@ -9,11 +9,9 @@ import com.google.firebase.auth.FirebaseToken;
 import com.google.firebase.auth.UserRecord;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hspconsortium.platform.authorization.repository.impl.FirebaseUserProfileDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.security.oauth2.common.exceptions.UnauthorizedUserException;
 
 import javax.annotation.PostConstruct;
 import java.io.*;

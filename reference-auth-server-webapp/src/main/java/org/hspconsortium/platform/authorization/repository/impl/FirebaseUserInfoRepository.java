@@ -5,9 +5,11 @@ import org.hspconsortium.platform.authentication.persona.PersonaUserInfoReposito
 import org.hspconsortium.platform.service.FirebaseTokenService;
 import org.mitre.openid.connect.model.DefaultUserInfo;
 import org.mitre.openid.connect.model.UserInfo;
+import org.springframework.context.annotation.Profile;
 
 import javax.inject.Inject;
 
+@Profile("users-firebase")
 public class FirebaseUserInfoRepository extends PersonaUserInfoRepository {
     @Inject
     private FirebaseTokenService firebaseTokenService;
