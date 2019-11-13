@@ -1,12 +1,12 @@
 version: 1
 
-dn: cn=admin,ou=admins,dc=hspconsortium,dc=org
+dn: cn=admin,ou=admins,dc=logicahealth,dc=org
 changetype: delete
 
-dn: cn=demo,ou=admins,dc=hspconsortium,dc=org
+dn: cn=demo,ou=admins,dc=logicahealth,dc=org
 changetype: delete
 
-dn: cn=admin,ou=admins,dc=hspconsortium,dc=org
+dn: cn=admin,ou=admins,dc=logicahealth,dc=org
 objectClass: simpleSecurityObject
 objectClass: organizationalPerson
 objectClass: person
@@ -18,10 +18,10 @@ sn: User
 userPassword:password
 displayName: Admin User
 givenName: Admin
-mail: support@hspconsortium.org
+mail: support@logicahealth.org
 uid: admin
 
-dn: cn=demo,ou=admins,dc=hspconsortium,dc=org
+dn: cn=demo,ou=admins,dc=logicahealth,dc=org
 objectClass: simpleSecurityObject
 objectClass: organizationalPerson
 objectClass: person
@@ -31,11 +31,11 @@ objectClass: pwmUser
 cn: demo
 sn: User
 userPassword:demo
-labeledURI: https://api.hspconsortium.org/hspc/data/P
+labeledURI: https://api.logicahealth.org/hspc/data/P
  ractitioner/demo/_history/1
 userPassword:: e1NTSEF9QnVhcG9HR0tJZGZHcHJmTUZqajNOOUk3TGppUzI0WDUzTmd4QlE9P
  Q==
 displayName: Demo User
 givenName: Demo
-mail: support_demo@hspconsortium.org
+mail: support_demo@logicahealth.org
 uid: demo

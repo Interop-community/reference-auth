@@ -6,7 +6,7 @@ Welcome to the HSPC Reference Authorization server!  The HSPC Reference Authoriz
 
 *Note:* If you are wanting to build and test SMART on FHIR Apps, it is recommended that you use the free cloud-hosted version of the HSPC Sandbox.
 
-[HSPC Sandbox](https://sandbox.hspconsortium.org)
+[HSPC Sandbox](https://sandbox.logicahealth.org)
 
 ## reference-auth-server-webapp
 
