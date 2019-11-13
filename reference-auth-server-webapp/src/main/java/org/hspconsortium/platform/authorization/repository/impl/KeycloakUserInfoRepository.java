@@ -11,6 +11,8 @@ import org.mitre.openid.connect.model.UserInfo;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.apache.http.*;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.nio.charset.StandardCharsets;
 
@@ -21,6 +23,7 @@ public class KeycloakUserInfoRepository extends PersonaUserInfoRepository {
 
     @Override
     public UserInfo getRealUserByUsername(String username) {
+        SecurityContext sc = SecurityContextHolder.getContext();
 
         UserInfo userInfo = new DefaultUserInfo();
         userInfo.setSub("4fa1fb37-13ab-4019-bef2-ec3ce53aa91e");

@@ -37,4 +37,12 @@ public class ExtendedUserInfoService {
     public DefaultUserInfo addUserInfo(DefaultUserInfo defaultUserInfo) {
         return JpaUtil.saveOrUpdate(defaultUserInfo.getId(), manager, defaultUserInfo);
     }
+
+    // TODO: Add the method  "getUserInfoBySub" same as getUserInfoByEmail
+    public DefaultUserInfo getUserInfoBySub(String sub) {
+        TypedQuery<DefaultUserInfo> query = manager.createNamedQuery(DefaultUserInfo.QUERY_BY_EMAIL, DefaultUserInfo.class);
+        query.setParameter(DefaultUserInfo.PARAM_EMAIL, sub);
+
+        return getSingleResult(query.getResultList());
+    }
 }

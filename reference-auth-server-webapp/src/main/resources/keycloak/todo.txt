@@ -1,0 +1,8 @@
+add the Keystore public key to this folder
+
+keycloak-pub-local
+
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAgMkCqNLREwRWPK82S8aqiLxWuucPZzZgs0Emc/OXU8eb5N0B76vXOzI364iP1cN6XxXJYfGMlulkHG6Y5+6aY3Tp86fIT4niD6665esgd/tybrQ0MD6uIOAXhfmA4L8Vvvs/1/j7oTIvtw4CblfOStd2sOCOZWSE7UgaAtJ4TteqUKuxfo+XuABMH6Fl5d9Arr2fmYGs2jVWQ4nvb16iblc65Y94yLo/M/6niIQ8DzAEvRnNCzvGiftNPVFJ696F8E30CwCF2dv0s2G+VhJDtxyeVJspcwivKW9oMd07MbluVZplQI503y5aA0dIH4MM2pgY0MzfOikF0qgKger51wIDAQAB
+
+keycloak-pub-test...
+keycloak-pub-prod...
