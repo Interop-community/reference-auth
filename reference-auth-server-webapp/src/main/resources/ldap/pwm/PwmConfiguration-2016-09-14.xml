@@ -50,7 +50,7 @@
     </setting>
     <setting key="ldap.serverUrls" syntax="STRING_ARRAY" profile="default" syntaxVersion="0" modifyTime="2016-08-30T18:28:34Z" modifyUser="default|cn=admin,ou=admins,dc=logicahealth,dc=org">
       <label>LDAP URLs</label>
-      <value><![CDATA[ldap://ldap.hspconsortium.org:10389]]></value>
+      <value><![CDATA[ldap://ldap.logicahealth.org:10389]]></value>
     </setting>
     <setting key="ldap.proxy.username" syntax="STRING" profile="default" syntaxVersion="0" modifyTime="2015-11-05T18:20:27Z">
       <label>LDAP Proxy User</label>
@@ -62,7 +62,7 @@
     </setting>
     <setting key="pwm.selfURL" syntax="STRING" syntaxVersion="0" modifyTime="2016-07-12T16:58:22Z" modifyUser="default|cn=admin,ou=admins,dc=logicahealth,dc=org">
       <label>Site URL</label>
-      <value><![CDATA[https://pwm.hspconsortium.org]]></value>
+      <value><![CDATA[https://pwm.logicahealth.org]]></value>
     </setting>
     <setting key="pwm.versionCheck.enable" syntax="BOOLEAN" syntaxVersion="0" modifyTime="2015-11-05T18:31:12Z">
       <label>Enable Version Checking</label>

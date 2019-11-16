@@ -50,7 +50,7 @@
     </setting>
     <setting key="ldap.serverUrls" syntax="STRING_ARRAY" profile="default" syntaxVersion="0" modifyTime="2015-11-05T18:20:20Z">
       <label>LDAP URLs</label>
-      <value><![CDATA[ldap://sandbox.hspconsortium.org:10389]]></value>
+      <value><![CDATA[ldap://sandbox.logicahealth.org:10389]]></value>
     </setting>
     <setting key="ldap.proxy.username" syntax="STRING" profile="default" syntaxVersion="0" modifyTime="2015-11-05T18:20:27Z">
       <label>LDAP Proxy User</label>
