@@ -10,7 +10,7 @@ export PROJECT_VERSION=$(mvn -f ../pom.xml -q -Dexec.executable="echo" -Dexec.ar
 
 export DOCKER_IMAGE_COORDINATES="hspconsortium/${PROJECT_NAME}:${PROJECT_VERSION}"
 
-export SPRING_PROFILES_ACTIVE="${TARGET_ENV},users-firebase"
+export SPRING_PROFILES_ACTIVE="${TARGET_ENV},users-firebase" #TODO: SS - add/replace users-keycloak
 
 export TEMPLATE_FILE="../aws/task-definition.json"
 

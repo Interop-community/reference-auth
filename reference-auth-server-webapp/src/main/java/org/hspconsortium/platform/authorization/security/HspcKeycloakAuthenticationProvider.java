@@ -1,5 +1,6 @@
 package org.hspconsortium.platform.authorization.security;
 
+import com.sun.xml.bind.v2.runtime.output.SAXOutput;
 import org.hspconsortium.platform.authorization.repository.impl.LocalUserInfoRepository;
 import org.hspconsortium.platform.web.ExtendedUserInfoService;
 import org.keycloak.adapters.springsecurity.account.SimpleKeycloakAccount;
@@ -10,6 +11,8 @@ import org.mitre.openid.connect.model.DefaultUserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
+import org.springframework.security.core.authority.mapping.SimpleAuthorityMapper;
 
 public class HspcKeycloakAuthenticationProvider extends KeycloakAuthenticationProvider {
     @Autowired
@@ -22,13 +25,18 @@ public class HspcKeycloakAuthenticationProvider extends KeycloakAuthenticationPr
         IDToken idToken = skca.getKeycloakSecurityContext().getIdToken();
         DefaultUserInfo userInfo = new DefaultUserInfo();
         userInfo.setSub(idToken.getSubject());
-        // TODO:  set all the other fields needed
+        userInfo.setEmail(idToken.getEmail());
+        userInfo.setGivenName(idToken.getGivenName());
+        userInfo.setMiddleName(idToken.getMiddleName());
+        userInfo.setFamilyName(idToken.getFamilyName());
+        userInfo.setName(idToken.getName());
+        userInfo.setPreferredUsername(idToken.getPreferredUsername());
         // Check if user already exists, if exist then update the user
-        // look for a method
+        DefaultUserInfo existingUser = extendedUserInfoService.getUserInfoBySub(idToken.getSubject());
+        if (existingUser != null) {
+            userInfo.setId(existingUser.getId());
+        }
         extendedUserInfoService.addUserInfo(userInfo);
-        // Add a method to get user_info by sub
-//       extendedUserInfoService.getUserInfoBySub(sub)
-
         return auth;
     }
 }

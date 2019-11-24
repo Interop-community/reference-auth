@@ -21,6 +21,8 @@ public class ExtendedUserInfoService {
     @PersistenceContext(unitName = "defaultPersistenceUnit")
     private EntityManager manager;
 
+    private final String PARAM_SUBJECT = "subject";
+
     @SuppressWarnings("JpaQlInspection")
     public List<DefaultUserInfo> getAllUserInfo() {
         TypedQuery<DefaultUserInfo> query = manager.createQuery("select u from DefaultUserInfo u", DefaultUserInfo.class);
@@ -38,11 +40,9 @@ public class ExtendedUserInfoService {
         return JpaUtil.saveOrUpdate(defaultUserInfo.getId(), manager, defaultUserInfo);
     }
 
-    // TODO: Add the method  "getUserInfoBySub" same as getUserInfoByEmail
     public DefaultUserInfo getUserInfoBySub(String sub) {
-        TypedQuery<DefaultUserInfo> query = manager.createNamedQuery(DefaultUserInfo.QUERY_BY_EMAIL, DefaultUserInfo.class);
-        query.setParameter(DefaultUserInfo.PARAM_EMAIL, sub);
-
+        TypedQuery<DefaultUserInfo> query = manager.createQuery("select u from DefaultUserInfo u WHERE u.sub = :" + PARAM_SUBJECT, DefaultUserInfo.class);
+        query.setParameter(PARAM_SUBJECT, sub);
         return getSingleResult(query.getResultList());
     }
 }

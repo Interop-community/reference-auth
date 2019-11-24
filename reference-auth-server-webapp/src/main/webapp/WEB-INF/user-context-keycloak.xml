@@ -30,7 +30,10 @@
         <constructor-arg index="0" ref="adapterDeploymentContext" />
         <!--<constructor-arg index="1" ref="requestMatcher" />-->
     </bean>
-    <bean id="keycloakAuthenticationProvider" class="org.hspconsortium.platform.authorization.security.HspcKeycloakAuthenticationProvider" />
+    <bean id="keycloakAuthenticationProvider" class="org.hspconsortium.platform.authorization.security.HspcKeycloakAuthenticationProvider" >
+        <property name="grantedAuthoritiesMapper" ref="hspcKeycloakAuthoritiesMapper" />
+    </bean>
+    <bean id="hspcKeycloakAuthoritiesMapper" class="org.hspconsortium.platform.authorization.security.HspcKeycloakAuthoritiesMapper" />
     <bean id="keycloakPreAuthActionsFilter" class="org.keycloak.adapters.springsecurity.filter.KeycloakPreAuthActionsFilter" />
     <bean id="keycloakAuthenticationProcessingFilter" class="org.keycloak.adapters.springsecurity.filter.KeycloakAuthenticationProcessingFilter">
         <constructor-arg name="authenticationManager" ref="keycloakAuthenticationManager" />
@@ -50,7 +53,7 @@
         </constructor-arg>
         <property name="logoutRequestMatcher">
             <bean class="org.springframework.security.web.util.matcher.AntPathRequestMatcher">
-                <constructor-arg name="pattern" value="/sso/logout**" />
+                <constructor-arg name="pattern" value="/logout**" />
                 <constructor-arg name="httpMethod" value="GET" />
             </bean>
         </property>
