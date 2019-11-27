@@ -1,34 +1,34 @@
 [
   {
-    "name": "interopio-auth-server",
-    "image": "nexus.interopion.com:18083/interopio/interopio-auth-server:{{PROJECT_VERSION}}",
+    "name": "auth-prod",
+    "image": "hspconsortium/auth:{{PROJECT_VERSION}}",
     "cpu": 0,
     "portMappings": [
       {
-        "containerPort": 10200,
+        "containerPort": 8060,
         "hostPort": 0,
         "protocol": "tcp"
       }
     ],
-    "memory": 600,
-    "memoryReservation": 400,
+    "memoryReservation": 512,
     "essential": true,
     "secrets": [
       {
         "name": "JASYPT_ENCRYPTOR_PASSWORD",
-        "valueFrom": "arn:aws:secretsmanager:us-west-2:888922156537:secret:interopio/prod/master_encryption_key-ujRe0K"
+        "valueFrom": "arn:aws:secretsmanager:us-west-2:657600230790:secret:hspconsortium/stage/master-encryption-key-iF6zVd"
       }
     ],
     "environment": [
       {
         "name": "SPRING_PROFILES_ACTIVE",
-        "value": "prod,mysql,users-interopio,analytics"
+        "value": "prod,users-firebase"
       }
     ],
     "logConfiguration": {
       "logDriver": "awslogs",
+      "secretOptions": null,
       "options": {
-        "awslogs-group": "/ecs/interopio/prod/interopio-auth",
+        "awslogs-group": "/ecs/auth-prod",
         "awslogs-region": "us-west-2",
         "awslogs-stream-prefix": "ecs"
       }
