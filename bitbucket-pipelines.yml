@@ -82,7 +82,7 @@ pipelines:
         deployment: test
         script:
         # maven test, build and deploy artifact to nexus.interopion.com/maven-snapshots
-        - mvn -V -B -s ci/settings.xml deploy
+        - mvn -V -B -s ci/settings.xml deploy -P DEPLOY-HSPC,hspc-nexus
         # build dynamic container-definitions
         - export PROJECT_VERSION=$(mvn -q -Dexec.executable="echo" -Dexec.args='${project.version}' --non-recursive exec:exec)
         - sed -i -e "s/{{PROJECT_VERSION}}/$PROJECT_VERSION/g" ci/container-definitions_stage.json
