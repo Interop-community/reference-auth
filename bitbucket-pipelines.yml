@@ -88,7 +88,7 @@ pipelines:
         - sed -i -e "s/{{PROJECT_VERSION}}/$PROJECT_VERSION/g" ci/container-definitions_stage.json
         # build docker image and push to nexus.interopion.com:18083 (docker-interopion)
         - export IMAGE_NAME=$(cat ci/container-definitions_stage.json | jq --raw-output '.[0].image')
-        - docker login -u $NEXUS_USR -p $NEXUS_PWD nexus.interopion.com:18083
+        - docker login -u $DOCKER_HUB_USERNAME -p $DOCKER_HUB_PASSWORD
         - docker build -t $IMAGE_NAME .
         - docker push $IMAGE_NAME
         # register the ECS task definition and capture the version
