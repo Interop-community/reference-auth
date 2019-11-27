@@ -48,7 +48,7 @@ pipelines:
         - xmlstarlet ed -P -N my=http://maven.apache.org/POM/4.0.0 -u my:project/my:version -v $RELEASE_VERSION pom.xml | sponge pom.xml
         - cat pom.xml
         - git add .
-        - git commit -m "Incremeinting to next release version $RELEASE_VERSION"
+        - git commit -m "Incrementing to next release version $RELEASE_VERSION"
         - git checkout -b master origin/master
         - git merge release/$RELEASE_VERSION
         - git tag $RELEASE_VERSION
