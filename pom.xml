@@ -41,6 +41,19 @@
         <module>reference-auth-server-webapp</module>
     </modules>
 
+    <distributionManagement>
+        <repository>
+            <name>HSPC Releases</name>
+            <id>hspc-releases</id>
+            <url>https://nexus.logicahealth.org/repository/maven-releases/</url>
+        </repository>
+        <snapshotRepository>
+            <name>HSPC Snapshots</name>
+            <id>hspc-snapshots</id>
+            <url>https://nexus.logicahealth.org/repository/maven-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
