@@ -42,6 +42,13 @@
                                                  location="classpath:config/auth-test.properties"
                                                  ignore-unresolvable="true" order="1"/>
   </beans>
+
+  <beans profile="stage">
+    <encryption:encryptable-property-placeholder encryptor="configurationEncryptor"
+                                                 location="classpath:config/auth-stage.properties"
+                                                 ignore-unresolvable="true" order="1"/>
+  </beans>
+
   <beans profile="prod">
     <encryption:encryptable-property-placeholder encryptor="configurationEncryptor"
                                                  location="classpath:config/auth-prod.properties"

@@ -1,0 +1,12 @@
+{
+  "realm": "dev",
+  "auth-server-url": "https://id.logicahealth.org/auth",
+  "ssl-required": "external",
+  "resource": "reference-auth",
+  "verify-token-audience": true,
+  "credentials": {
+    "secret": "34ab1727-627c-4ac5-ae11-3824bf7d01fc"
+  },
+  "confidential-port": 0,
+  "policy-enforcer": {}
+}
