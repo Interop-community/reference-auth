@@ -46,6 +46,8 @@ pipelines:
         - git checkout -b release/$RELEASE_VERSION
         - cat pom.xml
         - xmlstarlet ed -P -N my=http://maven.apache.org/POM/4.0.0 -u my:project/my:version -v $RELEASE_VERSION pom.xml | sponge pom.xml
+        - xmlstarlet ed -P -N my=http://maven.apache.org/POM/4.0.0 -u my:project/my:version -v $RELEASE_VERSION reference-auth-security/pom.xml | sponge reference-auth-security/pom.xml
+        - xmlstarlet ed -P -N my=http://maven.apache.org/POM/4.0.0 -u my:project/my:version -v $RELEASE_VERSION reference-auth-server-webapp/pom.xml | sponge reference-auth-server-webapp/pom.xml
         - cat pom.xml
         - git add .
         - git commit -m "Incrementing to next release version $RELEASE_VERSION"
@@ -58,6 +60,8 @@ pipelines:
         - git merge release/$RELEASE_VERSION
         - cat pom.xml
         - xmlstarlet ed -P -N my=http://maven.apache.org/POM/4.0.0 -u my:project/my:version -v $NEXT_VERSION pom.xml | sponge pom.xml
+        - xmlstarlet ed -P -N my=http://maven.apache.org/POM/4.0.0 -u my:project/my:version -v $NEXT_VERSION reference-auth-security/pom.xml | sponge reference-auth-security/pom.xml
+        - xmlstarlet ed -P -N my=http://maven.apache.org/POM/4.0.0 -u my:project/my:version -v $NEXT_VERSION reference-auth-server-webapp/pom.xml | sponge reference-auth-server-webapp/pom.xml
         - cat pom.xml
         - git add .
         - git commit -m "Incrementing to next snapshot version $NEXT_VERSION"
