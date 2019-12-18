@@ -46,9 +46,11 @@ pipelines:
         - git checkout -b release/$RELEASE_VERSION
         - cat pom.xml
         - xmlstarlet ed -P -N my=http://maven.apache.org/POM/4.0.0 -u my:project/my:version -v $RELEASE_VERSION pom.xml | sponge pom.xml
+        - xmlstarlet ed -P -N my=http://maven.apache.org/POM/4.0.0 -u my:project/my:version -v $RELEASE_VERSION reference-auth-security/pom.xml | sponge reference-auth-security/pom.xml
+        - xmlstarlet ed -P -N my=http://maven.apache.org/POM/4.0.0 -u my:project/my:version -v $RELEASE_VERSION reference-auth-server-webapp/pom.xml | sponge reference-auth-server-webapp/pom.xml
         - cat pom.xml
         - git add .
-        - git commit -m "Incremeinting to next release version $RELEASE_VERSION"
+        - git commit -m "Incrementing to next release version $RELEASE_VERSION"
         - git checkout -b master origin/master
         - git merge release/$RELEASE_VERSION
         - git tag $RELEASE_VERSION
@@ -58,6 +60,8 @@ pipelines:
         - git merge release/$RELEASE_VERSION
         - cat pom.xml
         - xmlstarlet ed -P -N my=http://maven.apache.org/POM/4.0.0 -u my:project/my:version -v $NEXT_VERSION pom.xml | sponge pom.xml
+        - xmlstarlet ed -P -N my=http://maven.apache.org/POM/4.0.0 -u my:project/my:version -v $NEXT_VERSION reference-auth-security/pom.xml | sponge reference-auth-security/pom.xml
+        - xmlstarlet ed -P -N my=http://maven.apache.org/POM/4.0.0 -u my:project/my:version -v $NEXT_VERSION reference-auth-server-webapp/pom.xml | sponge reference-auth-server-webapp/pom.xml
         - cat pom.xml
         - git add .
         - git commit -m "Incrementing to next snapshot version $NEXT_VERSION"
@@ -78,24 +82,24 @@ pipelines:
     - step:
         caches:
         - maven
-        name: Deploy to test
+        name: Deploy to Stage
         deployment: test
         script:
         # maven test, build and deploy artifact to nexus.interopion.com/maven-snapshots
-        - mvn -V -B -s ci/settings.xml deploy
+        - mvn -V -B -s ci/settings.xml deploy -P DEPLOY-HSPC,hspc-nexus
         # build dynamic container-definitions
         - export PROJECT_VERSION=$(mvn -q -Dexec.executable="echo" -Dexec.args='${project.version}' --non-recursive exec:exec)
         - sed -i -e "s/{{PROJECT_VERSION}}/$PROJECT_VERSION/g" ci/container-definitions_stage.json
         # build docker image and push to nexus.interopion.com:18083 (docker-interopion)
         - export IMAGE_NAME=$(cat ci/container-definitions_stage.json | jq --raw-output '.[0].image')
-        - docker login -u $NEXUS_USR -p $NEXUS_PWD nexus.interopion.com:18083
+        - docker login -u $DOCKER_HUB_USERNAME -p $DOCKER_HUB_PASSWORD
         - docker build -t $IMAGE_NAME .
         - docker push $IMAGE_NAME
         # register the ECS task definition and capture the version
-        - export TASK_VERSION=$(aws ecs register-task-definition --execution-role-arn arn:aws:iam::888922156537:role/ecsTaskExecutionRole --family interopio-auth-test-td --container-definitions $(cat ci/container-definitions_stage.json | jq -c '.')  | jq --raw-output '.taskDefinition.revision')
+        - export TASK_VERSION=$(aws ecs register-task-definition --execution-role-arn arn:aws:iam::657600230790:role/ecsTaskExecutionRole --family auth-stage --container-definitions $(cat ci/container-definitions_stage.json | jq -c '.')  | jq --raw-output '.taskDefinition.revision')
         - echo "Registered ECS Task Definition - " $TASK_VERSION
         # update the service to use the latest task definition
-        - aws ecs update-service --cluster interopio-test --service interopio-auth-test-sv --task-definition interopio-auth-test-td:$TASK_VERSION
+        - aws ecs update-service --cluster hspc-stage --service auth-stage --task-definition auth-stage:$TASK_VERSION
     - step:
         caches:
         - maven
@@ -107,10 +111,10 @@ pipelines:
         - export PROJECT_VERSION=$(mvn -q -Dexec.executable="echo" -Dexec.args='${project.version}' --non-recursive exec:exec)
         - sed -i -e "s/{{PROJECT_VERSION}}/$PROJECT_VERSION/g" ci/container-definitions_prod.json
         # register the ECS task definition and capture the version
-        - export TASK_VERSION=$(aws ecs register-task-definition --execution-role-arn arn:aws:iam::888922156537:role/ecsTaskExecutionRole --family interopio-auth-prod-td --container-definitions $(cat ./ci/container-definitions_prod.json | jq -c '.')  | jq --raw-output '.taskDefinition.revision')
+        - export TASK_VERSION=$(aws ecs register-task-definition --execution-role-arn arn:aws:iam::657600230790:role/ecsTaskExecutionRole --family auth-prod --container-definitions $(cat ./ci/container-definitions_prod.json | jq -c '.')  | jq --raw-output '.taskDefinition.revision')
         - echo "Task definition:" $TASK_VERSION
         # update the service to use the latest task definition
-        - aws ecs update-service --cluster interopio-prod --service interopio-auth-prod-sv --task-definition interopio-auth-prod-td:$TASK_VERSION
+        - aws ecs update-service --cluster hspc-prod --service auth-prod --task-definition auth-prod:$TASK_VERSION
 
 options:
   docker: true
