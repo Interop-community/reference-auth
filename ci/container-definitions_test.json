@@ -22,7 +22,7 @@
     "environment": [
       {
         "name": "SPRING_PROFILES_ACTIVE",
-        "value": "test,users-firebase"
+        "value": "test,users-keycloak"
       }
     ],
     "logConfiguration": {
@@ -35,5 +35,3 @@
     }
   }
 ]
-
-// TODO: add/replace to users-keycloak
