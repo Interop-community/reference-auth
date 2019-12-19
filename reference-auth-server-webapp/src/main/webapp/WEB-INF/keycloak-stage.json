@@ -5,7 +5,7 @@
   "resource": "reference-auth",
   "verify-token-audience": true,
   "credentials": {
-    "secret": "401ea4e3-8ee6-4a89-9b69-75c8bc85f2d1"
+    "secret": ""
   },
   "confidential-port": 0,
   "policy-enforcer": {}
