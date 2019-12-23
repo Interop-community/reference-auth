@@ -21,7 +21,7 @@
     "environment": [
       {
         "name": "SPRING_PROFILES_ACTIVE",
-        "value": "stage,users-firebase"
+        "value": "stage,users-keycloak"
       }
     ]
   }

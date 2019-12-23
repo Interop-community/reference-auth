@@ -10,8 +10,8 @@ import java.io.IOException;
  * Used as a place holder on profiles that don't require custom security.
  */
 @Component("customApiSecurityFilter")
-@Profile("!users-firebase")
-public class CustomApiSecurityFilterPlaceholder implements CustomApiSecurityFilter {
+@Profile("users-local")
+public class CustomApiSecurityFilterLocal implements CustomApiSecurityFilter {
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
 

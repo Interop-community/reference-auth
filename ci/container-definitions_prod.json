@@ -21,7 +21,7 @@
     "environment": [
       {
         "name": "SPRING_PROFILES_ACTIVE",
-        "value": "prod,users-firebase"
+        "value": "prod,users-keycloak"
       }
     ],
     "logConfiguration": {
@@ -34,3 +34,5 @@
     }
   }
 ]
+
+//TODO: why users-interopio

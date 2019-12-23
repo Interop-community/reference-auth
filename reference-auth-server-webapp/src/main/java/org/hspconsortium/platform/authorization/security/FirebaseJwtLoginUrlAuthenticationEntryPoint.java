@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
+// TODO: redirect to keycloak
 public class FirebaseJwtLoginUrlAuthenticationEntryPoint extends LoginUrlAuthenticationEntryPoint {
     public FirebaseJwtLoginUrlAuthenticationEntryPoint(String loginFormUrl, String baseUrl) {
         super(loginFormUrl);

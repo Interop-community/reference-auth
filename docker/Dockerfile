@@ -13,4 +13,8 @@ ADD ${JETTY_RUNNER_FILE} jetty-runner.jar
 ARG JETTY_CONFIG_FILE
 ADD ${JETTY_CONFIG_FILE} jetty.xml
 
+# copy the keycloak public key for each environment into the image
+ADD src/main/resources/keycloak/[filename] [filename matching config for environment]
+ADD src/main/resources/keycloak/[filename] [filename matching config for environment]
+
 ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","jetty-runner.jar","--config","jetty.xml","app.war"]

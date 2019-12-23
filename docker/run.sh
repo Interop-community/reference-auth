@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 profile="local"
-users="users-local"
+users="users-keycloak"
 
 if [ $# -gt 0 ]; then
     if [ "$1" == "local" ] || [ "$1" == "test" ] || [ "$1" == "prod" ]; then
@@ -20,10 +20,10 @@ fi
 echo "using $profile profile..."
 
 if [ $# -gt 1 ]; then
-    if [ "$2" == "users-local" ] || [ "$2" == "users-firebase" ] || [ "$2" == "users-ldap" ]; then
+    if [ "$2" == "users-local" ] || [ "$2" == "users-firebase" ] || [ "$2" == "users-keycloak" ]  || [ "$2" == "users-ldap" ]; then
         users=$2
     else
-        echo "usage: $0 {local | test | prod} {users-local | users-firebase | users-ldap}";
+        echo "usage: $0 {local | test | prod} {users-local | users-firebase | users-keycloak | users-ldap}";
         exit 1;
     fi
 fi
