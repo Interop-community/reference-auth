@@ -44,7 +44,7 @@
     <bean id="hspcKeycloakConfigResolver" class="org.hspconsortium.platform.authorization.security.HspcKeycloakConfigResolver"></bean>
 
     <bean id="logoutFilter" class="org.springframework.security.web.authentication.logout.LogoutFilter">
-        <constructor-arg name="logoutSuccessUrl" value="/" />
+        <constructor-arg name="logoutSuccessUrl" value="${keycloak.logoutSuccessUrl}" />
         <constructor-arg name="handlers">
             <list>
                 <ref bean="keycloakLogoutHandler" />
