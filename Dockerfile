@@ -6,7 +6,7 @@ ADD reference-auth-server-webapp/target/dependency/jetty-runner.jar  jetty-runne
 ADD reference-auth-server-webapp/src/main/resources/jetty-ssl.xml jetty-ssl.xml
 ADD reference-auth-server-webapp/src/main/resources/jetty.xml jetty.xml
 
-ADD src/main/resources/mysql-ca/rdscacerts rdscacerts
+#ADD src/main/resources/mysql-ca/rdscacerts rdscacerts
 
 ADD ci/keystore-gen.sh pre-run.sh
 RUN chmod +x pre-run.sh
