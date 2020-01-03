@@ -87,11 +87,14 @@ public class SmartOAuth2RequestFactory extends ConnectOAuth2RequestFactory {
 
                     ret.getExtensions().put("launch_context", gson.toJson(params));
                 } catch (NeedUnmetException e1) {
-                    logger.warn("Couldn't resolve launch id: " + launchId);
+                    logger.error("Couldn't resolve launch id: " + launchId, e1);
                     ret.getExtensions().put("invalid_launch", "Couldn't resolve launch id: " + launchId);
                 }
             } else if (requestingLaunch) { // asking for launch, but no launch ID provided
                 logger.warn("external_launch_required");
+                if (launchReqs.isEmpty()) {
+                	throw new RuntimeException("Input params are empty" + inputParams);
+				}
                 ret.getExtensions().put("external_launch_required", launchReqs);
             }
         }

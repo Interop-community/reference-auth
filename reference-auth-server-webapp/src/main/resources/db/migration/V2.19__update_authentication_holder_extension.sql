@@ -1,0 +1,1 @@
+ALTER TABLE authentication_holder_extension MODIFY val VARCHAR(2048) NOT NULL;
