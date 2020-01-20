@@ -24,7 +24,6 @@ public class CustomApiSecurityFilterKeycloak extends GenericFilterBean implement
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
             throws IOException, ServletException {
-        //TODO: use Spring security SimpleAuthorityMapper to insert ROLE_ and org.mitre.oauth2.model.convert role name to uppercase
         SimpleAuthorityMapper simpleAuthorityMapper = new SimpleAuthorityMapper();
         simpleAuthorityMapper.setDefaultAuthority(servletRequest.toString());
 

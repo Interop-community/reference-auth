@@ -30,7 +30,7 @@ public class HspcKeycloakAuthenticationProvider extends KeycloakAuthenticationPr
         userInfo.setMiddleName(idToken.getMiddleName());
         userInfo.setFamilyName(idToken.getFamilyName());
         userInfo.setName(idToken.getName());
-        userInfo.setPreferredUsername(idToken.getPreferredUsername());
+        userInfo.setPreferredUsername(idToken.getEmail());
         // Check if user already exists, if exist then update the user
         DefaultUserInfo existingUser = extendedUserInfoService.getUserInfoBySub(idToken.getSubject());
         if (existingUser != null) {
