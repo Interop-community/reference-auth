@@ -26,15 +26,21 @@ public class PersonaAuthInterceptor extends HandlerInterceptorAdapter {
     @Inject
     private JwtService jwtService;
 
-
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object handler) throws Exception {
         if (httpServletRequest.getServletPath().startsWith("/authorize")) {
             authenticatePersonaUser(httpServletRequest);
+            // A persona user should never login to the sandbox, we are preventing it through this code.
+            SecurityContext securityContext = SecurityContextHolder.getContext();
+            if (securityContext.getAuthentication() instanceof  PersonaAuthenticationToken && httpServletRequest.getQueryString() != null && httpServletRequest.getQueryString().contains("client_id=sand_man")) {
+                SecurityContextHolder.clearContext();
+                httpServletResponse.setHeader("Location", httpServletRequest.getRequestURL().toString() + "?" + httpServletRequest.getQueryString());
+                httpServletResponse.setStatus(302);
+                return false;
+            }
         } else if (httpServletRequest.getServletPath().startsWith("/token")) {
             removePersonaCookie(httpServletRequest, httpServletResponse);
         }
-
         return true;
     }
 
@@ -42,7 +48,6 @@ public class PersonaAuthInterceptor extends HandlerInterceptorAdapter {
 
         if (httpServletRequest.getCookies() == null)
             return;
-
         for (Cookie cookie : httpServletRequest.getCookies()) {
             if (cookie.getName().equals(personaCookieName)) {
                 cookie.setPath("/");
