@@ -10,12 +10,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class CustomLogoutSuccessHandler extends SimpleUrlLogoutSuccessHandler {
-    private final String KEYCLOAK_LOGOUT_URL = "http://id.logicahealth.org/auth/realms/dev/protocol/openid-connect/logout?redirect_uri=";
 
     @Override
     public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         if (authentication instanceof PersonaAuthenticationToken) {
-            response.setHeader("Location", KEYCLOAK_LOGOUT_URL + this.getDefaultTargetUrl());
+            response.setHeader("Location",  this.getDefaultTargetUrl());
             response.setStatus(307);
             return;
         }
