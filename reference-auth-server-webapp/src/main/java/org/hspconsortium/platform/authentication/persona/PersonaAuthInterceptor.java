@@ -28,7 +28,7 @@ public class PersonaAuthInterceptor extends HandlerInterceptorAdapter {
 
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object handler) throws Exception {
-        if (httpServletRequest.getServletPath().startsWith("/authorize") || httpServletRequest.getServletPath().startsWith("/logout")) {
+        if (httpServletRequest.getServletPath().startsWith("/authorize")) {
             authenticatePersonaUser(httpServletRequest);
             // A persona user should never login to the sandbox, we are preventing it through this code.
             SecurityContext securityContext = SecurityContextHolder.getContext();

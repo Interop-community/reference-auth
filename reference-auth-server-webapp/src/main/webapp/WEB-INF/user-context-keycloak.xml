@@ -42,9 +42,13 @@
         <constructor-arg ref="adapterDeploymentContext" />
     </bean>
     <bean id="hspcKeycloakConfigResolver" class="org.hspconsortium.platform.authorization.security.HspcKeycloakConfigResolver"></bean>
+    <bean id="customLogoutSuccessHandler" class="org.hspconsortium.platform.authorization.security.CustomLogoutSuccessHandler">
+        <property name="defaultTargetUrl" value="${keycloak.logoutSuccessUrl}" />
+    </bean>
+
 
     <bean id="logoutFilter" class="org.springframework.security.web.authentication.logout.LogoutFilter">
-        <constructor-arg name="logoutSuccessUrl" value="${keycloak.logoutSuccessUrl}" />
+        <constructor-arg name="logoutSuccessHandler" ref="customLogoutSuccessHandler" />
         <constructor-arg name="handlers">
             <list>
                 <ref bean="keycloakLogoutHandler" />
