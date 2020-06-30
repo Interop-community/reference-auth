@@ -34,7 +34,7 @@ In the terminal, run the following command:
 
     mvn package
 
-#### Step 2: Run the application by executing the following command:
+#### Step 2: Run the application by executing the following command from the reference-auth-server-webapp directory:
  
 `mvn jetty:run -Dspring.profiles.active=users-keycloak,local`
 
