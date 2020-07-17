@@ -1,5 +1,5 @@
 INSERT INTO client_details (client_id, client_name, logo_uri, access_token_validity_seconds, token_endpoint_auth_method) VALUES
-	('bp_centiles', 'BP Centiles', 'https://content.hspconsortium.org/images/bp-centiles/logo/bpc.png', 86400, 'NONE');
+	('bp_centiles', 'BP Centiles', 'https://content.logicahealth.org/images/bp-centiles/logo/bpc.png', 86400, 'NONE');
 
 INSERT INTO client_scope (owner_id, scope) VALUES
 	((SELECT id from client_details where client_id = 'bp_centiles'), 'openid'),

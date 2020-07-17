@@ -1,5 +1,5 @@
 INSERT INTO client_details (client_id, client_name, logo_uri, access_token_validity_seconds, token_endpoint_auth_method) VALUES
-	('my_web_app', 'My Web App', 'https://content.hspconsortium.org/images/my-web-app/logo/my.png', 86400, 'NONE');
+	('my_web_app', 'My Web App', 'https://content.logicahealth.org/images/my-web-app/logo/my.png', 86400, 'NONE');
 
 INSERT INTO client_scope (owner_id, scope) VALUES
 	((SELECT id from client_details where client_id = 'my_web_app'), 'openid'),

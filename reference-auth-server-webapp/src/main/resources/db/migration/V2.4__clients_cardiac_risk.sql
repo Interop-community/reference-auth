@@ -1,5 +1,5 @@
 INSERT INTO client_details (client_id, client_name, logo_uri, access_token_validity_seconds, token_endpoint_auth_method) VALUES
-	('cardiac_risk', 'Cardiac Risk', 'https://content.hspconsortium.org/images/cardiac-risk/logo/cardiac-risk.png', 86400, 'NONE');
+	('cardiac_risk', 'Cardiac Risk', 'https://content.logicahealth.org/images/cardiac-risk/logo/cardiac-risk.png', 86400, 'NONE');
 
 INSERT INTO client_scope (owner_id, scope) VALUES
 	((SELECT id from client_details where client_id = 'cardiac_risk'), 'openid'),
