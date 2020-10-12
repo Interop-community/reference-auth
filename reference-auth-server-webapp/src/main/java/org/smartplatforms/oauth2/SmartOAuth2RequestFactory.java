@@ -101,16 +101,6 @@ public class SmartOAuth2RequestFactory extends ConnectOAuth2RequestFactory {
                 ret.getExtensions().put("external_launch_required", launchReqs);
             }
         }
-
-		ret.setScope(Sets.difference(ret.getScope(),
-                FluentIterable.from(ret.getScope()).filter(isLaunchContext)
-                        .toSet()));
-
-		if (launchId != null) {
-			Set<String> plusLaunch = new HashSet<String>(ret.getScope());
-			plusLaunch.add("launch");
-			ret.setScope(plusLaunch);
-		}
 		
 		return ret;
 	}
