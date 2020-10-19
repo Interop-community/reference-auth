@@ -76,6 +76,6 @@
     </bean>
 
     <!-- Error page handler. -->
-    <mvc:view-controller path="/error" view-name="error"/>
+    <mvc:view-controller path="/error" view-name="serverError"/>
 
 </beans>
