@@ -43,7 +43,7 @@ public class HspcKeycloakAuthenticationProvider extends KeycloakAuthenticationPr
     }
 
     private void allowOnlyEnterpriseUsers(KeycloakAuthenticationToken auth) throws AuthenticationException {
-        if (!((SimpleKeycloakAccount) auth.getDetails()).getRoles().contains("member")) {
+        if (!auth.getAccount().getRoles().contains("member")) {
             throw new BadCredentialsException("");
         }
     }
