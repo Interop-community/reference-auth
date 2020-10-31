@@ -9,6 +9,7 @@ import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.keycloak.representations.IDToken;
 import org.mitre.openid.connect.model.DefaultUserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
@@ -21,6 +22,7 @@ public class HspcKeycloakAuthenticationProvider extends KeycloakAuthenticationPr
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         KeycloakAuthenticationToken auth = (KeycloakAuthenticationToken) super.authenticate(authentication);
+        allowOnlyEnterpriseUsers(auth);
         SimpleKeycloakAccount skca = (SimpleKeycloakAccount) auth.getDetails();
         IDToken idToken = skca.getKeycloakSecurityContext().getIdToken();
         DefaultUserInfo userInfo = new DefaultUserInfo();
@@ -38,5 +40,11 @@ public class HspcKeycloakAuthenticationProvider extends KeycloakAuthenticationPr
         }
         extendedUserInfoService.addUserInfo(userInfo);
         return auth;
+    }
+
+    private void allowOnlyEnterpriseUsers(KeycloakAuthenticationToken auth) throws AuthenticationException {
+        if (!((SimpleKeycloakAccount) auth.getDetails()).getRoles().contains("member")) {
+            throw new BadCredentialsException("");
+        }
     }
 }
