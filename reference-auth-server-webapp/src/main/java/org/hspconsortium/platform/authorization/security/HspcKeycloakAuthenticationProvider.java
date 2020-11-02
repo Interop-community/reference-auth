@@ -9,6 +9,7 @@ import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.keycloak.representations.IDToken;
 import org.mitre.openid.connect.model.DefaultUserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -16,6 +17,10 @@ import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMap
 import org.springframework.security.core.authority.mapping.SimpleAuthorityMapper;
 
 public class HspcKeycloakAuthenticationProvider extends KeycloakAuthenticationProvider {
+
+    @Value("${keycloak.enterpriseUser.role}")
+    private String enterpriseUserRole;
+
     @Autowired
     private ExtendedUserInfoService extendedUserInfoService;
 
@@ -43,8 +48,10 @@ public class HspcKeycloakAuthenticationProvider extends KeycloakAuthenticationPr
     }
 
     private void allowOnlyEnterpriseUsers(KeycloakAuthenticationToken auth) throws AuthenticationException {
-        if (!auth.getAccount().getRoles().contains("member")) {
-            throw new BadCredentialsException("");
+        if (!auth.getAccount()
+                 .getRoles()
+                 .contains(enterpriseUserRole)) {
+            throw new BadCredentialsException("Only enterprise users are allowed.");
         }
     }
 }
