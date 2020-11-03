@@ -85,7 +85,12 @@
   </jsp-config>
 
   <error-page>
+    <error-code>401</error-code>
     <location>/error</location>
+  </error-page>
+
+  <error-page>
+    <location>/serverError</location>
   </error-page>
 
 </web-app>
