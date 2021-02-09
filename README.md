@@ -1,6 +1,6 @@
 # Logica Reference Auth Parent
 
-Welcome to the Logica Reference Authorization server!  The Logica Reference Authorization server contains a MITRE OpenID Connect server in two flavors, a MySQL-backed and an LDAP-backed web application.  This version is the LDAP-backed version.
+Welcome to the Logica Reference Authorization server!  The Logica Reference Authorization server contains MITRE OpenID Connect server as a MySQL-backed web application.
 
 # Logica Sandbox
 
@@ -10,39 +10,33 @@ Welcome to the Logica Reference Authorization server!  The Logica Reference Auth
 
 ## reference-auth-server-webapp
 
-The auth server can be run in three modes:
- 1. OIC (local mysql)
- 2. LDAP
- 3. Firebase (test account server)  
- 
- A run-local script exists for each of these modes:
-
-* "run-local.sh local" (uses the OIC support for user accounts in the local mysql database) 
-* "run-local.sh ldap" (uses an external LDAP system for user accounts) 
-* "run-local.sh firebase" (preferred, uses the hspc-test account system) 
-
 ### How do I set up?
-This project uses Java 8.  Please make sure that your Project SDK is set to use Java 8.
+This project uses Maven and Java 11.  Please make sure that your Project SDK is set to use Java 11.
 
 ### Preconditions
 Need a mysql an empty mysql schema named `oic`. The default Character Set for the schema needs to be `Latin1`. This schema will be populated as you start your server.
+
+Set up your local keycloak server and add reference-auth as a client 
+
+Edit the following keycloak settings in auth.properties to match your local keycloak settings
+
+    keycloak.realm=YOUR KEYCLOAK REALM
+    keycloak.authServerUrl=REPLACE THIS WITH KEYCLOAK URL
+    keycloak.sslRequired=external
+    keycloak.resource=reference-auth
+    keycloak.verifyTokenAudience=true
+    keycloak.credentials.secret=REPLACE THIS WITH KEYCLOAK SECRETE
+    keycloak.logoutSuccessUrl=KEYCLOAK_URL/auth/realms/NAME_OF_THE_REALM/protocol/openid-connect/logout?redirect_uri=http://localhost:3001
+    
 
 #### Step 1: Maven Build
 In the terminal, run the following command:
 
     mvn package
 
-#### Step 2: Run the following command depending on the mode you want:
-    
-###### For Local Installation
+#### Step 2: Run the application by executing the following command from the reference-auth-server-webapp directory:
  
-`./run-local.sh local`
-
-###### For LDAP Installation
-`./run-local.sh ldap`
-
-###### For Firebase installation
-`./run-local.sh firebase`
+`mvn jetty:run -Dspring.profiles.active=users-keycloak,local`
 
 ###### For Docker Installation
 
