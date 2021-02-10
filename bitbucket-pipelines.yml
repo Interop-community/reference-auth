@@ -99,7 +99,7 @@ pipelines:
         - export TASK_VERSION=$(aws ecs register-task-definition --execution-role-arn arn:aws:iam::657600230790:role/ecsTaskExecutionRole --family auth-stage --container-definitions $(cat ci/container-definitions_stage.json | jq -c '.')  | jq --raw-output '.taskDefinition.revision')
         - echo "Registered ECS Task Definition - " $TASK_VERSION
         # update the service to use the latest task definition
-        - aws ecs update-service --cluster hspc-stage --service auth-stage --task-definition auth-stage:$TASK_VERSION
+#        - aws ecs update-service --cluster hspc-stage --service auth-stage --task-definition auth-stage:$TASK_VERSION
     - step:
         caches:
         - maven
