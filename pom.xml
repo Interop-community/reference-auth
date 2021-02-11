@@ -10,7 +10,7 @@
 
     <groupId>org.hspconsortium.reference</groupId>
     <artifactId>hspc-reference-auth-parent</artifactId>
-    <version>1.17.16-SNAPSHOT</version>
+    <version>1.17.16</version>
     <packaging>pom</packaging>
 
     <properties>
