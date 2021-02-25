@@ -32,7 +32,7 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
 
   <!-- Scan for components -->
-  <context:component-scan annotation-config="true" base-package="org.mitre, org.hspconsortium.platform, org.smartplatforms" />
+  <context:component-scan annotation-config="true" base-package="org.mitre, org.logicahealth.platform, org.smartplatforms" />
 
   <!-- Enables the Spring MVC @Controller programming model -->
   <tx:annotation-driven transaction-manager="transactionManager"/>

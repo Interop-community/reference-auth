@@ -45,10 +45,14 @@ pipelines:
         - git fetch origin
         - git checkout -b release/$RELEASE_VERSION
         - cat pom.xml
+        - cat reference-auth-security/pom.xml
+        - cat reference-auth-server-webapp/pom.xml
         - xmlstarlet ed -P -N my=http://maven.apache.org/POM/4.0.0 -u my:project/my:version -v $RELEASE_VERSION pom.xml | sponge pom.xml
         - xmlstarlet ed -P -N my=http://maven.apache.org/POM/4.0.0 -u my:project/my:version -v $RELEASE_VERSION reference-auth-security/pom.xml | sponge reference-auth-security/pom.xml
         - xmlstarlet ed -P -N my=http://maven.apache.org/POM/4.0.0 -u my:project/my:version -v $RELEASE_VERSION reference-auth-server-webapp/pom.xml | sponge reference-auth-server-webapp/pom.xml
         - cat pom.xml
+        - cat reference-auth-security/pom.xml
+        - cat reference-auth-server-webapp/pom.xml
         - git add .
         - git add reference-auth-security/pom.xml
         - git add reference-auth-server-webapp/pom.xml
@@ -61,10 +65,14 @@ pipelines:
         - git checkout develop
         - git merge release/$RELEASE_VERSION
         - cat pom.xml
+        - cat reference-auth-security/pom.xml
+        - cat reference-auth-server-webapp/pom.xml
         - xmlstarlet ed -P -N my=http://maven.apache.org/POM/4.0.0 -u my:project/my:version -v $NEXT_VERSION pom.xml | sponge pom.xml
         - xmlstarlet ed -P -N my=http://maven.apache.org/POM/4.0.0 -u my:project/my:version -v $NEXT_VERSION reference-auth-security/pom.xml | sponge reference-auth-security/pom.xml
         - xmlstarlet ed -P -N my=http://maven.apache.org/POM/4.0.0 -u my:project/my:version -v $NEXT_VERSION reference-auth-server-webapp/pom.xml | sponge reference-auth-server-webapp/pom.xml
         - cat pom.xml
+        - cat reference-auth-security/pom.xml
+        - cat reference-auth-server-webapp/pom.xml
         - git add .
         - git add reference-auth-security/pom.xml
         - git add reference-auth-server-webapp/pom.xml

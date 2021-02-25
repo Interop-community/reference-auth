@@ -12,10 +12,10 @@
        http://www.springframework.org/schema/security/spring-security.xsd">
 
     <context:component-scan annotation-config="true"
-                            base-package="org.mitre, org.hspconsortium.platform, org.smartplatforms, org.keycloak.adapters.springsecurity"/>
+                            base-package="org.mitre, org.logicahealth.platform, org.smartplatforms, org.keycloak.adapters.springsecurity"/>
 
     <bean id="keycloakUserInfoRepository" primary="true"
-          class="org.hspconsortium.platform.authorization.repository.impl.KeycloakUserInfoRepository">
+          class="org.logicahealth.platform.authorization.repository.impl.KeycloakUserInfoRepository">
     </bean>
 
     <security:authentication-manager id="keycloakAuthenticationManager">
@@ -29,10 +29,10 @@
     <bean id="keycloakAuthenticationEntryPoint" class="org.keycloak.adapters.springsecurity.authentication.KeycloakAuthenticationEntryPoint">
         <constructor-arg index="0" ref="adapterDeploymentContext" />
     </bean>
-    <bean id="keycloakAuthenticationProvider" class="org.hspconsortium.platform.authorization.security.HspcKeycloakAuthenticationProvider" >
+    <bean id="keycloakAuthenticationProvider" class="org.logicahealth.platform.authorization.security.HspcKeycloakAuthenticationProvider" >
         <property name="grantedAuthoritiesMapper" ref="hspcKeycloakAuthoritiesMapper" />
     </bean>
-    <bean id="hspcKeycloakAuthoritiesMapper" class="org.hspconsortium.platform.authorization.security.HspcKeycloakAuthoritiesMapper" />
+    <bean id="hspcKeycloakAuthoritiesMapper" class="org.logicahealth.platform.authorization.security.HspcKeycloakAuthoritiesMapper" />
     <bean id="keycloakPreAuthActionsFilter" class="org.keycloak.adapters.springsecurity.filter.KeycloakPreAuthActionsFilter" />
     <bean id="keycloakAuthenticationProcessingFilter" class="org.keycloak.adapters.springsecurity.filter.KeycloakAuthenticationProcessingFilter">
         <constructor-arg name="authenticationManager" ref="keycloakAuthenticationManager" />
@@ -41,8 +41,8 @@
     <bean id="keycloakLogoutHandler" class="org.keycloak.adapters.springsecurity.authentication.KeycloakLogoutHandler">
         <constructor-arg ref="adapterDeploymentContext" />
     </bean>
-    <bean id="hspcKeycloakConfigResolver" class="org.hspconsortium.platform.authorization.security.HspcKeycloakConfigResolver"></bean>
-    <bean id="customLogoutSuccessHandler" class="org.hspconsortium.platform.authorization.security.CustomLogoutSuccessHandler">
+    <bean id="hspcKeycloakConfigResolver" class="org.logicahealth.platform.authorization.security.HspcKeycloakConfigResolver"></bean>
+    <bean id="customLogoutSuccessHandler" class="org.logicahealth.platform.authorization.security.CustomLogoutSuccessHandler">
         <property name="defaultTargetUrl" value="${keycloak.logoutSuccessUrl}" />
     </bean>
 

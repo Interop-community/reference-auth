@@ -32,7 +32,7 @@
     <import resource="property-context.xml" />
 
     <!-- The properties defined in the config bean are available in the .jsp pages -->
-    <bean id="configBean" class="org.hspconsortium.platform.config.HspcConfigurationPropertiesBean">
+    <bean id="configBean" class="org.logicahealth.platform.config.HspcConfigurationPropertiesBean">
 
         <!-- This property sets the root URL of the server, known as the issuer. -->
         <property name="issuer" value="${oidc.issuer}" />

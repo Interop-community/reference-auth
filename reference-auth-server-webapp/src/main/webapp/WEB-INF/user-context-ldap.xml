@@ -26,7 +26,7 @@
 
   <!-- LDAP User Info -->
 
-  <bean id="ldapUserInfoRepository" primary="true" class="org.hspconsortium.platform.authorization.repository.impl.LdapUserInfoRepository">
+  <bean id="ldapUserInfoRepository" primary="true" class="org.logicahealth.platform.authorization.repository.impl.LdapUserInfoRepository">
     <property name="ldapTemplate" ref="ldapTemplate"/>
   </bean>
 
@@ -62,7 +62,7 @@
       </bean>
     </constructor-arg>
     <constructor-arg>
-      <bean class="org.hspconsortium.platform.authorization.userdetails.MappedLdapAuthoritiesPopulator"/>
+      <bean class="org.logicahealth.platform.authorization.userdetails.MappedLdapAuthoritiesPopulator"/>
     </constructor-arg>
   </bean>
 
@@ -101,6 +101,6 @@
     <security:csrf disabled="true"/>
   </security:http>
 
-  <bean id="personaSessionRepo" class="org.hspconsortium.platform.authentication.persona.PersonaHttpSessionSecurityContextRepository"/>
+  <bean id="personaSessionRepo" class="org.logicahealth.platform.authentication.persona.PersonaHttpSessionSecurityContextRepository"/>
 
 </beans>

@@ -1,8 +1,7 @@
 package org.smartplatforms.oauth2;
 
-import org.hspconsortium.platform.authorization.launchcontext.LaunchContextHolder;
-import org.hspconsortium.platform.security.LaunchContext;
-import org.springframework.stereotype.Component;
+import org.logicahealth.platform.authorization.launchcontext.LaunchContextHolder;
+import org.logicahealth.platform.security.LaunchContext;
 
 import java.io.Serializable;
 import java.util.HashMap;

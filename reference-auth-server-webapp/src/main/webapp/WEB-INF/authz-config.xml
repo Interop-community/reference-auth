@@ -56,7 +56,7 @@
     <bean id="oauthAccessDeniedHandler"
           class="org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler"/>
 
-    <bean id="launchContextHolder" class="org.hspconsortium.platform.authorization.launchcontext.InMemoryLaunchContextHolder" />
+    <bean id="launchContextHolder" class="org.logicahealth.platform.authorization.launchcontext.InMemoryLaunchContextHolder" />
 
     <bean id="smartLaunchContextResolver" class="org.smartplatforms.oauth2.SmartLaunchContextResolver">
         <property name="fhirEndpoint" value="${CONTEXT_FHIR_ENDPOINT}"/>

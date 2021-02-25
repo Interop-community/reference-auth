@@ -60,15 +60,15 @@
         <mvc:interceptors>
             <mvc:interceptor>
                 <mvc:mapping path="/**/introspect"/>
-                <bean class="org.hspconsortium.platform.authorization.launchcontext.LaunchContextIntrospectionInterceptor"/>
+                <bean class="org.logicahealth.platform.authorization.launchcontext.LaunchContextIntrospectionInterceptor"/>
             </mvc:interceptor>
             <mvc:interceptor>
                 <mvc:mapping path="/**"/>
-                <bean class="org.hspconsortium.platform.authentication.persona.PersonaAuthInterceptor"/>
+                <bean class="org.logicahealth.platform.authentication.persona.PersonaAuthInterceptor"/>
             </mvc:interceptor>
             <mvc:interceptor>
                 <mvc:mapping path="/**"/>
-                <bean class="org.hspconsortium.platform.authentication.launch.LaunchContextAuthenticationInterceptor"/>
+                <bean class="org.logicahealth.platform.authentication.launch.LaunchContextAuthenticationInterceptor"/>
             </mvc:interceptor>
         </mvc:interceptors>
     </beans>

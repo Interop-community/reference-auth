@@ -30,7 +30,7 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
 
   <bean id="localUserInfoRepository" primary="true"
-        class="org.hspconsortium.platform.authorization.repository.impl.LocalUserInfoRepository">
+        class="org.logicahealth.platform.authorization.repository.impl.LocalUserInfoRepository">
   </bean>
 
   <security:authentication-manager id="authenticationManager">
