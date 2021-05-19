@@ -36,7 +36,7 @@
     </setting>
     <setting key="db.url" syntax="STRING" syntaxVersion="0" modifyTime="2016-08-19T18:59:30Z" modifyUser="default|cn=admin,ou=admins,dc=logicahealth,dc=org">
       <label>Database Connection String</label>
-      <value><![CDATA[jdbc:mysql://sandboxdb.logicahealth.org/pwm]]></value>
+      <value><![CDATA[jdbc:mysql://sandboxdb.interop.community/pwm]]></value>
     </setting>
     <setting key="db.username" syntax="STRING" syntaxVersion="0" modifyTime="2016-08-19T19:00:28Z" modifyUser="default|cn=admin,ou=admins,dc=logicahealth,dc=org">
       <label>Database Username</label>
@@ -50,7 +50,7 @@
     </setting>
     <setting key="ldap.serverUrls" syntax="STRING_ARRAY" profile="default" syntaxVersion="0" modifyTime="2016-08-30T18:28:34Z" modifyUser="default|cn=admin,ou=admins,dc=logicahealth,dc=org">
       <label>LDAP URLs</label>
-      <value><![CDATA[ldap://ldap.logicahealth.org:10389]]></value>
+      <value><![CDATA[ldap://ldap.interop.community:10389]]></value>
     </setting>
     <setting key="ldap.proxy.username" syntax="STRING" profile="default" syntaxVersion="0" modifyTime="2015-11-05T18:20:27Z">
       <label>LDAP Proxy User</label>
@@ -62,7 +62,7 @@
     </setting>
     <setting key="pwm.selfURL" syntax="STRING" syntaxVersion="0" modifyTime="2017-03-01T22:40:20Z" modifyUser="default|cn=admin,ou=admins,dc=logicahealth,dc=org">
       <label>Site URL</label>
-      <value><![CDATA[https://pwm.logicahealth.org]]></value>
+      <value><![CDATA[https://pwm.interop.community]]></value>
     </setting>
     <setting key="pwm.versionCheck.enable" syntax="BOOLEAN" syntaxVersion="0" modifyTime="2015-11-05T18:31:12Z">
       <label>Enable Version Checking</label>
@@ -138,7 +138,7 @@
     </setting>
     <setting key="email.smtp.username" syntax="STRING" syntaxVersion="0" modifyTime="2016-11-18T16:36:42Z" modifyUser="default|cn=admin,ou=admins,dc=logicahealth,dc=org">
       <label>SMTP Email Server Username</label>
-      <value><![CDATA[noreply@logicahealth.org]]></value>
+      <value><![CDATA[noreply@interop.community]]></value>
     </setting>
     <setting key="email.smtp.userpassword" syntax="PASSWORD" syntaxVersion="0" modifyTime="2017-04-10T21:51:24Z" modifyUser="default|cn=admin,ou=admins,dc=logicahealth,dc=org">
       <label>SMTP Email Server Password</label>
@@ -156,7 +156,7 @@
     </setting>
     <setting key="email.adminAlert.toAddress" syntax="STRING_ARRAY" syntaxVersion="0" modifyTime="2016-02-09T18:45:02Z" modifyUser="default|cn=admin,ou=admins,dc=logicahealth,dc=org">
       <label>System Audit Event Email Alerts</label>
-      <value><![CDATA[sandbox@logicahealth.org]]></value>
+      <value><![CDATA[sandbox@interop.community]]></value>
     </setting>
     <setting key="email.adminAlert.fromAddress" syntax="STRING">
       <label>Admin Alert From Address</label>
@@ -164,11 +164,11 @@
     </setting>
     <setting key="email.changePassword" syntax="EMAIL" syntaxVersion="0" modifyTime="2016-02-09T20:51:59Z" modifyUser="default|cn=admin,ou=admins,dc=logicahealth,dc=org">
       <label>Change Password Email</label>
-      <value>{"to":"@LDAP:displayName@ &lt;@LDAP:uid@&gt;","from":"HSPC Support &lt;@DefaultEmailFromAddress@&gt;","subject":"Password Change\n        Notification","bodyPlain":"You have changed your password. If you did not initiate a password change\n        please contact support@logicahealth.org immediately.","bodyHtml":"&lt;b&gt;You have changed your\n        password.&lt;/b&gt; If you have changed your password, then no action is required. If you did not\n        initiate a password change please contact &lt;a href=\"mailto:support@logicahealth.org\"\n        target=\"_self\"&gt;support@logicahealth.org&lt;/a&gt; immediately."}</value>
+      <value>{"to":"@LDAP:displayName@ &lt;@LDAP:uid@&gt;","from":"HSPC Support &lt;@DefaultEmailFromAddress@&gt;","subject":"Password Change\n        Notification","bodyPlain":"You have changed your password. If you did not initiate a password change\n        please contact support@interop.community immediately.","bodyHtml":"&lt;b&gt;You have changed your\n        password.&lt;/b&gt; If you have changed your password, then no action is required. If you did not\n        initiate a password change please contact &lt;a href=\"mailto:support@interop.community\"\n        target=\"_self\"&gt;support@interop.community&lt;/a&gt; immediately."}</value>
     </setting>
     <setting key="email.changePassword.helpdesk" syntax="EMAIL" syntaxVersion="0" modifyTime="2016-02-09T20:52:55Z" modifyUser="default|cn=admin,ou=admins,dc=logicahealth,dc=org">
       <label>Helpdesk Change Password Email</label>
-      <value>{"to":"@LDAP:displayName@ &lt;@LDAP:uid@&gt;","from":"HSPC Support &lt;@DefaultEmailFromAddress@&gt;","subject":"Password Change\n        Notification","bodyPlain":"Your password has been changed by the heldesk. You should set a new password\n        immediately. If you did not initiate a password change please contact support@logicahealth.org\n        immediately.","bodyHtml":"&lt;b&gt;Your password has been changed by the helpdesk.&lt;/b&gt; You\n        should set a new password immediately.If you did not initiate a password change please contact &lt;a\n        href=\"mailto:support@logicahealth.org\"\n        target=\"_self\"&gt;support@logicahealth.org&lt;/a&gt; immediately. &lt;br /&gt;"}</value>
+      <value>{"to":"@LDAP:displayName@ &lt;@LDAP:uid@&gt;","from":"HSPC Support &lt;@DefaultEmailFromAddress@&gt;","subject":"Password Change\n        Notification","bodyPlain":"Your password has been changed by the heldesk. You should set a new password\n        immediately. If you did not initiate a password change please contact support@interop.community\n        immediately.","bodyHtml":"&lt;b&gt;Your password has been changed by the helpdesk.&lt;/b&gt; You\n        should set a new password immediately.If you did not initiate a password change please contact &lt;a\n        href=\"mailto:support@interop.community\"\n        target=\"_self\"&gt;support@interop.community&lt;/a&gt; immediately. &lt;br /&gt;"}</value>
     </setting>
     <setting key="email.updateProfile" syntax="EMAIL" syntaxVersion="0" modifyTime="2016-02-09T20:53:01Z" modifyUser="default|cn=admin,ou=admins,dc=logicahealth,dc=org">
       <label>Update Profile Email</label>

@@ -18,7 +18,7 @@ sn: User
 userPassword:password
 displayName: Admin User
 givenName: Admin
-mail: support@logicahealth.org
+mail: support@interop.community
 uid: admin
 
 dn: cn=demo,ou=admins,dc=logicahealth,dc=org
@@ -31,11 +31,11 @@ objectClass: pwmUser
 cn: demo
 sn: User
 userPassword:demo
-labeledURI: https://api.logicahealth.org/hspc/data/P
+labeledURI: https://api.interop.community/hspc/data/P
  ractitioner/demo/_history/1
 userPassword:: e1NTSEF9QnVhcG9HR0tJZGZHcHJmTUZqajNOOUk3TGppUzI0WDUzTmd4QlE9P
  Q==
 displayName: Demo User
 givenName: Demo
-mail: support_demo@logicahealth.org
+mail: support_demo@interop.community
 uid: demo
