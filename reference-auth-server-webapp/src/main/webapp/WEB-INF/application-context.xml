@@ -231,11 +231,6 @@
     <security:csrf disabled="true"/>
   </security:http>
 
-  <security:http>
-    <security:http-basic entry-point-ref="oauthAuthenticationEntryPoint"/>
-    <security:custom-filter ref="sessionCookieFilter" after="BASIC_AUTH_FILTER"/>
-  </security:http>
-
   <bean id="oauthAuthenticationEntryPoint"
         class="org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint">
     <property name="realmName" value="openidconnect"/>
@@ -287,8 +282,6 @@
 
   <bean id="clientAssertionAuthenticationProvider"
         class="org.mitre.openid.connect.assertion.JWTBearerAuthenticationProvider"/>
-
-  <bean id="sessionCookieFilter" class="org.logicahealth.platform.authorization.security.SessionCookieFilter"/>
 
   <!-- Configure locale information -->
   <import resource="locale-config.xml"/>
