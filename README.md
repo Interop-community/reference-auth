@@ -1,12 +1,12 @@
-# HSPC Reference Auth Parent
+# Meld Reference Auth Parent
 
-Welcome to the HSPC Reference Authorization server!  The HSPC Reference Authorization server contains a MITRE OpenID Connect server in two flavors, a MySQL-backed and an LDAP-backed web application.  This version is the LDAP-backed version.
+Welcome to the Meld Reference Authorization server!  The Meld Reference Authorization server contains a MITRE OpenID Connect server in two flavors, a MySQL-backed and an LDAP-backed web application.  This version is the LDAP-backed version.
 
-# HSPC Sandbox
+# Meld Sandbox
 
 *Note:* If you are wanting to build and test SMART on FHIR Apps, it is recommended that you use the free cloud-hosted version of the HSPC Sandbox.
 
-[HSPC Sandbox](https://sandbox.hspconsortium.org)
+[Meld Sandbox](https://meld.interop.community)
 
 ## reference-auth-server-ldap-webapp
 LDAP-backed overly of the webapp module that overlays MITRE's OpenID Connect server webapp.  MySQL is used to store the OpenID Connect configuration and LDAP is used to store the user information.
