@@ -37,7 +37,7 @@ sn: User
 userPassword:password
 displayName: Admin User
 givenName: Admin
-mail: support@logicahealth.org
+mail: support@interop.community
 uid: admin
 
 dn: cn=demo,ou=admins,dc=logicahealth,dc=org
@@ -52,7 +52,7 @@ sn: User
 userPassword:demo
 displayName: Demo User
 givenName: Demo
-mail: support_demo@logicahealth.org
+mail: support_demo@interop.community
 uid: demo
 
 dn: cn=test,ou=users,dc=logicahealth,dc=org

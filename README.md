@@ -6,7 +6,7 @@ Welcome to the Logica Reference Authorization server!  The Logica Reference Auth
 
 *Note:* If you are wanting to build and test SMART on FHIR Apps, it is recommended that you use the free cloud-hosted version of the Logica Sandbox.
 
-[Logica Sandbox](https://sandbox.logicahealth.org)
+[Interop Community Sandbox](https://sandbox.interop.community)
 
 ## reference-auth-server-webapp
 
